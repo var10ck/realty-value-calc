@@ -25,6 +25,7 @@ object Dependencies {
         val zioConfig = "3.0.1"
         val zioMagic = "0.3.11"
         val bcrypt = "4.3.0"
+        val testContainers = "0.40.11"
     }
 
     lazy val kindProjector =
@@ -75,8 +76,8 @@ object Dependencies {
     lazy val liquibase = Seq("org.liquibase" % "liquibase-core" % V.liquibase)
 
     lazy val testContainers = Seq(
-      "com.dimafeng" %% "testcontainers-scala-postgresql" % "0.39.11" % Test,
-      "com.dimafeng" %% "testcontainers-scala-scalatest"  % "0.39.11" % Test
+      "com.dimafeng" %% "testcontainers-scala-postgresql" % V.testContainers % Test,
+      "com.dimafeng" %% "testcontainers-scala-scalatest"  % V.testContainers % Test
     )
 
     lazy val quill = Seq(

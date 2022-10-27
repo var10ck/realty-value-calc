@@ -100,11 +100,6 @@ final case class UserRepositoryLive() extends UserRepository {
                   )
             )
         } yield ()
-
-    /** Filter Users by condition
-      */
-    override def filter(cond: User => Boolean): QIO[List[User]] =
-        run(query[User].filter(cond))
 }
 
 /** Here in the companion object we define the layer that provides the live implementation of the UserRepository.

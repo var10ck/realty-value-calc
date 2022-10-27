@@ -43,9 +43,6 @@ trait UserRepository {
         id: UserId,
         newPassword: String
     ): QIO[Unit]
-
-    /** Filter Users by condition */
-    def filter(cond: User => Boolean): QIO[List[User]]
 }
 
 object UserRepository {
@@ -92,8 +89,5 @@ object UserRepository {
     ): ZIO[DataSource with UserRepository, SQLException, Unit] =
         ZIO.serviceWithZIO[UserRepository](_.updatePassword(id, newPassword))
 
-    /** Filter Users by condition */
-    def filter(cond: User => Boolean): ZIO[DataSource with UserRepository, SQLException, List[User]] =
-        ZIO.serviceWithZIO[UserRepository](_.filter(cond))
 
 }

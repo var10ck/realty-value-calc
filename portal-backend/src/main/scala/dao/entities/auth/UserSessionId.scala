@@ -17,5 +17,5 @@ object UserSessionId {
     def fromString(id: String): Task[UserSessionId] = ZIO.attempt(UserSessionId(UUID.fromString(id)))
 
     /** Derives a codec allowing a UUID to be (de)serialized as an UserSessionId. */
-    implicit val codec: JsonCodec[UserId] = JsonCodec[UUID].transform(UserId.apply, _.id)
+    implicit val codec: JsonCodec[UserSessionId] = JsonCodec[UUID].transform(UserSessionId.apply, _.id)
 }

@@ -4,7 +4,7 @@ import dto.auth._
 import exceptions.BodyParsingException
 import services.AuthService
 import zio.ZIO
-import zio.json.DecoderOps
+import zio.json.{DecoderOps, EncoderOps}
 import zhttp.http._
 
 object AuthApi {
@@ -18,19 +18,21 @@ object AuthApi {
                     .orElseFail(BodyParsingException("CreateUserDTO"))
                 createdUser <- AuthService.createUser(dto)
             } yield createdUser).fold(
-              failure => Response.status(Status.InternalServerError),
-              success => Response.ok
+              _ => Response.status(Status.InternalServerError),
+              _ => Response.ok
             )
 
         case req @ Method.GET -> !! / "auth" / "user" =>
-            (for {
+            for {
                 requestBody <- req.bodyAsString
                 dto <- ZIO.fromEither(requestBody.fromJson[AuthUserDTO]).orElseFail(BodyParsingException("AuthUserDTO"))
-                session <- AuthService.authUser(dto)
-            } yield session).fold(
-              failure => Response.status(Status.BadRequest),
-              success => Response.ok
-            )
+                sessionOpt <- AuthService.authUser(dto)
+            } yield sessionOpt match {
+                case Some(session) =>
+//                    Response.json(SessionCreatedDTO(session).toJson)
+                    Response.ok.setHeaders(Headers.setCookie(Cookie("userSessionId", session.id.toString)))
+                case None => Response.status(Status.BadRequest)
+            }
 
     }
 
