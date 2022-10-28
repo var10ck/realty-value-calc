@@ -22,7 +22,7 @@ object App {
     val server = {
         for {
             config <- zio.config.getConfig[ApplicationConfig]
-            _ <- LiquibaseService.performMigrationWithDropAll *>
+            _ <- LiquibaseService.performMigration *>
                 zhttp.service.Server.start(config.api.port, httpApp)
         } yield ExitCode.success
 //        (LiquibaseService.performMigration *> zhttp.service.Server.start(8080, httpApp))

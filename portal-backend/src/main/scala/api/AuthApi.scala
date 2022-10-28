@@ -33,16 +33,22 @@ object AuthApi {
             )
 
         case req @ Method.POST -> !! / "auth" / "user" =>
-            for {
+            (for {
                 requestBody <- req.bodyAsString
                 dto <- ZIO.fromEither(requestBody.fromJson[AuthUserDTO]).orElseFail(BodyParsingException("AuthUserDTO"))
                 sessionOpt <- AuthService.authUser(dto)
-            } yield sessionOpt match {
-                case Some(session) =>
-//                    Response.json(SessionCreatedDTO(session).toJson)
-                    Response.ok.setHeaders(Headers.setCookie(Cookie("userSessionId", session.id.toString)))
-                case None => Response.status(Status.BadRequest)
-            }
+            } yield sessionOpt).fold(
+              {
+                  case exceptions.UserNotFound(field, value) => Response.text(s"User with $field = $value not found")
+                  case _ => Response.status(Status.InternalServerError)
+              },
+              {
+                  case Some(session) =>
+                      //                    Response.json(SessionCreatedDTO(session).toJson)
+                      Response.ok.setHeaders(Headers.setCookie(Cookie("userSessionId", session.id.id.toString)))
+                  case None => Response.status(Status.BadRequest)
+              }
+            )
 
         case req @ Method.DELETE -> !! / "auth" / "user" / userId =>
             AuthService.deleteUser(userId)
