@@ -1,7 +1,7 @@
 package services
 import dao.entities.auth.{User, UserSession}
 import dao.repositories.auth.{UserRepository, UserSessionRepository}
-import dto.auth.{AuthUserDTO, CheckSessionDTO, CreateUserDTO}
+import dto.auth.{AuthUserDTO, CheckSessionDTO, CreateUserDTO, DeleteUserDTO}
 import zio.{RIO, Task, ZIO}
 
 import java.sql.SQLException
@@ -11,7 +11,7 @@ trait AuthService {
 
     /** Create user and return it
       */
-    def createUser(createUserDTO: CreateUserDTO): ZIO[DataSource with UserRepository, SQLException, User]
+    def createUser(createUserDTO: CreateUserDTO): ZIO[DataSource with UserRepository, Throwable, User]
 
     /** Try to find user with given login/password. Returns new UserSession if succeed */
     def authUser(
@@ -20,14 +20,16 @@ trait AuthService {
     /** Check if sessionId is exists in database */
     def checkSession(checkSessionDTO: CheckSessionDTO): RIO[DataSource with UserSessionRepository, Boolean]
 
+    /** Delete user from database */
+    def deleteUser(userId: String): ZIO[DataSource with UserRepository, Throwable, Unit]
+
 }
 
 object AuthService {
 
-    /** Create user and return it
-      */
+    /** Create user and return it */
     def createUser(
-        createUserDTO: CreateUserDTO): ZIO[DataSource with UserRepository with AuthService, SQLException, User] =
+        createUserDTO: CreateUserDTO): ZIO[DataSource with UserRepository with AuthService, Throwable, User] =
         ZIO.serviceWithZIO[AuthService](_.createUser(createUserDTO))
 
     /** Try to find user with given login/password. Returns new UserSession if succeed */
@@ -41,5 +43,9 @@ object AuthService {
     def checkSession(checkSessionDTO: CheckSessionDTO)
         : ZIO[DataSource with UserSessionRepository with AuthService, Throwable, Boolean] =
         ZIO.serviceWithZIO[AuthService](_.checkSession(checkSessionDTO))
+
+    /** Delete user from database */
+    def deleteUser(userId: String): ZIO[DataSource with UserRepository with AuthService, Throwable, Unit] =
+        ZIO.serviceWithZIO[AuthService](_.deleteUser(userId))
 
 }

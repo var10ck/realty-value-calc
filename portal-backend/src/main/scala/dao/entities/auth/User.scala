@@ -30,5 +30,4 @@ object User {
 
     /** JSON codec */
     implicit val codec: JsonCodec[User] = DeriveJsonCodec.gen[User]
-
 }

@@ -2,6 +2,7 @@ package dao.repositories.auth
 
 import com.github.t3hnar.bcrypt._
 import dao.entities.auth.{User, UserId}
+import dto.auth.CreateUserDTO
 import io.getquill.context.ZioJdbc.QIO
 import zio._
 import zio.metrics._
@@ -107,5 +108,4 @@ final case class UserRepositoryLive() extends UserRepository {
 object UserRepositoryLive {
 
     val layer: ULayer[UserRepositoryLive] = ZLayer.succeed(UserRepositoryLive())
-
 }

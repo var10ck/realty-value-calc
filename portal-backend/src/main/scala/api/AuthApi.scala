@@ -1,11 +1,13 @@
 package api
 import dao.entities.auth.User
 import dto.auth._
-import exceptions.BodyParsingException
+import exceptions.{BodyParsingException, DataValidationException}
 import services.AuthService
 import zio.ZIO
 import zio.json.{DecoderOps, EncoderOps}
 import zhttp.http._
+
+import java.time.format.DateTimeParseException
 
 object AuthApi {
 
@@ -18,11 +20,19 @@ object AuthApi {
                     .orElseFail(BodyParsingException("CreateUserDTO"))
                 createdUser <- AuthService.createUser(dto)
             } yield createdUser).fold(
-              _ => Response.status(Status.InternalServerError),
-              _ => Response.ok
+              {
+                  case _: DateTimeParseException =>
+                      Response
+                          .text("Date format is invalid. Should be in format - dd.MM.yyyy")
+                          .setStatus(Status.BadRequest)
+                  case DataValidationException(message) => Response.text(message).setStatus(Status.BadRequest)
+                  case _ => Response.status(Status.InternalServerError)
+              },
+//              err => Response.text(err.toString),
+              user => Response.json(user.toJson)
             )
 
-        case req @ Method.GET -> !! / "auth" / "user" =>
+        case req @ Method.POST -> !! / "auth" / "user" =>
             for {
                 requestBody <- req.bodyAsString
                 dto <- ZIO.fromEither(requestBody.fromJson[AuthUserDTO]).orElseFail(BodyParsingException("AuthUserDTO"))
@@ -34,6 +44,14 @@ object AuthApi {
                 case None => Response.status(Status.BadRequest)
             }
 
-    }
+        case req @ Method.DELETE -> !! / "auth" / "user" / userId =>
+            AuthService.deleteUser(userId)
+            .fold(
+//                err => Response.text(err.toString),
+              _ => Response.status(Status.InternalServerError),
+              _ => Response.ok
+            )
+
+    } @@ Middleware.debug
 
 }

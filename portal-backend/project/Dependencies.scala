@@ -26,6 +26,7 @@ object Dependencies {
         val zioMagic = "0.3.11"
         val bcrypt = "4.3.0"
         val testContainers = "0.40.11"
+        val zioPrelude = "1.0.0-RC16"
     }
 
     lazy val kindProjector =
@@ -97,6 +98,8 @@ object Dependencies {
     lazy val zioHttp = "io.d11" %% "zhttp" % V.zhttp
 
     lazy val zioJson = "dev.zio" %% "zio-json" % V.zioJson
+
+    lazy val zioPrelude = "dev.zio" %% "zio-prelude" % V.zioPrelude
 
     lazy val bcrypt = "com.github.t3hnar"    %% "scala-bcrypt"   % V.bcrypt
 
