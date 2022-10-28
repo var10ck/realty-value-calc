@@ -1,4 +1,5 @@
 //import com.typesafe.config.Config
+import com.typesafe.config.{Config, ConfigFactory}
 import configuration.ApplicationConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.getquill._
@@ -7,59 +8,89 @@ import io.getquill.util.LoadConfig
 import liquibase.Liquibase
 import liquibase.database.jvm.JdbcConnection
 import liquibase.resource.{ClassLoaderResourceAccessor, CompositeResourceAccessor, FileSystemResourceAccessor}
+import zio.config.magnolia.descriptor
+import zio.config.{read, ReadError}
+import zio.config.typesafe.TypesafeConfigSource
 import zio.{RIO, URIO, ZIO, ZLayer, _}
 import zio.macros.accessible
 
 package object db {
 
-  type DataSource = javax.sql.DataSource
+    type DataSource = javax.sql.DataSource
 
-  object Ctx extends PostgresZioJdbcContext(NamingStrategy(Escape, Literal))
+    object Ctx extends PostgresZioJdbcContext(NamingStrategy(Escape, Literal))
 
-  def hikariDS: HikariDataSource = JdbcContextConfig(LoadConfig("db")).dataSource
+//  def hikariDS: HikariDataSource = JdbcContextConfig(LoadConfig("db")).dataSource
 
-  val zioDS: ZLayer[Any, Throwable, DataSource] = ZLayer.succeed(hikariDS)
+//  val zioDS: ZLayer[Any, Throwable, DataSource] = ZLayer.succeed(hikariDS)
 
+    private def makeDataSource(resourceBaseName: String) = ZLayer.fromZIO(for {
+        config <- ZIO.from(ConfigFactory.load(resourceBaseName).getConfig("db"))
+        jdbcContextConf <- ZIO.succeed(JdbcContextConfig(config).dataSource)
+        ds <- ZIO.succeed(jdbcContextConf)
+    } yield ds)
 
+    lazy val zioTestDS: ZLayer[Any, Throwable, DataSource] = makeDataSource("application.test.conf")
 
-  @accessible
-  object LiquibaseService {
+    lazy val zioLiveDS: ZLayer[Any, Throwable, DataSource] = makeDataSource("application.conf")
 
-    type LiquibaseService = Service
+    trait LiquibaseService {
+        def performMigration: RIO[Liquibase, Unit]
 
-    type Liqui = Liquibase
+        def performMigrationClean: RIO[Liquibase, Unit]
 
-    trait Service {
-      def performMigration: RIO[Liqui, Unit]
+        def performMigrationWithDropAll: RIO[Liquibase, Unit]
     }
 
-    class Impl extends Service {
+    final case class LiquibaseServiceLive() extends LiquibaseService {
+        override def performMigration: RIO[Liquibase, Unit] = LiquibaseService.liquibase.map(_.update("dev"))
+        override def performMigrationClean: RIO[Liquibase, Unit] = for {
+            liquibase <- LiquibaseService.liquibase
+            _ <- ZIO.from(liquibase.clearCheckSums())
+            _ <- ZIO.from(liquibase.update("dev"))
+        } yield ()
 
-      override def performMigration: RIO[Liqui, Unit] = liquibase.map(_.update("dev"))
+        override def performMigrationWithDropAll: RIO[Liquibase, Unit] = for {
+            liquibase <- LiquibaseService.liquibase
+            _ <- ZIO.from(liquibase.clearCheckSums())
+            _ <- ZIO.from(liquibase.dropAll())
+            _ <- ZIO.from(liquibase.update("dev"))
+        } yield ()
     }
-     
-    def mkLiquibase(config: ApplicationConfig): ZIO[Any with Scope with DataSource, Throwable, Liqui] = for {
-      ds <- ZIO.environment[DataSource].map(_.get)
-      fileAccessor <-  ZIO.from(new FileSystemResourceAccessor())
-      classLoader <- ZIO.from(classOf[Service].getClassLoader)
-      classLoaderAccessor <- ZIO.from(new ClassLoaderResourceAccessor(classLoader))
-      fileOpener <- ZIO.from(new CompositeResourceAccessor(fileAccessor, classLoaderAccessor))
-      jdbcConn <- ZIO.acquireRelease(ZIO.from(new JdbcConnection(ds.getConnection)))(c => ZIO.succeed(c.close()))
-      liqui <- ZIO.from(new Liquibase(config.liquibase.changeLog, fileOpener, jdbcConn))
-    } yield liqui
 
+    object LiquibaseServiceLive {
+        def layer: ULayer[LiquibaseServiceLive] = ZLayer.succeed(LiquibaseServiceLive())
 
-    val liquibaseLayer: ZLayer[Any with Scope with DataSource with ApplicationConfig, Throwable, Liqui] = ZLayer.fromZIO(
-      for {
-        config <- zio.config.getConfig[ApplicationConfig]
-        liquibase <- mkLiquibase(config)
-      } yield liquibase
-    )
+        def liquibaseLayer: ZLayer[Any with Scope with DataSource with ApplicationConfig, Throwable, Liquibase] =
+            ZLayer.fromZIO(
+              for {
+                  config <- zio.config.getConfig[ApplicationConfig]
+                  liquibase <- mkLiquibase(config)
+              } yield liquibase
+            )
 
+        def mkLiquibase(config: ApplicationConfig): ZIO[Any with Scope with DataSource, Throwable, Liquibase] = for {
+            ds <- ZIO.environment[DataSource].map(_.get)
+            fileAccessor <- ZIO.from(new FileSystemResourceAccessor())
+            classLoader <- ZIO.from(classOf[LiquibaseService].getClassLoader)
+            classLoaderAccessor <- ZIO.from(new ClassLoaderResourceAccessor(classLoader))
+            fileOpener <- ZIO.from(new CompositeResourceAccessor(fileAccessor, classLoaderAccessor))
+            jdbcConn <- ZIO.acquireRelease(ZIO.from(new JdbcConnection(ds.getConnection)))(c => ZIO.succeed(c.close()))
+            liqui <- ZIO.from(new Liquibase(config.liquibase.changeLog, fileOpener, jdbcConn))
+        } yield liqui
 
-    def liquibase: URIO[Liqui, Liquibase] = ZIO.succeed[Liquibase]
+    }
 
-    val live: ULayer[LiquibaseService] = ZLayer.succeed(new Impl)
+    object LiquibaseService {
+        def performMigration: ZIO[Liquibase with LiquibaseService, Throwable, Unit] =
+            ZIO.serviceWithZIO[LiquibaseService](_.performMigration)
 
-  }
+        def performMigrationClean: ZIO[Liquibase with LiquibaseService, Throwable, Unit] =
+            ZIO.serviceWithZIO[LiquibaseService](_.performMigrationClean)
+
+        def performMigrationWithDropAll: ZIO[Liquibase with LiquibaseService, Throwable, Unit] =
+            ZIO.serviceWithZIO[LiquibaseService](_.performMigrationWithDropAll)
+
+        def liquibase: URIO[Liquibase, Liquibase] = ZIO.service[Liquibase]
+    }
 }

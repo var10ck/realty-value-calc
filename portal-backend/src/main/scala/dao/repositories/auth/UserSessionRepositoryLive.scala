@@ -15,7 +15,7 @@ final case class UserSessionRepositoryLive() extends UserSessionRepository {
         validUntil: LocalDateTime): QIO[UserSession] =
         for{
             session <- UserSession.make(userId, validFrom, validUntil)
-            _ <- run(query[UserSession].insertValue(session))
+            _ <- run(query[UserSession].insertValue(lift(session)))
         } yield session
 
     override def delete(userSessionId: UserSessionId): QIO[Unit] =

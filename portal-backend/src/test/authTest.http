@@ -1,0 +1,26 @@
+POST /auth/user HTTP/1.1
+Host: localhost:8080
+Content-Length: 52
+
+{
+    "login": "admin",
+    "password": "admin"
+}
+
+###
+POST /auth/register HTTP/1.1
+Host: localhost:8080
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 138
+
+{
+    "login": "admin",
+    "password": "admin",
+    "firstName": "Victor",
+    "lastName": "Nguen",
+    "birthdate": "09.05.1999"
+}
+
+###
+GET /auth/user/87578330-1abe-46c2-bdc4-ef4d373225c7 HTTP/1.1
+Host: localhost:8080
