@@ -13,7 +13,7 @@ package object configuration {
     case class DbConfig(driver: String, url: String, user: String, password: String)
 
     object ApplicationConfig {
-        val live: ZLayer[Any, ReadError[String], ApplicationConfig] = ZLayer {
+        def live: ZLayer[Any, ReadError[String], ApplicationConfig] = ZLayer {
             read {
                 descriptor[ApplicationConfig].from(
                   TypesafeConfigSource.fromResourcePath
@@ -22,10 +22,10 @@ package object configuration {
             }
         }
 
-        val test: ZLayer[Any, ReadError[String], ApplicationConfig] = ZLayer{
+        def test: ZLayer[Any, ReadError[String], ApplicationConfig] = ZLayer{
             read {
                 descriptor[ApplicationConfig].from(
-                  TypesafeConfigSource.fromHoconFilePath("application.test.conf")
+                  TypesafeConfigSource.fromHoconFilePath("src/main/resources/application.test.conf")
                 )
             }
         }
