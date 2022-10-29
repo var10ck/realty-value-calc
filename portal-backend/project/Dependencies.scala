@@ -27,6 +27,7 @@ object Dependencies {
         val bcrypt = "4.3.0"
         val testContainers = "0.40.11"
         val zioPrelude = "1.0.0-RC16"
+        val poi = "5.2.2"
     }
 
     lazy val kindProjector =
@@ -60,6 +61,8 @@ object Dependencies {
 //    "io.circe" %% "circe-generic" % CirceVersion,
 //    "io.circe" %% "circe-literal" % CirceVersion
 //  )
+
+    lazy val poi = "org.apache.poi" % "poi-ooxml" % V.poi
 
     lazy val zio: Seq[ModuleID] = Seq(
       "dev.zio" %% "zio"          % V.zio,

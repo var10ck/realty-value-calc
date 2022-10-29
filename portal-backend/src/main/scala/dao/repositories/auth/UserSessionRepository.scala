@@ -1,5 +1,5 @@
 package dao.repositories.auth
-import dao.entities.auth.{UserId, UserSession, UserSessionId}
+import dao.entities.auth.{User, UserId, UserSession, UserSessionId}
 import io.getquill.context.ZioJdbc.QIO
 import zio.{Task, ZIO}
 
@@ -25,6 +25,12 @@ trait UserSessionRepository {
     /** find all user's sessions */
     def findForUser(userId: UserId): QIO[List[UserSession]]
 
+    /** get UserId by UserSessionId */
+    def getUserId(userSessionId: UserSessionId): QIO[Option[UserId]]
+
+    /** get User by UserSessionId */
+    def getUser(userSessionId: UserSessionId): QIO[Option[User]]
+
 }
 
 object UserSessionRepository {
@@ -49,4 +55,11 @@ object UserSessionRepository {
     /** find all user's sessions */
     def findForUser(userId: UserId): ZIO[DataSource with UserSessionRepository, SQLException, List[UserSession]] =
         ZIO.serviceWithZIO[UserSessionRepository](_.findForUser(userId))
+
+    def getUserId(
+        userSessionId: UserSessionId): ZIO[DataSource with UserSessionRepository, SQLException, Option[UserId]] =
+        ZIO.serviceWithZIO[UserSessionRepository](_.getUserId(userSessionId))
+
+    def getUser(userSessionId: UserSessionId): ZIO[DataSource with UserSessionRepository, SQLException, Option[User]] =
+        ZIO.serviceWithZIO[UserSessionRepository](_.getUser(userSessionId))
 }

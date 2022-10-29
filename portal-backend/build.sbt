@@ -19,7 +19,8 @@ lazy val root = (project in file("."))
             Dependencies.logback,
             Dependencies.zioJson,
             Dependencies.bcrypt,
-            Dependencies.zioPrelude
+            Dependencies.zioPrelude,
+            Dependencies.poi
           ),
       testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
       addCompilerPlugin(Dependencies.kindProjector)
