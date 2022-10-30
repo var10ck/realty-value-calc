@@ -2,7 +2,7 @@ package services
 import dao.entities.auth.UserId
 import dao.entities.realty.{RealtyObject, RealtyObjectId}
 import dao.repositories.realty.RealtyObjectRepository
-import dto.realty.{CreateRealtyObjectDTO, DeleteRealtyObjectDTO}
+import dto.realty.{CreateRealtyObjectDTO, DeleteRealtyObjectDTO, RealtyObjectInfoDTO}
 import zio.{Scope, ZIO}
 import zio.stream.ZStream
 
@@ -31,10 +31,15 @@ trait RealtyObjectService {
     def getRealtyObjectsForUser(
         userId: UserId): ZIO[DataSource with RealtyObjectRepository, SQLException, List[RealtyObject]]
 
-    /** Delete Realty object with checking that it was created by user*/
+    /** Delete Realty object with checking that it was created by user */
     def deleteRealtyObject(
         realtyObjectId: RealtyObjectId,
         userId: UserId): ZIO[DataSource with RealtyObjectRepository, Throwable, Unit]
+
+    /** Return information about realty object with check that this object was added by attempting user */
+    def getRealtyObjectInfo(
+        realtyObjectId: String,
+        userId: UserId): ZIO[DataSource with RealtyObjectRepository, Throwable, RealtyObjectInfoDTO]
 }
 
 object RealtyObjectService {
@@ -61,9 +66,13 @@ object RealtyObjectService {
         : ZIO[DataSource with RealtyObjectRepository with RealtyObjectService, SQLException, List[RealtyObject]] =
         ZIO.serviceWithZIO[RealtyObjectService](_.getRealtyObjectsForUser(userId))
 
-    /** Delete Realty object with checking that it was created by user*/
+    /** Delete Realty object with checking that it was created by user */
     def deleteRealtyObject(
         realtyObjectId: RealtyObjectId,
         userId: UserId): ZIO[DataSource with RealtyObjectRepository with RealtyObjectService, Throwable, Unit] =
         ZIO.serviceWithZIO[RealtyObjectService](_.deleteRealtyObject(realtyObjectId, userId))
+
+    def getRealtyObjectInfo(realtyObjectId: String, userId: UserId)
+        : ZIO[DataSource with RealtyObjectRepository with RealtyObjectService, Throwable, RealtyObjectInfoDTO] =
+        ZIO.serviceWithZIO[RealtyObjectService](_.getRealtyObjectInfo(realtyObjectId, userId))
 }

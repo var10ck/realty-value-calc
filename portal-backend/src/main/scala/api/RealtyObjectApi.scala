@@ -41,6 +41,15 @@ object RealtyObjectApi {
               realtyObject => Response.json(RealtyObjectCreatedDTO.fromEntity(realtyObject).toJson)
             )
 
+        case req @ Method.GET -> !! / "realty" / "objects" / objectId =>
+            withUserContextZIO(req) { user =>
+                RealtyObjectService.getRealtyObjectInfo(objectId, user.id)
+            }.fold(
+                realtyObjectActionsBasicHandler,
+                dto => Response.json(dto.toJson)
+            )
+
+
         case req @ Method.DELETE -> !! / "realty" / "objects" / objectId =>
             withUserContextZIO(req) { user =>
                 for {
@@ -48,26 +57,30 @@ object RealtyObjectApi {
                     _ <- RealtyObjectService.deleteRealtyObject(realtyId, user.id)
                 } yield ()
             }.fold(
-              {
-                  case _: HeaderNotSetException =>
-                      Response.text("Header userSessionId is not set").setStatus(Status.Unauthorized)
-                  case _: UserUnauthorizedException => Response.text("session not found").setStatus(Status.Unauthorized)
-                  case e: RealtyObjectNotFound =>
-                      Response
-                          .text(s"Realty object with ${e.field} = ${e.value} not found")
-                          .setStatus(Status.BadRequest)
-                  case _: NotEnoughRightsException =>
-                      Response.text("User is not author of object").setStatus(Status.BadRequest)
-                  case _ => Response.text("Unknown exception").setStatus(Status.InternalServerError)
-              },
+                realtyObjectActionsBasicHandler,
               _ => Response.ok
             )
     } @@ Middleware.debug
 
-    def basicAuthExceptionHandler: Throwable => Response = {
+    val basicAuthExceptionHandler: Throwable => Response = {
         case _: HeaderNotSetException =>
             Response.text("Header userSessionId is not set").setStatus(Status.Unauthorized)
         case _: UserUnauthorizedException => Response.text("session not found").setStatus(Status.Unauthorized)
         case _ => Response.text("Unknown exception").setStatus(Status.InternalServerError)
+    }
+
+    val realtyObjectActionsBasicHandler: Throwable => Response = {
+        {
+            case _: HeaderNotSetException =>
+                Response.text("Header userSessionId is not set").setStatus(Status.Unauthorized)
+            case _: UserUnauthorizedException => Response.text("session not found").setStatus(Status.Unauthorized)
+            case e: RealtyObjectNotFound =>
+                Response
+                    .text(s"Realty object with ${e.field} = ${e.value} not found")
+                    .setStatus(Status.BadRequest)
+            case _: NotEnoughRightsException =>
+                Response.text("User is not author of object").setStatus(Status.BadRequest)
+            case _ => Response.text("Unknown exception").setStatus(Status.InternalServerError)
+        }
     }
 }
