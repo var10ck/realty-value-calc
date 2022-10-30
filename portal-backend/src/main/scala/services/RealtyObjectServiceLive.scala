@@ -27,7 +27,7 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
             tempFile <- FileHelper.makeTempFile("upload", ".xlsx")
             bytesWritten <- bodyStream.run(ZSink.fromFile(tempFile))
             _ <- zio.Console.printLine(s"created temp file $tempFile and $bytesWritten written")
-            _ <- transmitXlsxObjectsToDatabase(tempFile, userId).forkDaemon
+            _ <- transmitXlsxObjectsToDatabase(tempFile, userId)
         } yield ()
 
     /** takes xlsx-file, transforms it to RealtyObject entities and writes into database

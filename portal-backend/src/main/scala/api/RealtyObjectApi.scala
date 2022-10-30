@@ -1,8 +1,9 @@
 package api
 import dao.entities.realty.RealtyObjectId
 import dto.realty.{CreateRealtyObjectDTO, RealtyObjectCreatedDTO}
-import exceptions.{HeaderNotSetException, NotEnoughRightsException, RealtyObjectNotFound, UserUnauthorizedException}
+import exceptions.{ExcelParsingException, HeaderNotSetException, NotEnoughRightsException, RealtyObjectNotFound, UserUnauthorizedException}
 import helpers.AuthHelper._
+import helpers.HttpExceptionHandlers.basicAuthExceptionHandler
 import services.RealtyObjectService
 import zhttp.http._
 import zio.ZIO
@@ -15,7 +16,7 @@ object RealtyObjectApi {
             withUserContextZIO(req) { user =>
                 RealtyObjectService.importFromXlsx(req.bodyAsStream, user.id)
             }.fold(
-              basicAuthExceptionHandler,
+                importFromXlsxExceptionHandler,
               _ => Response.ok
             )
 
@@ -62,14 +63,15 @@ object RealtyObjectApi {
             )
     } @@ Middleware.debug
 
-    val basicAuthExceptionHandler: Throwable => Response = {
+    private val importFromXlsxExceptionHandler: Throwable => Response = {
         case _: HeaderNotSetException =>
             Response.text("Header userSessionId is not set").setStatus(Status.Unauthorized)
-        case _: UserUnauthorizedException => Response.text("session not found").setStatus(Status.Unauthorized)
+        case _: UserUnauthorizedException => Response.text("session not found").setStatus(Status.BadRequest)
+        case _: ExcelParsingException => Response.text("invalid file format").setStatus(Status.BadRequest)
         case _ => Response.text("Unknown exception").setStatus(Status.InternalServerError)
     }
 
-    val realtyObjectActionsBasicHandler: Throwable => Response = {
+    private val realtyObjectActionsBasicHandler: Throwable => Response = {
         {
             case _: HeaderNotSetException =>
                 Response.text("Header userSessionId is not set").setStatus(Status.Unauthorized)
