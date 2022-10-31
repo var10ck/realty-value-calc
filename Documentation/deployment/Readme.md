@@ -50,19 +50,95 @@ DB_PASSWORD=postgres
 
 ### Сборка собственного образа
 
+> :Warning: Описана сборка образа контейнера бэкэнда системы, СУБД 
+> должна быть развернута отдельно, параметры для доступа к БД необходимо прокинуть 
+> через переменные среды
+
 Для сборки образа понадобится установить [SBT](https://www.scala-sbt.org/) - инструмент для сборки для Scala.
 
 В директории с проектом выполнить:
-> sbt update
+```console
+foo@bar:~$ sbt update
+```
 
 Данная команда загрузит необходимую версию Scala и остальные зависимости проекта.
 
 Для создания образа выполните:
-> sbt docker:publishLocal
+```console
+foo@bar:~$ sbt docker:publishLocal
+```
 
 После этого sbt сгенерирует скомпилирует исходники, сгенерирует Dockerfile и создаст образ контейнера.
 
 Посмотреть список контейнеров на устройстве можно так:
-> docker images
-
+```console
+foo@bar:~$ docker images
+```
 ![docker images result example](./assets/docker-images-assets.png)
+
+> :Warning: Для корректного запуска контейнера обязательно трубуется передать переменные
+> окружения DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
+
+После сборки конетейнера его можно запустить:
+```console
+foo@bar:~$ docker run -p 8080:8080 -d -ti -e API_HOST='localhost' \
+-e API_PORT=8080
+-e DB_HOST='postgres'
+-e DB_PORT=5433
+-e DB_NAME='portal'
+-e DB_USER='postgres'
+-e DB_PASSWORD='postgres'
+--name container_name
+realty-value-calc:0.1.1
+```
+В данном примере сервис доступен на порту 8080.
+
+## Создание сборки для конкретной платформы
+
+Для сборки также понадобится [SBT](https://www.scala-sbt.org/)
+
+Для начала установить зависимости:
+```console
+foo@bar:~$ sbt update
+```
+
+С помощью SBT плагина, установленного в проекте, можно создать сборку 
+под различные платформы: Docker(описано выше), Linux(Debian, RPM), Windows, GraalVM
+
+### Пример сботки для Debian
+
+В системе должны быть установлены следующие приложения:
+* dpkg-deb
+* dpkg-sig
+* dpkg-genchanges
+* lintian
+* fakeroot
+
+Для пакета Debian необходимы некоторые обязательные настройки. Убедитесь, что у вас есть эти настройки в build.sbt:
+```scala
+name := "Debian Example"
+
+version := "1.0"
+
+maintainer := "Max Smith <max.smith@yourcompany.io>"
+
+packageSummary := "Hello World Debian Package"
+
+packageDescription :=
+        """A fun package description of our software,
+          with multiple lines."""
+
+debianPackageDependencies := Seq("java8-runtime-headless")
+
+enablePlugins(DebianPlugin)
+```
+
+Запустите следующую команду в директории с проектом:
+```console
+foo@bar:~$ sbt debian:packageBin
+```
+
+После этого sbt соберет Deb-пакет в директории target/
+
+Более подробную информацию о сборке под различные платформы можно найти в официальной документации плагина sbt-native packager:
+https://www.scala-sbt.org/sbt-native-packager/formats/index.html
