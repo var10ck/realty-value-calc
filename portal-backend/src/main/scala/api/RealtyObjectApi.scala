@@ -107,8 +107,8 @@ object RealtyObjectApi {
     private val authExceptionHandler: Throwable => Response = basicAuthExceptionHandler orElse lastResortHandler
 
     private val importFromXlsxExceptionHandler: Throwable => Response =
-        basicAuthExceptionHandler orElse [Throwable, Response] { case _: ExcelParsingException =>
-            Response.text("invalid file format").setStatus(Status.BadRequest)
+        basicAuthExceptionHandler orElse [Throwable, Response] { case e: ExcelParsingException =>
+            Response.text(s"invalid file format: ${e.getMessage}").setStatus(Status.BadRequest)
         } orElse lastResortHandler
 
     private val exportRealtyObjectsToXlsxExceptionsHandler: Throwable => Response =

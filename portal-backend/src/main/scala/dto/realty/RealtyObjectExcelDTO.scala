@@ -10,7 +10,7 @@ case class RealtyObjectExcelDTO(
     floorNumber: Int,
     totalArea: Double,
     kitchenArea: Double,
-    gotBalcony: String,
+    gotBalcony: Boolean,
     condition: String,
     distanceFromMetro: Int
 )

@@ -1,7 +1,7 @@
 ThisBuild / scalaVersion     := "2.13.9"
-ThisBuild / version          := "0.1.0-SNAPSHOT"
+ThisBuild / version          := "0.1.0"
 ThisBuild / organization     := "org.scalalazy"
-ThisBuild / organizationName := "example"
+ThisBuild / organizationName := "Scalalazy"
 
 lazy val root = (project in file("."))
     .settings(
@@ -25,3 +25,10 @@ lazy val root = (project in file("."))
       testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
       addCompilerPlugin(Dependencies.kindProjector)
     )
+
+
+enablePlugins(JavaAppPackaging)
+enablePlugins(DockerPlugin)
+
+Docker / packageName        := "realty-value-calc-backend"
+Docker / dockerExposedPorts := Seq(8080)

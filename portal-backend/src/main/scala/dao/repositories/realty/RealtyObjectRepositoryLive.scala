@@ -21,7 +21,7 @@ final case class RealtyObjectRepositoryLive() extends RealtyObjectRepository {
         floorNumber: Int,
         totalArea: Double,
         kitchenArea: Double,
-        gotBalcony: String,
+        gotBalcony: Boolean,
         condition: String,
         distanceFromMetro: Int,
         addedByUserId: UserId,
@@ -69,7 +69,7 @@ final case class RealtyObjectRepositoryLive() extends RealtyObjectRepository {
         floorNumber: Option[Int] = None,
         totalArea: Option[Double] = None,
         kitchenArea: Option[Double] = None,
-        gotBalcony: Option[String] = None,
+        gotBalcony: Option[Boolean] = None,
         condition: Option[String] = None,
         distanceFromMetro: Option[Int] = None,
         calculatedValue: Option[Long] = None): QIO[Unit] = {

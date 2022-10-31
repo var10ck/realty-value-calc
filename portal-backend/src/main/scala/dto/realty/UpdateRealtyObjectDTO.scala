@@ -11,7 +11,7 @@ case class UpdateRealtyObjectDTO(
     floorNumber: Option[Int],
     totalArea: Option[Double],
     kitchenArea: Option[Double],
-    gotBalcony: Option[String],
+    gotBalcony: Option[Boolean],
     condition: Option[String],
     distanceFromMetro: Option[Int],
     calculatedValue: Option[Long]

@@ -34,7 +34,7 @@
             <column name="kitchenArea" type="double">
                 <constraints nullable="false"/>
             </column>
-            <column name="gotBalcony" type="varchar(20)">
+            <column name="gotBalcony" type="boolean">
                 <constraints nullable="false"/>
             </column>
             <column name="condition" type="varchar(50)">

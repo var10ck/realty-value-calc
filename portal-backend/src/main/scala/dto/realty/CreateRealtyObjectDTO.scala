@@ -9,7 +9,7 @@ case class CreateRealtyObjectDTO (location: String,
                                   floorNumber: Int,
                                   totalArea: Double,
                                   kitchenArea: Double,
-                                  gotBalcony: String,
+                                  gotBalcony: Boolean,
                                   condition: String,
                                   distanceFromMetro: Int)
 

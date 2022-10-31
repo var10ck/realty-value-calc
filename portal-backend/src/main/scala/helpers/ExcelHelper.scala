@@ -69,6 +69,11 @@ object ExcelHelper {
                 val distanceFromMetro = row.getCell(10)
                 distanceFromMetro.setCellType(CellType.STRING)
 
+                val gotBalconyBool: Boolean = gotBalcony.getStringCellValue.toLowerCase match {
+                    case "есть" => true
+                    case "нет" => false
+                    case _ => throw new Exception(s"Invalid data in cell (${rowNum + 1}, 8)")
+                }
                 RealtyObjectExcelDTO(
                   location.getStringCellValue,
                   roomsNumber.getStringCellValue.toInt,
@@ -78,7 +83,7 @@ object ExcelHelper {
                   floorNumber.getStringCellValue.toInt,
                   totalArea.getStringCellValue.toDouble,
                   kitchenArea.getStringCellValue.toDouble,
-                  gotBalcony.getStringCellValue,
+                  gotBalconyBool,
                   condition.getStringCellValue,
                   distanceFromMetro.getStringCellValue.toInt
                 )
@@ -145,8 +150,6 @@ object ExcelHelper {
         cellFont.setFontHeightInPoints(12.toShort)
         dataCellStyle.setFont(cellFont)
 
-
-
         // Create header and set it's style
         val headerRow = sheet.createRow(0)
 
@@ -209,7 +212,8 @@ object ExcelHelper {
                 chainCell(row.createCell(5))(_.setCellValue(realtyObject.floorNumber)).setCellStyle(dataCellStyle)
                 chainCell(row.createCell(6))(_.setCellValue(realtyObject.totalArea)).setCellStyle(dataCellStyle)
                 chainCell(row.createCell(7))(_.setCellValue(realtyObject.kitchenArea)).setCellStyle(dataCellStyle)
-                chainCell(row.createCell(8))(_.setCellValue(realtyObject.gotBalcony)).setCellStyle(dataCellStyle)
+                chainCell(row.createCell(8))(_.setCellValue(if (realtyObject.gotBalcony) "есть" else "нет"))
+                    .setCellStyle(dataCellStyle)
                 chainCell(row.createCell(9))(_.setCellValue(realtyObject.condition)).setCellStyle(dataCellStyle)
                 chainCell(row.createCell(10))(_.setCellValue(realtyObject.distanceFromMetro))
                     .setCellStyle(dataCellStyle)
