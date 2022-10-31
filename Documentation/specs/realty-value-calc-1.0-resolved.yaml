@@ -5,28 +5,28 @@ info:
   contact: {}
   version: "1.0"
 servers:
-- url: http://localhost:8080
+  - url: http://localhost:8080
 tags:
-- name: Realty
-  description: ""
+  - name: Realty
+    description: ""
 paths:
   /realty/objects/import:
     put:
       tags:
-      - Realty
+        - Realty
       summary: Импорт из XLSX-файла
       description: Импортировать объекты недвижимости из файла
       operationId: ИмпортизXLSX-файла
       parameters:
-      - name: userSessionId
-        in: header
-        description: userSessionId из Cookie
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: 21a45861-2308-45f1-93a4-21be5f06ecd7
+        - name: userSessionId
+          in: header
+          description: userSessionId из Cookie
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 21a45861-2308-45f1-93a4-21be5f06ecd7
       requestBody:
         content:
           multipart/form-data:
@@ -103,19 +103,19 @@ paths:
   /realty/objects/create:
     post:
       tags:
-      - Realty
+        - Realty
       summary: Создание объекта недвижимости
       operationId: createrealtyobject
       parameters:
-      - name: userSessionId
-        in: header
-        description: userSessionId Cookie
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: 21a45861-2308-45f1-93a4-21be5f06ecd7
+        - name: userSessionId
+          in: header
+          description: userSessionId Cookie
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 21a45861-2308-45f1-93a4-21be5f06ecd7
       requestBody:
         description: Значения полей создаваемого объекта недвижимости.
         content:
@@ -131,7 +131,7 @@ paths:
               floorNumber: 4
               totalArea: 75
               kitchenArea: 12
-              gotBalcony: да
+              gotBalcony: true
               condition: Современная отделка
               distanceFromMetro: 200
         required: true
@@ -169,7 +169,7 @@ paths:
                 floorNumber: 4
                 totalArea: 75
                 kitchenArea: 12
-                gotBalcony: да
+                gotBalcony: true
                 condition: Современная отделка
                 distanceFromMetro: 200
                 createdAt: 2022-10-30T02:15:31.4185054
@@ -206,19 +206,19 @@ paths:
   /realty/objects:
     get:
       tags:
-      - Realty
+        - Realty
       summary: Получить все объекты недвижимости, созданные авторизованным пользователем
       operationId: getrealtyobjectscreatedbyuser
       parameters:
-      - name: userSessionId
-        in: header
-        description: userSessionId from Cookie
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: 21a45861-2308-45f1-93a4-21be5f06ecd7
+        - name: userSessionId
+          in: header
+          description: userSessionId from Cookie
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 21a45861-2308-45f1-93a4-21be5f06ecd7
       responses:
         "200":
           description: OK
@@ -245,6 +245,69 @@ paths:
                 type: array
                 description: ""
                 example:
+                  - id: 8a7395e0-8bfe-4c9f-b322-cd48d519c21c
+                    location: Адрес 1
+                    roomsNumber: 3
+                    segment: Новостройка
+                    floorCount: 5
+                    wallMaterial: кирпич
+                    floorNumber: 3
+                    totalArea: 70
+                    kitchenArea: 15
+                    gotBalcony: false
+                    condition: без отделки
+                    distanceFromMetro: 500
+                    addedByUserId: 90b72302-b5ae-4d00-9067-a061edd5fd33
+                    createdAt: 2022-10-30T02:14:13.618054
+                    updatedAt: 2022-10-30T02:14:13.618054
+                  - id: 5e892bab-7d21-4571-8425-2235d1e0d2f5
+                    location: Адрес 2
+                    roomsNumber: 2
+                    segment: Современное жилье
+                    floorCount: 6
+                    wallMaterial: панель
+                    floorNumber: 5
+                    totalArea: 50
+                    kitchenArea: 10
+                    gotBalcony: true
+                    condition: муниципальный ремонт
+                    distanceFromMetro: 400
+                    addedByUserId: 90b72302-b5ae-4d00-9067-a061edd5fd33
+                    createdAt: 2022-10-30T01:48:21.356481
+                    updatedAt: 2022-10-30T01:48:21.356481
+                  - id: bf070e18-81f6-4520-b892-ec881734367c
+                    location: Адрес 3
+                    roomsNumber: 1
+                    segment: старый жилой фонд
+                    floorCount: 7
+                    wallMaterial: монолит
+                    floorNumber: 7
+                    totalArea: 30
+                    kitchenArea: 5
+                    gotBalcony: true
+                    condition: современная отделка
+                    distanceFromMetro: 100
+                    addedByUserId: 90b72302-b5ae-4d00-9067-a061edd5fd33
+                    createdAt: 2022-10-30T01:48:21.362481
+                    updatedAt: 2022-10-30T01:48:21.362481
+                  - id: 0e7ec6a5-59a4-45cf-8528-c33efe8c83dd
+                    location: Саринский пр-д, 42, Москва, 127524
+                    roomsNumber: 3
+                    segment: Новостройка
+                    floorCount: 10
+                    wallMaterial: кирпич
+                    floorNumber: 4
+                    totalArea: 75
+                    kitchenArea: 12
+                    gotBalcony: true
+                    condition: Современная отделка
+                    distanceFromMetro: 200
+                    addedByUserId: 90b72302-b5ae-4d00-9067-a061edd5fd33
+                    createdAt: 2022-10-30T02:15:31.418505
+                    updatedAt: 2022-10-30T02:15:31.418505
+                items:
+                  $ref: '#/components/schemas/getrealtyobjectscreatedbyuser'
+              example:
                 - id: 8a7395e0-8bfe-4c9f-b322-cd48d519c21c
                   location: Адрес 1
                   roomsNumber: 3
@@ -254,7 +317,7 @@ paths:
                   floorNumber: 3
                   totalArea: 70
                   kitchenArea: 15
-                  gotBalcony: нет
+                  gotBalcony: false
                   condition: без отделки
                   distanceFromMetro: 500
                   addedByUserId: 90b72302-b5ae-4d00-9067-a061edd5fd33
@@ -269,7 +332,7 @@ paths:
                   floorNumber: 5
                   totalArea: 50
                   kitchenArea: 10
-                  gotBalcony: балкон
+                  gotBalcony: true
                   condition: муниципальный ремонт
                   distanceFromMetro: 400
                   addedByUserId: 90b72302-b5ae-4d00-9067-a061edd5fd33
@@ -284,7 +347,7 @@ paths:
                   floorNumber: 7
                   totalArea: 30
                   kitchenArea: 5
-                  gotBalcony: лоджия
+                  gotBalcony: true
                   condition: современная отделка
                   distanceFromMetro: 100
                   addedByUserId: 90b72302-b5ae-4d00-9067-a061edd5fd33
@@ -299,75 +362,12 @@ paths:
                   floorNumber: 4
                   totalArea: 75
                   kitchenArea: 12
-                  gotBalcony: да
+                  gotBalcony: true
                   condition: Современная отделка
                   distanceFromMetro: 200
                   addedByUserId: 90b72302-b5ae-4d00-9067-a061edd5fd33
                   createdAt: 2022-10-30T02:15:31.418505
                   updatedAt: 2022-10-30T02:15:31.418505
-                items:
-                  $ref: '#/components/schemas/getrealtyobjectscreatedbyuser'
-              example:
-              - id: 8a7395e0-8bfe-4c9f-b322-cd48d519c21c
-                location: Адрес 1
-                roomsNumber: 3
-                segment: Новостройка
-                floorCount: 5
-                wallMaterial: кирпич
-                floorNumber: 3
-                totalArea: 70
-                kitchenArea: 15
-                gotBalcony: нет
-                condition: без отделки
-                distanceFromMetro: 500
-                addedByUserId: 90b72302-b5ae-4d00-9067-a061edd5fd33
-                createdAt: 2022-10-30T02:14:13.618054
-                updatedAt: 2022-10-30T02:14:13.618054
-              - id: 5e892bab-7d21-4571-8425-2235d1e0d2f5
-                location: Адрес 2
-                roomsNumber: 2
-                segment: Современное жилье
-                floorCount: 6
-                wallMaterial: панель
-                floorNumber: 5
-                totalArea: 50
-                kitchenArea: 10
-                gotBalcony: балкон
-                condition: муниципальный ремонт
-                distanceFromMetro: 400
-                addedByUserId: 90b72302-b5ae-4d00-9067-a061edd5fd33
-                createdAt: 2022-10-30T01:48:21.356481
-                updatedAt: 2022-10-30T01:48:21.356481
-              - id: bf070e18-81f6-4520-b892-ec881734367c
-                location: Адрес 3
-                roomsNumber: 1
-                segment: старый жилой фонд
-                floorCount: 7
-                wallMaterial: монолит
-                floorNumber: 7
-                totalArea: 30
-                kitchenArea: 5
-                gotBalcony: лоджия
-                condition: современная отделка
-                distanceFromMetro: 100
-                addedByUserId: 90b72302-b5ae-4d00-9067-a061edd5fd33
-                createdAt: 2022-10-30T01:48:21.362481
-                updatedAt: 2022-10-30T01:48:21.362481
-              - id: 0e7ec6a5-59a4-45cf-8528-c33efe8c83dd
-                location: Саринский пр-д, 42, Москва, 127524
-                roomsNumber: 3
-                segment: Новостройка
-                floorCount: 10
-                wallMaterial: кирпич
-                floorNumber: 4
-                totalArea: 75
-                kitchenArea: 12
-                gotBalcony: да
-                condition: Современная отделка
-                distanceFromMetro: 200
-                addedByUserId: 90b72302-b5ae-4d00-9067-a061edd5fd33
-                createdAt: 2022-10-30T02:15:31.418505
-                updatedAt: 2022-10-30T02:15:31.418505
         "401":
           description: Unauthorized
           headers:
@@ -396,19 +396,19 @@ paths:
       deprecated: false
     patch:
       tags:
-      - Realty
+        - Realty
       summary: Изменить информацию об объекте недвижимости
       operationId: Updaterealtyobjectinfo
       parameters:
-      - name: userSessionId
-        in: header
-        description: ""
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: 21a45861-2308-45f1-93a4-21be5f06ecd7
+        - name: userSessionId
+          in: header
+          description: ""
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 21a45861-2308-45f1-93a4-21be5f06ecd7
       requestBody:
         description: Поле id - обязательное поле, представлющее id объекта недвижимости. Остальные поля опциональные, устанавливаются только если нужно обновить значения в них.
         content:
@@ -425,7 +425,7 @@ paths:
               floorNumber: 9
               totalArea: 74.5
               kitchenArea: 12.3
-              gotBalcony: нет
+              gotBalcony: false
               condition: муниципальный ремонт
               distanceFromMetro: 390
               calculatedValue: 18000000
@@ -497,19 +497,19 @@ paths:
   /realty/objects/<RealtyObjectId удаляемого объекта>:
     delete:
       tags:
-      - Realty
+        - Realty
       summary: Удалить объект недвижимости
       operationId: deleterealtyobject
       parameters:
-      - name: userSessionId
-        in: header
-        description: userSessionId from Cookie
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: 21a45861-2308-45f1-93a4-21be5f06ecd7
+        - name: userSessionId
+          in: header
+          description: userSessionId from Cookie
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 21a45861-2308-45f1-93a4-21be5f06ecd7
       responses:
         "200":
           description: OK
@@ -552,19 +552,19 @@ paths:
   /realty/objects/<RealtyObjectId извлекаемого объекта>:
     get:
       tags:
-      - Realty
+        - Realty
       summary: Получить подробную информацию об объекте недвижимости
       operationId: getinfoaboutrealtyobject
       parameters:
-      - name: userSessionId
-        in: header
-        description: userSessionId from Cookie
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: 21a45861-2308-45f1-93a4-21be5f06ecd7
+        - name: userSessionId
+          in: header
+          description: userSessionId from Cookie
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 21a45861-2308-45f1-93a4-21be5f06ecd7
       responses:
         "200":
           description: OK
@@ -599,7 +599,7 @@ paths:
                 floorNumber: 3
                 totalArea: 70
                 kitchenArea: 15
-                gotBalcony: нет
+                gotBalcony: false
                 condition: без отделки
                 distanceFromMetro: 500
                 calculatedValue: 1000000
@@ -659,19 +659,19 @@ paths:
   /realty/objects/export:
     get:
       tags:
-      - Realty
+        - Realty
       summary: Экспортировать объекты с рассчитанной стоимостью в xlsx
       operationId: exportrealtyobjectstoxlsx
       parameters:
-      - name: userSessionId
-        in: header
-        description: ""
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          example: 21a45861-2308-45f1-93a4-21be5f06ecd7
+        - name: userSessionId
+          in: header
+          description: ""
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            example: 21a45861-2308-45f1-93a4-21be5f06ecd7
       responses:
         "200":
           description: В теле ответа передается xlsx-файл в бинарном формате
@@ -735,7 +735,7 @@ paths:
   /auth/register:
     post:
       tags:
-      - Auth
+        - Auth
       summary: Регистрация нового пользователя
       operationId: Registernewuser
       parameters: []
@@ -771,7 +771,7 @@ paths:
   /auth/user:
     post:
       tags:
-      - Auth
+        - Auth
       summary: Авторизовать пользователя
       operationId: Authorizeuser
       parameters: []
@@ -802,7 +802,7 @@ paths:
   /auth/user/<userId>:
     delete:
       tags:
-      - Auth
+        - Auth
       summary: Удалить пользователя из системы
       operationId: Deleteuser
       parameters: []
@@ -817,17 +817,17 @@ components:
     createrealtyobjectrequest:
       title: createrealtyobjectrequest
       required:
-      - condition
-      - distanceFromMetro
-      - floorCount
-      - floorNumber
-      - gotBalcony
-      - kitchenArea
-      - location
-      - roomsNumber
-      - segment
-      - totalArea
-      - wallMaterial
+        - condition
+        - distanceFromMetro
+        - floorCount
+        - floorNumber
+        - gotBalcony
+        - kitchenArea
+        - location
+        - roomsNumber
+        - segment
+        - totalArea
+        - wallMaterial
       type: object
       properties:
         location:
@@ -852,7 +852,7 @@ components:
           type: integer
           format: int32
         gotBalcony:
-          type: string
+          type: boolean
         condition:
           type: string
         distanceFromMetro:
@@ -867,25 +867,25 @@ components:
         floorNumber: 4
         totalArea: 75
         kitchenArea: 12
-        gotBalcony: да
+        gotBalcony: true
         condition: Современная отделка
         distanceFromMetro: 200
     createrealtyobject:
       title: createrealtyobject
       required:
-      - condition
-      - createdAt
-      - distanceFromMetro
-      - floorCount
-      - floorNumber
-      - gotBalcony
-      - id
-      - kitchenArea
-      - location
-      - roomsNumber
-      - segment
-      - totalArea
-      - wallMaterial
+        - condition
+        - createdAt
+        - distanceFromMetro
+        - floorCount
+        - floorNumber
+        - gotBalcony
+        - id
+        - kitchenArea
+        - location
+        - roomsNumber
+        - segment
+        - totalArea
+        - wallMaterial
       type: object
       properties:
         id:
@@ -912,7 +912,7 @@ components:
           type: integer
           format: int32
         gotBalcony:
-          type: string
+          type: boolean
         condition:
           type: string
         distanceFromMetro:
@@ -930,28 +930,28 @@ components:
         floorNumber: 4
         totalArea: 75
         kitchenArea: 12
-        gotBalcony: да
+        gotBalcony: true
         condition: Современная отделка
         distanceFromMetro: 200
         createdAt: 2022-10-30T02:15:31.4185054
     getrealtyobjectscreatedbyuser:
       title: getrealtyobjectscreatedbyuser
       required:
-      - addedByUserId
-      - condition
-      - createdAt
-      - distanceFromMetro
-      - floorCount
-      - floorNumber
-      - gotBalcony
-      - id
-      - kitchenArea
-      - location
-      - roomsNumber
-      - segment
-      - totalArea
-      - updatedAt
-      - wallMaterial
+        - addedByUserId
+        - condition
+        - createdAt
+        - distanceFromMetro
+        - floorCount
+        - floorNumber
+        - gotBalcony
+        - id
+        - kitchenArea
+        - location
+        - roomsNumber
+        - segment
+        - totalArea
+        - updatedAt
+        - wallMaterial
       type: object
       properties:
         id:
@@ -978,7 +978,7 @@ components:
           type: integer
           format: int32
         gotBalcony:
-          type: string
+          type: boolean
         condition:
           type: string
         distanceFromMetro:
@@ -1000,7 +1000,7 @@ components:
         floorNumber: 3
         totalArea: 70
         kitchenArea: 15
-        gotBalcony: нет
+        gotBalcony: false
         condition: без отделки
         distanceFromMetro: 500
         addedByUserId: 90b72302-b5ae-4d00-9067-a061edd5fd33
@@ -1009,21 +1009,21 @@ components:
     userSessionIdisset:
       title: userSessionIdisset
       required:
-      - calculatedValue
-      - condition
-      - createdAt
-      - distanceFromMetro
-      - floorCount
-      - floorNumber
-      - gotBalcony
-      - id
-      - kitchenArea
-      - location
-      - roomsNumber
-      - segment
-      - totalArea
-      - updatedAt
-      - wallMaterial
+        - calculatedValue
+        - condition
+        - createdAt
+        - distanceFromMetro
+        - floorCount
+        - floorNumber
+        - gotBalcony
+        - id
+        - kitchenArea
+        - location
+        - roomsNumber
+        - segment
+        - totalArea
+        - updatedAt
+        - wallMaterial
       type: object
       properties:
         id:
@@ -1050,7 +1050,7 @@ components:
           type: integer
           format: int32
         gotBalcony:
-          type: string
+          type: boolean
         condition:
           type: string
         distanceFromMetro:
@@ -1073,7 +1073,7 @@ components:
         floorNumber: 3
         totalArea: 70
         kitchenArea: 15
-        gotBalcony: нет
+        gotBalcony: false
         condition: без отделки
         distanceFromMetro: 500
         calculatedValue: 1000000
@@ -1082,11 +1082,11 @@ components:
     RegisternewuserRequest:
       title: RegisternewuserRequest
       required:
-      - birthdate
-      - firstName
-      - lastName
-      - login
-      - password
+        - birthdate
+        - firstName
+        - lastName
+        - login
+        - password
       type: object
       properties:
         login:
@@ -1108,13 +1108,13 @@ components:
     register:
       title: register
       required:
-      - birthdate
-      - firstName
-      - id
-      - lastName
-      - login
-      - passwordHash
-      - salt
+        - birthdate
+        - firstName
+        - id
+        - lastName
+        - login
+        - passwordHash
+        - salt
       type: object
       properties:
         id:
@@ -1142,8 +1142,8 @@ components:
     AuthorizeuserRequest:
       title: AuthorizeuserRequest
       required:
-      - login
-      - password
+        - login
+        - password
       type: object
       properties:
         login:
@@ -1156,19 +1156,19 @@ components:
     UpdaterealtyobjectinfoRequest:
       title: UpdatereealtyobjectinfoRequest
       required:
-      - calculatedValue
-      - condition
-      - distanceFromMetro
-      - floorCount
-      - floorNumber
-      - gotBalcony
-      - id
-      - kitchenArea
-      - location
-      - roomsNumber
-      - segment
-      - totalArea
-      - wallMaterial
+        - calculatedValue
+        - condition
+        - distanceFromMetro
+        - floorCount
+        - floorNumber
+        - gotBalcony
+        - id
+        - kitchenArea
+        - location
+        - roomsNumber
+        - segment
+        - totalArea
+        - wallMaterial
       type: object
       properties:
         id:
@@ -1192,7 +1192,7 @@ components:
         kitchenArea:
           type: number
         gotBalcony:
-          type: string
+          type: boolean
         condition:
           type: string
         distanceFromMetro:
@@ -1211,13 +1211,13 @@ components:
         floorNumber: 9
         totalArea: 74.5
         kitchenArea: 12.3
-        gotBalcony: нет
+        gotBalcony: false
         condition: муниципальный ремонт
         distanceFromMetro: 390
         calculatedValue: 18000000
     objects_import_body:
       required:
-      - File
+        - File
       type: object
       properties:
         File:
@@ -1225,95 +1225,95 @@ components:
           format: binary
     objects_create_body:
       allOf:
-      - $ref: '#/components/schemas/createrealtyobjectrequest'
-      - example:
-          location: Саринский пр-д, 42, Москва, 127524
-          roomsNumber: 3
-          segment: Новостройка
-          floorCount: 10
-          wallMaterial: кирпич
-          floorNumber: 4
-          totalArea: 75
-          kitchenArea: 12
-          gotBalcony: да
-          condition: Современная отделка
-          distanceFromMetro: 200
+        - $ref: '#/components/schemas/createrealtyobjectrequest'
+        - example:
+            location: Саринский пр-д, 42, Москва, 127524
+            roomsNumber: 3
+            segment: Новостройка
+            floorCount: 10
+            wallMaterial: кирпич
+            floorNumber: 4
+            totalArea: 75
+            kitchenArea: 12
+            gotBalcony: true
+            condition: Современная отделка
+            distanceFromMetro: 200
     inline_response_200:
       allOf:
-      - $ref: '#/components/schemas/createrealtyobject'
-      - example:
-          id: 0e7ec6a5-59a4-45cf-8528-c33efe8c83dd
-          location: Саринский пр-д, 42, Москва, 127524
-          roomsNumber: 3
-          segment: Новостройка
-          floorCount: 10
-          wallMaterial: кирпич
-          floorNumber: 4
-          totalArea: 75
-          kitchenArea: 12
-          gotBalcony: да
-          condition: Современная отделка
-          distanceFromMetro: 200
-          createdAt: 2022-10-30T02:15:31.4185054
+        - $ref: '#/components/schemas/createrealtyobject'
+        - example:
+            id: 0e7ec6a5-59a4-45cf-8528-c33efe8c83dd
+            location: Саринский пр-д, 42, Москва, 127524
+            roomsNumber: 3
+            segment: Новостройка
+            floorCount: 10
+            wallMaterial: кирпич
+            floorNumber: 4
+            totalArea: 75
+            kitchenArea: 12
+            gotBalcony: true
+            condition: Современная отделка
+            distanceFromMetro: 200
+            createdAt: 2022-10-30T02:15:31.4185054
     realty_objects_body:
       allOf:
-      - $ref: '#/components/schemas/UpdaterealtyobjectinfoRequest'
-      - example:
-          id: 8e9f4521-b26c-4529-ab54-524b104d039b
-          location: Другой адрес
-          roomsNumber: "5"
-          segment: Старый жилой фонд
-          floorCount: 16
-          wallMaterial: монолит
-          floorNumber: 9
-          totalArea: 74.5
-          kitchenArea: 12.3
-          gotBalcony: нет
-          condition: муниципальный ремонт
-          distanceFromMetro: 390
-          calculatedValue: 18000000
+        - $ref: '#/components/schemas/UpdaterealtyobjectinfoRequest'
+        - example:
+            id: 8e9f4521-b26c-4529-ab54-524b104d039b
+            location: Другой адрес
+            roomsNumber: "5"
+            segment: Старый жилой фонд
+            floorCount: 16
+            wallMaterial: монолит
+            floorNumber: 9
+            totalArea: 74.5
+            kitchenArea: 12.3
+            gotBalcony: false
+            condition: муниципальный ремонт
+            distanceFromMetro: 390
+            calculatedValue: 18000000
     inline_response_200_1:
       allOf:
-      - $ref: '#/components/schemas/userSessionIdisset'
-      - example:
-          id: c3cb4c8a-916d-42de-beab-3b59b0840940
-          location: Адрес 1
-          roomsNumber: 3
-          segment: Новостройка
-          floorCount: 5
-          wallMaterial: кирпич
-          floorNumber: 3
-          totalArea: 70
-          kitchenArea: 15
-          gotBalcony: нет
-          condition: без отделки
-          distanceFromMetro: 500
-          calculatedValue: 1000000
-          createdAt: 2022-10-30T00:45:14.136715
-          updatedAt: 2022-10-30T00:45:14.136715
+        - $ref: '#/components/schemas/userSessionIdisset'
+        - example:
+            id: c3cb4c8a-916d-42de-beab-3b59b0840940
+            location: Адрес 1
+            roomsNumber: 3
+            segment: Новостройка
+            floorCount: 5
+            wallMaterial: кирпич
+            floorNumber: 3
+            totalArea: 70
+            kitchenArea: 15
+            gotBalcony: false
+            condition: без отделки
+            distanceFromMetro: 500
+            calculatedValue: 1000000
+            createdAt: 2022-10-30T00:45:14.136715
+            updatedAt: 2022-10-30T00:45:14.136715
     auth_register_body:
       allOf:
-      - $ref: '#/components/schemas/RegisternewuserRequest'
-      - example:
-          login: admin
-          password: admin
-          firstName: Victor
-          lastName: Nguen
-          birthdate: 09.05.1999
+        - $ref: '#/components/schemas/RegisternewuserRequest'
+        - example:
+            login: admin
+            password: admin
+            firstName: Victor
+            lastName: Nguen
+            birthdate: 09.05.1999
     inline_response_default:
       allOf:
-      - $ref: '#/components/schemas/register'
-      - example:
-          id: cf9934f7-9089-4241-9a1d-0984f13bfcf5
-          login: admin
-          passwordHash: $2a$10$OrZGbIj4cZvh1Xz2lFrln.w9OApqHiEPd4Ntue0V7VoGW/c9YUB3O
-          salt: $2a$10$OrZGbIj4cZvh1Xz2lFrln.
-          firstName: Victor
-          lastName: Nguen
-          birthdate: 1999-05-09
+        - $ref: '#/components/schemas/register'
+        - example:
+            id: cf9934f7-9089-4241-9a1d-0984f13bfcf5
+            login: admin
+            passwordHash: $2a$10$OrZGbIj4cZvh1Xz2lFrln.w9OApqHiEPd4Ntue0V7VoGW/c9YUB3O
+            salt: $2a$10$OrZGbIj4cZvh1Xz2lFrln.
+            firstName: Victor
+            lastName: Nguen
+            birthdate: 1999-05-09
     auth_user_body:
       allOf:
-      - $ref: '#/components/schemas/AuthorizeuserRequest'
-      - example:
-          login: admin
-          password: admin
+        - $ref: '#/components/schemas/AuthorizeuserRequest'
+        - example:
+            login: admin
+            password: admin
