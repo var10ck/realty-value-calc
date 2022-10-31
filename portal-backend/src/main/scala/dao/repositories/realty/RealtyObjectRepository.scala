@@ -48,7 +48,7 @@ trait RealtyObjectRepository {
         gotBalcony: Option[String],
         condition: Option[String],
         distanceFromMetro: Option[Int],
-        updatedAt: Option[java.time.LocalDateTime]
+        calculatedValue: Option[Long]
     ): QIO[Unit]
 
     /** Set calculatedValue to RealtyObject */
@@ -104,18 +104,18 @@ object RealtyObjectRepository {
     /** Updates info of an existing User. */
     def updateInfo(
         id: RealtyObjectId,
-        location: Option[String],
-        roomsNumber: Option[Int],
-        segment: Option[String],
-        floorCount: Option[Int],
-        wallMaterial: Option[String],
-        floorNumber: Option[Int],
-        totalArea: Option[Double],
-        kitchenArea: Option[Double],
-        gotBalcony: Option[String],
-        condition: Option[String],
-        distanceFromMetro: Option[Int],
-        updatedAt: Option[java.time.LocalDateTime]
+        location: Option[String] = None,
+        roomsNumber: Option[Int] = None,
+        segment: Option[String] = None,
+        floorCount: Option[Int] = None,
+        wallMaterial: Option[String] = None,
+        floorNumber: Option[Int] = None,
+        totalArea: Option[Double] = None,
+        kitchenArea: Option[Double] = None,
+        gotBalcony: Option[String] = None,
+        condition: Option[String] = None,
+        distanceFromMetro: Option[Int] = None,
+        calculatedValue: Option[Long] = None
     ): ZIO[DataSource with RealtyObjectRepository, SQLException, Unit] = ZIO.serviceWithZIO[RealtyObjectRepository](
       _.updateInfo(
         id,
@@ -130,7 +130,7 @@ object RealtyObjectRepository {
         gotBalcony,
         condition,
         distanceFromMetro,
-        updatedAt))
+        calculatedValue))
 
     /** Set calculatedValue to RealtyObject */
     def setCalculatedValue(

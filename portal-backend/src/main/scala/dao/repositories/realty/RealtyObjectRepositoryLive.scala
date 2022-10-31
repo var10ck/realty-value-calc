@@ -72,7 +72,7 @@ final case class RealtyObjectRepositoryLive() extends RealtyObjectRepository {
         gotBalcony: Option[String] = None,
         condition: Option[String] = None,
         distanceFromMetro: Option[Int] = None,
-        updatedAt: Option[LocalDateTime] = None): QIO[Unit] =
+        calculatedValue: Option[Long] = None): QIO[Unit] = {
         run(
           dynamicQuery[RealtyObject]
               .filter(_.id == lift(id))
@@ -88,9 +88,11 @@ final case class RealtyObjectRepositoryLive() extends RealtyObjectRepository {
                 setOpt(_.gotBalcony, gotBalcony),
                 setOpt(_.condition, condition),
                 setOpt(_.distanceFromMetro, distanceFromMetro),
-                setOpt(_.updatedAt, updatedAt)
+                setOpt(_.calculatedValue, calculatedValue.map(Option(_))),
+                setValue(_.updatedAt, LocalDateTime.now())
               )
         ).unit
+    }
 
     /** Set calculatedValue to RealtyObject */
     override def setCalculatedValue(id: RealtyObjectId, calculatedValue: Long): QIO[Unit] =
@@ -103,6 +105,6 @@ final case class RealtyObjectRepositoryLive() extends RealtyObjectRepository {
         ).unit
 }
 
-object RealtyObjectRepositoryLive{
+object RealtyObjectRepositoryLive {
     lazy val layer: ULayer[RealtyObjectRepositoryLive] = ZLayer.succeed(RealtyObjectRepositoryLive())
 }

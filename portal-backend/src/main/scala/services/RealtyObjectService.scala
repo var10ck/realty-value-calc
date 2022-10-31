@@ -1,11 +1,12 @@
 package services
-import dao.entities.auth.UserId
+import dao.entities.auth.{User, UserId}
 import dao.entities.realty.{RealtyObject, RealtyObjectId}
 import dao.repositories.realty.RealtyObjectRepository
-import dto.realty.{CreateRealtyObjectDTO, DeleteRealtyObjectDTO, RealtyObjectInfoDTO}
+import dto.realty.{CreateRealtyObjectDTO, DeleteRealtyObjectDTO, RealtyObjectInfoDTO, UpdateRealtyObjectDTO}
 import zio.{Scope, ZIO}
 import zio.stream.ZStream
 
+import java.io.File
 import java.sql.SQLException
 import javax.sql.DataSource
 
@@ -21,6 +22,10 @@ trait RealtyObjectService {
         bodyStream: ZStream[Any, Throwable, Byte],
         userId: UserId
     ): ZIO[DataSource with RealtyObjectRepository with Any with Scope, Throwable, Unit]
+
+    /** Getting all RealtyObjects added by User and writes it into xlsx-file */
+    def exportRealtyObjectsOfUserToXlsx(user: User)
+        : ZIO[Any with Scope with DataSource with RealtyObjectRepository with RealtyObjectService, Throwable, File]
 
     /** Creates RealtyObject and writes into database */
     def createRealtyObject(
@@ -40,6 +45,15 @@ trait RealtyObjectService {
     def getRealtyObjectInfo(
         realtyObjectId: String,
         userId: UserId): ZIO[DataSource with RealtyObjectRepository, Throwable, RealtyObjectInfoDTO]
+
+    /** Updates RealtyObject if this object was added by attempting User
+      * @param userId
+      *   retrieving User's id
+      */
+    def updateRealtyObjectInfo(
+        dto: UpdateRealtyObjectDTO,
+        userId: UserId
+    ): ZIO[DataSource with RealtyObjectRepository, Throwable, Unit]
 }
 
 object RealtyObjectService {
@@ -55,6 +69,10 @@ object RealtyObjectService {
         userId: UserId
     ): ZIO[DataSource with RealtyObjectRepository with Any with Scope with RealtyObjectService, Throwable, Unit] =
         ZIO.serviceWithZIO[RealtyObjectService](_.importFromXlsx(bodyStream, userId))
+
+    def exportRealtyObjectsOfUserToXlsx(user: User)
+        : ZIO[Any with Scope with DataSource with RealtyObjectRepository with RealtyObjectService, Throwable, File] =
+        ZIO.serviceWithZIO[RealtyObjectService](_.exportRealtyObjectsOfUserToXlsx(user))
 
     /** Creates RealtyObject and writes into database */
     def createRealtyObject(dto: CreateRealtyObjectDTO, userId: UserId)
@@ -75,4 +93,14 @@ object RealtyObjectService {
     def getRealtyObjectInfo(realtyObjectId: String, userId: UserId)
         : ZIO[DataSource with RealtyObjectRepository with RealtyObjectService, Throwable, RealtyObjectInfoDTO] =
         ZIO.serviceWithZIO[RealtyObjectService](_.getRealtyObjectInfo(realtyObjectId, userId))
+
+    /** Updates RealtyObject if this object was added by attempting User
+      * @param userId
+      *   retrieving User's id
+      */
+    def updateRealtyObjectInfo(
+        dto: UpdateRealtyObjectDTO,
+        userId: UserId
+    ): ZIO[DataSource with RealtyObjectRepository with RealtyObjectService, Throwable, Unit] =
+        ZIO.serviceWithZIO[RealtyObjectService](_.updateRealtyObjectInfo(dto, userId))
 }

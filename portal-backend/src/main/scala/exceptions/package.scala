@@ -9,6 +9,7 @@ package object exceptions {
 
     case class RealtyObjectNotFound(field: String, value: String) extends EntityNotFound("RealtyObject", field, value)
 
+    // Invalid input
     case class BodyParsingException(dtoName: String) extends CustomException(s"Cannot parse body as $dtoName")
 
     case class DataValidationException(message: String) extends CustomException(message)
@@ -17,6 +18,8 @@ package object exceptions {
 
     // Excel
     case class ExcelParsingException(message: String) extends CustomException(message)
+
+    case class ExcelWritingException(message:String) extends CustomException(message)
 
     // Headers exception
     case class HeaderNotSetException(headerName: String) extends CustomException(s"Header $headerName is not set")

@@ -13,7 +13,7 @@ object FileUploadApi {
     val api = Http.collectZIO[Request] {
         case req @ Method.PUT -> !! / "upload" / "file" =>
             (for {
-                tempFile <- FileHelper.makeTempFile("upload", ".xls")
+                tempFile <- FileHelper.makeTempFileZIO("upload", ".xls")
                 result <- req.bodyAsStream.run(ZSink.fromFile(tempFile))
             } yield (tempFile, result)).fold(
               e => {

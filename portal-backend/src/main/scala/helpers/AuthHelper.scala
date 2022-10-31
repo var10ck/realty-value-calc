@@ -1,7 +1,7 @@
 package helpers
 import dao.entities.auth.{User, UserSessionId}
 import dao.repositories.auth.{UserRepository, UserSessionRepository}
-import zhttp.http.{Request, Response, Status}
+import zhttp.http.{Http, Request, Response, Status}
 import zio.ZIO
 
 import javax.sql.DataSource
@@ -31,4 +31,15 @@ object AuthHelper {
             result <- f(user)
         } yield result
 
+    def withUserContextHttp[R, A](request: Request)(
+        f: User => ZIO[R, Throwable, A])= Http.fromZIO{
+        for {
+            sessionId <- ZIO
+                .fromOption(request.headers.headerValue("userSessionId"))
+                .orElseFail(exceptions.HeaderNotSetException("userSessionId"))
+            userSessionId <- UserSessionId.fromString(sessionId)
+            userOpt <- UserSessionRepository.getUser(userSessionId)
+            user <- ZIO.fromOption(userOpt).orElseFail(exceptions.UserUnauthorizedException())
+            result <- f(user)
+        } yield result}
 }
