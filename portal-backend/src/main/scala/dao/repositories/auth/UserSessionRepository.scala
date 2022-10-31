@@ -1,7 +1,7 @@
 package dao.repositories.auth
 import dao.entities.auth.{User, UserId, UserSession, UserSessionId}
 import io.getquill.context.ZioJdbc.QIO
-import zio.{Task, ZIO}
+import zio.{Task, ULayer, ZIO}
 
 import java.sql.SQLException
 import java.time.LocalDateTime
@@ -62,4 +62,6 @@ object UserSessionRepository {
 
     def getUser(userSessionId: UserSessionId): ZIO[DataSource with UserSessionRepository, SQLException, Option[User]] =
         ZIO.serviceWithZIO[UserSessionRepository](_.getUser(userSessionId))
+
+    val live: ULayer[UserSessionRepository] = UserSessionRepositoryLive.layer
 }

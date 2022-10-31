@@ -92,5 +92,9 @@ package object db {
             ZIO.serviceWithZIO[LiquibaseService](_.performMigrationWithDropAll)
 
         def liquibase: URIO[Liquibase, Liquibase] = ZIO.service[Liquibase]
+
+        val live: ULayer[LiquibaseService] = LiquibaseServiceLive.layer
+        val liquibaseLayer: ZLayer[Any with Scope with DataSource with ApplicationConfig, Throwable, Liquibase] =
+            LiquibaseServiceLive.liquibaseLayer
     }
 }

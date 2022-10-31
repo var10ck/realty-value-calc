@@ -17,12 +17,11 @@ package object configuration {
             read {
                 descriptor[ApplicationConfig].from(
                   TypesafeConfigSource.fromResourcePath
-                      .at(PropertyTreePath.$("applicationConfig"))
                 )
             }
         }
 
-        def test: ZLayer[Any, ReadError[String], ApplicationConfig] = ZLayer{
+        def test: ZLayer[Any, ReadError[String], ApplicationConfig] = ZLayer {
             read {
                 descriptor[ApplicationConfig].from(
                   TypesafeConfigSource.fromHoconFilePath("src/main/resources/application.test.conf")

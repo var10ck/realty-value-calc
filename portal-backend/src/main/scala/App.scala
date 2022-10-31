@@ -1,23 +1,24 @@
 import api.{AuthApi, FileUploadApi, RealtyObjectApi}
 import configuration.ApplicationConfig
-import dao.repositories.auth.{UserRepository, UserRepositoryLive, UserSessionRepository, UserSessionRepositoryLive}
-import dao.repositories.realty.{RealtyObjectRepository, RealtyObjectRepositoryLive}
-import db.{DataSource, LiquibaseService, LiquibaseServiceLive, zioTestDS}
+import dao.repositories.auth.{UserRepository, UserSessionRepository}
+import dao.repositories.realty.RealtyObjectRepository
+import db.{DataSource, LiquibaseService, LiquibaseServiceLive, zioLiveDS, zioTestDS}
 import liquibase.Liquibase
-import services.{AuthService, AuthServiceLive, RealtyObjectService, RealtyObjectServiceLive}
-import zio.{ExitCode, Random}
+import services.{AuthService, RealtyObjectService}
+import zio.{ExitCode, Scope, ZIOAppArgs, ZLayer}
 
 object App {
 
 
     type AppEnvironment = UserRepository
-        with UserSessionRepository with AuthService with DataSource with Random with ApplicationConfig with Liquibase
+        with UserSessionRepository with AuthService with DataSource with ApplicationConfig with Liquibase
         with LiquibaseService with RealtyObjectRepository with RealtyObjectService
 
 
-    val appEnv = ApplicationConfig.test >+> zioTestDS >+> LiquibaseServiceLive.layer >+> UserRepositoryLive.layer >+>
-        UserSessionRepositoryLive.layer >+> AuthServiceLive.layer >+> LiquibaseServiceLive.liquibaseLayer >+>
-        RealtyObjectRepositoryLive.layer >+> RealtyObjectServiceLive.layer
+    // TODO: replace ApplicationConfig.test to ApplicationConfig.live, zioTestDS to zioLiveDS for production deployment
+    val appEnv = ApplicationConfig.live >+> zioLiveDS >+> LiquibaseService.live >+> UserRepository.live >+>
+        UserSessionRepository.live >+> AuthService.live >+> LiquibaseServiceLive.liquibaseLayer >+>
+        RealtyObjectRepository.live >+> RealtyObjectService.live >+> Scope.default
 
     val httpApp = AuthApi.api ++ FileUploadApi.api ++ RealtyObjectApi.api
 

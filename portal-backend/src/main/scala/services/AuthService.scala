@@ -2,7 +2,7 @@ package services
 import dao.entities.auth.{User, UserSession}
 import dao.repositories.auth.{UserRepository, UserSessionRepository}
 import dto.auth.{AuthUserDTO, CheckSessionDTO, CreateUserDTO, DeleteUserDTO}
-import zio.{RIO, Task, ZIO}
+import zio.{RIO, Task, ULayer, ZIO, ZLayer}
 
 import java.sql.SQLException
 import javax.sql.DataSource
@@ -48,4 +48,5 @@ object AuthService {
     def deleteUser(userId: String): ZIO[DataSource with UserRepository with AuthService, Throwable, Unit] =
         ZIO.serviceWithZIO[AuthService](_.deleteUser(userId))
 
+    val live: ULayer[AuthService] = AuthServiceLive.layer
 }

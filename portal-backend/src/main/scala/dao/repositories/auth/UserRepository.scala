@@ -2,7 +2,7 @@ package dao.repositories.auth
 
 import dao.entities.auth.{User, UserId}
 import io.getquill.context.ZioJdbc.QIO
-import zio.{Task, ZIO}
+import zio.{Task, ULayer, ZIO}
 
 import java.sql.SQLException
 import javax.sql.DataSource
@@ -89,5 +89,5 @@ object UserRepository {
     ): ZIO[DataSource with UserRepository, SQLException, Unit] =
         ZIO.serviceWithZIO[UserRepository](_.updatePassword(id, newPassword))
 
-
+    val live: ULayer[UserRepository] = UserRepositoryLive.layer
 }

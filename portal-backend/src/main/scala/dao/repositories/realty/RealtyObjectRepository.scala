@@ -2,7 +2,7 @@ package dao.repositories.realty
 import dao.entities.auth.UserId
 import dao.entities.realty.{RealtyObject, RealtyObjectId}
 import io.getquill.context.ZioJdbc.QIO
-import zio.ZIO
+import zio.{ULayer, ZIO}
 
 import java.sql.SQLException
 import javax.sql.DataSource
@@ -137,4 +137,6 @@ object RealtyObjectRepository {
         id: RealtyObjectId,
         calculatedValue: Long): ZIO[DataSource with RealtyObjectRepository, SQLException, Unit] =
         ZIO.serviceWithZIO[RealtyObjectRepository](_.setCalculatedValue(id, calculatedValue))
+
+    val live: ULayer[RealtyObjectRepository] = RealtyObjectRepositoryLive.layer
 }

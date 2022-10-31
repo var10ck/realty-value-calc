@@ -3,7 +3,7 @@ import dao.entities.auth.{User, UserId}
 import dao.entities.realty.{RealtyObject, RealtyObjectId}
 import dao.repositories.realty.RealtyObjectRepository
 import dto.realty.{CreateRealtyObjectDTO, DeleteRealtyObjectDTO, RealtyObjectInfoDTO, UpdateRealtyObjectDTO}
-import zio.{Scope, ZIO}
+import zio.{Scope, ULayer, ZIO}
 import zio.stream.ZStream
 
 import java.io.File
@@ -103,4 +103,6 @@ object RealtyObjectService {
         userId: UserId
     ): ZIO[DataSource with RealtyObjectRepository with RealtyObjectService, Throwable, Unit] =
         ZIO.serviceWithZIO[RealtyObjectService](_.updateRealtyObjectInfo(dto, userId))
+
+    val live: ULayer[RealtyObjectService] = RealtyObjectServiceLive.layer
 }
