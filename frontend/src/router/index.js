@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Login from '@/components/Login';
+import Registry from '@/components/Registry';
 
 Vue.use(VueRouter)
 
@@ -22,7 +23,16 @@ const routes = [
   {
     path: '/login',
     component: Login,
- },
+  },
+  {
+    path: '/registry',
+    component: Registry,
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    component: Login,
+  },
+ 
 ]
 
 const router = new VueRouter({
