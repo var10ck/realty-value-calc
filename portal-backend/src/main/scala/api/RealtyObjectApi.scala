@@ -19,7 +19,7 @@ object RealtyObjectApi {
         /** Import RealtyObjects from xlsx-file */
         case req @ Method.PUT -> !! / "realty" / "objects" / "import" =>
             withUserContextZIO(req) { user =>
-                RealtyObjectService.importFromXlsx(req.bodyAsStream, user.id)
+                RealtyObjectService.importFromXlsx(req.body.asStream, user.id)
             }.fold(
               importFromXlsxExceptionHandler,
               _ => Response.ok
@@ -32,7 +32,7 @@ object RealtyObjectApi {
                 } yield tempFile
             }.fold(
               exportRealtyObjectsToXlsxExceptionsHandler,
-              file => Response(data = HttpData.fromStream(ZStream.fromFile(file)))
+              file => Response(body = Body.fromStream(ZStream.fromFile(file)))
                   .addHeader(HeaderNames.contentDisposition, HeaderValues.attachment)
                   .addHeader(HeaderNames.contentType, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             )
@@ -50,7 +50,7 @@ object RealtyObjectApi {
         case req @ Method.POST -> !! / "realty" / "objects" / "create" =>
             withUserContextZIO(req) { user =>
                 for {
-                    requestBody <- req.bodyAsString
+                    requestBody <- req.body.asString
                     dto <- ZIO
                         .fromEither(requestBody.fromJson[CreateRealtyObjectDTO])
                         .orElseFail(BodyParsingException("CreateRealtyObjectDTO"))
@@ -86,7 +86,7 @@ object RealtyObjectApi {
         case req @ Method.PATCH -> !! / "realty" / "objects" =>
             withUserContextZIO(req) { user =>
                 for {
-                    body <- req.bodyAsString
+                    body <- req.body.asString
                     dto <- ZIO
                         .fromEither(body.fromJson[UpdateRealtyObjectDTO])
                         .orElseFail(BodyParsingException("UpdateRealtyObjectDTO"))

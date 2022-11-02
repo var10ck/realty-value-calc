@@ -12,6 +12,7 @@ lazy val root = (project in file("."))
           Dependencies.liquibase ++
           Dependencies.testContainers ++
           Dependencies.quill ++
+          Dependencies.circe ++
 //          Dependencies.tapir ++
           Seq(
             Dependencies.zioHttp,

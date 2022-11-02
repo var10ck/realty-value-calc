@@ -5,7 +5,7 @@
 
 ## Документация для разработчиков
 
-> * **Документация по API
+> * **Документация по REST API сервиса
     досупна [в SwaggerUI по данной ссылке](https://app.swaggerhub.com/apis-docs/NGUENVICTOR/realty/1.0)**
 >
 > * Спецификация OpenAPI [находится здесь](./specs/realty-value-calc-1.0-resolved.yaml)

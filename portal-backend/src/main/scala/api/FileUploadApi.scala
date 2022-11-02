@@ -14,7 +14,7 @@ object FileUploadApi {
         case req @ Method.PUT -> !! / "upload" / "file" =>
             (for {
                 tempFile <- FileHelper.makeTempFileZIO("upload", ".xls")
-                result <- req.bodyAsStream.run(ZSink.fromFile(tempFile))
+                result <- req.body.asStream.run(ZSink.fromFile(tempFile))
             } yield (tempFile, result)).fold(
               e => {
                   e.printStackTrace()
