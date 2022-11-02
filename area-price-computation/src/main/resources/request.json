@@ -1,0 +1,78 @@
+{
+  "jsonQuery": {
+    "_type": "flatsale",
+    "engine_version": {
+      "type": "term",
+      "value": 2
+    },
+    "geo": {
+      "type": "geo",
+      "value": [
+        {
+          "type": "polygon",
+          "name": "район Северное Тушино",
+          "coordinates": [
+            [
+              "37.393721",
+              "55.848751"
+            ],
+            [
+              "37.393721",
+              "55.879712"
+            ],
+            [
+              "37.462577",
+              "55.879712"
+            ],
+            [
+              "37.462577",
+              "55.848751"
+            ],
+            [
+              "37.393721",
+              "55.848751"
+            ]
+          ]
+        }
+      ]
+    },
+    "room": {
+      "type": "terms",
+      "value": [
+        1
+      ]
+    },
+    "total_area": {
+      "type": "range",
+      "value": {
+        "gte": 10,
+        "lte": 100
+      }
+    },
+    "balconies": {
+      "type": "range",
+      "value": {
+        "gte": 1
+      }
+    },
+    "repair": {
+      "type": "terms",
+      "value": [
+        2
+      ]
+    },
+    "floor": {
+      "type": "range",
+      "value": {
+        "gte": 10,
+        "lte": 20
+      }
+    },
+    "house_material": {
+      "type": "terms",
+      "value": [
+        3
+      ]
+    }
+  }
+}
