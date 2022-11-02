@@ -7,7 +7,7 @@ object Dependencies {
         val scalamacros = "2.1.1"
         val http4s = "0.23.12"
         val zio = "2.0.2"
-        val zhttp = "2.0.0-RC10"
+        val zhttp = "2.0.0-RC11"
         val zioJson = "0.3.0-RC10"
         val zioInteropCats = "3.3.0"
         val circe = "0.14.3"
@@ -55,12 +55,12 @@ object Dependencies {
 //    "org.http4s" %% "http4s-ember-client" % Http4sVersion
 //  )
 
-//  lazy val circe: Seq[ModuleID] = Seq(
-//    "io.circe" %% "circe-core" % CirceVersion,
-//    "io.circe" %% "circe-parser" % CirceVersion,
-//    "io.circe" %% "circe-generic" % CirceVersion,
-//    "io.circe" %% "circe-literal" % CirceVersion
-//  )
+  lazy val circe: Seq[ModuleID] = Seq(
+    "io.circe" %% "circe-core" % V.circe,
+    "io.circe" %% "circe-parser" % V.circe,
+    "io.circe" %% "circe-generic" % V.circe,
+    "io.circe" %% "circe-literal" % V.circe
+  )
 
     lazy val poi = "org.apache.poi" % "poi-ooxml" % V.poi
 

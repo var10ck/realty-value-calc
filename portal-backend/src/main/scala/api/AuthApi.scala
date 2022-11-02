@@ -14,7 +14,7 @@ object AuthApi {
     val api = Http.collectZIO[Request] {
         case req @ Method.POST -> !! / "auth" / "register" =>
             (for {
-                requestBody <- req.bodyAsString
+                requestBody <- req.body.asString
                 dto <- ZIO
                     .fromEither(requestBody.fromJson[CreateUserDTO])
                     .orElseFail(BodyParsingException("CreateUserDTO"))
@@ -34,7 +34,7 @@ object AuthApi {
 
         case req @ Method.POST -> !! / "auth" / "user" =>
             (for {
-                requestBody <- req.bodyAsString
+                requestBody <- req.body.asString
                 dto <- ZIO.fromEither(requestBody.fromJson[AuthUserDTO]).orElseFail(BodyParsingException("AuthUserDTO"))
                 sessionOpt <- AuthService.authUser(dto)
             } yield sessionOpt).fold(
