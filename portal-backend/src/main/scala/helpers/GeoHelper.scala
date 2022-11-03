@@ -11,6 +11,9 @@ object GeoHelper {
 
         def strRep(double: Double): String =
             new DecimalFormat("#.000000").format(double).replace(",", ".")
+
+        def lonLatTuple: (String, String) = (lonStr, latStr)
+        def latLonTuple: (String, String) = (latStr, lonStr)
     }
 
     case class GeoPolygon(bottomLeft: Point, topLeft: Point, bottomRight: Point, topRight: Point)

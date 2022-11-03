@@ -45,6 +45,6 @@ integration {
   }
 
   cian{
-    url = "https://map.cian.ru"
+    url = "https://api.cian.ru"
   }
 }

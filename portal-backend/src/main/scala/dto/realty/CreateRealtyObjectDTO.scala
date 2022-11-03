@@ -11,7 +11,9 @@ case class CreateRealtyObjectDTO (location: String,
                                   kitchenArea: Double,
                                   gotBalcony: Boolean,
                                   condition: String,
-                                  distanceFromMetro: Int)
+                                  distanceFromMetro: Int,
+                                  poolId:String
+                                 )
 
 object CreateRealtyObjectDTO{
     implicit val codec: JsonCodec[CreateRealtyObjectDTO] = zio.json.DeriveJsonCodec.gen[CreateRealtyObjectDTO]

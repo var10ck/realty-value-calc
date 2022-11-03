@@ -1,6 +1,6 @@
 package dao.repositories.realty
 import dao.entities.auth.UserId
-import dao.entities.realty.{RealtyObject, RealtyObjectId}
+import dao.entities.realty.{RealtyObject, RealtyObjectId, RealtyObjectPoolId}
 import io.getquill.context.ZioJdbc.QIO
 import zio.{ULayer, ZLayer}
 import zio.metrics.Metric
@@ -25,7 +25,8 @@ final case class RealtyObjectRepositoryLive() extends RealtyObjectRepository {
         condition: String,
         distanceFromMetro: Int,
         addedByUserId: UserId,
-        calculatedValue: Option[Long] = None): QIO[RealtyObject] =
+        calculatedValue: Option[Long] = None,
+        poolId: RealtyObjectPoolId): QIO[RealtyObject] =
         for {
             realtyObject <- RealtyObject.make(
               location = location,
@@ -40,7 +41,8 @@ final case class RealtyObjectRepositoryLive() extends RealtyObjectRepository {
               condition = condition,
               distanceFromMetro = distanceFromMetro,
               addedByUserId = addedByUserId,
-              calculatedValue = calculatedValue
+              calculatedValue = calculatedValue,
+              poolId = poolId
             )
             _ <- run(query[RealtyObject].insertValue(lift(realtyObject)))
             _ <- Metric.counter("realtyObject.created").increment

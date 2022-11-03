@@ -1,6 +1,6 @@
 package dao.repositories.realty
 import dao.entities.auth.UserId
-import dao.entities.realty.{RealtyObject, RealtyObjectId}
+import dao.entities.realty.{RealtyObject, RealtyObjectId, RealtyObjectPoolId}
 import io.getquill.context.ZioJdbc.QIO
 import zio.{ULayer, ZIO}
 
@@ -23,7 +23,8 @@ trait RealtyObjectRepository {
         condition: String,
         distanceFromMetro: Int,
         addedByUserId: UserId,
-        calculatedValue: Option[Long] = None): QIO[RealtyObject]
+        calculatedValue: Option[Long] = None,
+        poolId: RealtyObjectPoolId): QIO[RealtyObject]
 
     /** Deletes an existing RealtyObject. */
     def delete(id: RealtyObjectId): QIO[Unit]
@@ -71,7 +72,8 @@ object RealtyObjectRepository {
         condition: String,
         distanceFromMetro: Int,
         addedByUserId: UserId,
-        calculatedValue: Option[Long] = None): ZIO[DataSource with RealtyObjectRepository, SQLException, RealtyObject] =
+        calculatedValue: Option[Long] = None,
+        poolId: RealtyObjectPoolId): ZIO[DataSource with RealtyObjectRepository, SQLException, RealtyObject] =
         ZIO.serviceWithZIO[RealtyObjectRepository](
           _.create(
             location,
@@ -86,7 +88,8 @@ object RealtyObjectRepository {
             condition,
             distanceFromMetro,
             addedByUserId,
-            calculatedValue
+            calculatedValue,
+            poolId
           ))
 
     /** Deletes an existing RealtyObject. */

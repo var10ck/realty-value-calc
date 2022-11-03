@@ -30,7 +30,7 @@ trait RealtyObjectService {
     /** Creates RealtyObject and writes into database */
     def createRealtyObject(
         dto: CreateRealtyObjectDTO,
-        userId: UserId): ZIO[DataSource with RealtyObjectRepository, SQLException, RealtyObject]
+        userId: UserId): ZIO[DataSource with RealtyObjectRepository, Throwable, RealtyObject]
 
     /** Get all realty objects, created and imported by user */
     def getRealtyObjectsForUser(
@@ -76,7 +76,7 @@ object RealtyObjectService {
 
     /** Creates RealtyObject and writes into database */
     def createRealtyObject(dto: CreateRealtyObjectDTO, userId: UserId)
-        : ZIO[DataSource with RealtyObjectRepository with RealtyObjectService, SQLException, RealtyObject] =
+        : ZIO[DataSource with RealtyObjectRepository with RealtyObjectService, Throwable, RealtyObject] =
         ZIO.serviceWithZIO[RealtyObjectService](_.createRealtyObject(dto, userId))
 
     /** Get all realty objects, created and imported by user */
