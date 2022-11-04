@@ -95,6 +95,14 @@
                 referencedTableName="User"
                 onDelete="CASCADE"
         />
+        <addForeignKeyConstraint
+                baseColumnNames="poolId"
+                baseTableName="RealtyObject"
+                constraintName="fk_RealtyObject_poolId_RealtyObjectPool_id"
+                referencedColumnNames="id"
+                referencedTableName="RealtyObjectPool"
+                onDelete="CASCADE"
+        />
     </changeSet>
 
 

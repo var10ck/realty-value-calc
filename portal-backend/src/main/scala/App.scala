@@ -23,8 +23,7 @@ object App {
             RealtyObjectPoolRepository.live >+> RealtyObjectPoolService.live
 
     val httpApp = AuthApi.api ++ FileUploadApi.api ++ RealtyObjectApi.api ++ RealtyObjectPoolApi.api
-
-//    val serverConfig = zhttp.service.Server.CServerConfig()
+    
     val serverConfig = zhttp.service.Server
         .app(httpApp)
         .withObjectAggregator(Int.MaxValue)
@@ -34,7 +33,6 @@ object App {
             config <- zio.config.getConfig[ApplicationConfig]
             _ <- LiquibaseService.performMigration *>
                 serverConfig.withPort(config.api.port).startDefault
-//                zhttp.service.Server.start(config.api.port, httpApp)
         } yield ExitCode.success
     }
 }

@@ -78,6 +78,7 @@ services:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
+      - DADATA_KEY=${DADATA_KEY}
     networks:
       - realty-value-calc-network
 
