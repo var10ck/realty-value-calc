@@ -26,7 +26,9 @@ final case class RealtyObjectRepositoryLive() extends RealtyObjectRepository {
         distanceFromMetro: Int,
         addedByUserId: UserId,
         calculatedValue: Option[Long] = None,
-        poolId: RealtyObjectPoolId): QIO[RealtyObject] =
+        poolId: RealtyObjectPoolId,
+        latitude: Option[String] = None,
+        longitude: Option[String] = None): QIO[RealtyObject] =
         for {
             realtyObject <- RealtyObject.make(
               location = location,
@@ -42,7 +44,9 @@ final case class RealtyObjectRepositoryLive() extends RealtyObjectRepository {
               distanceFromMetro = distanceFromMetro,
               addedByUserId = addedByUserId,
               calculatedValue = calculatedValue,
-              poolId = poolId
+              poolId = poolId,
+              latitude = latitude,
+              longitude = longitude
             )
             _ <- run(query[RealtyObject].insertValue(lift(realtyObject)))
             _ <- Metric.counter("realtyObject.created").increment
@@ -60,6 +64,17 @@ final case class RealtyObjectRepositoryLive() extends RealtyObjectRepository {
     override def getAllByUser(userId: UserId): QIO[List[RealtyObject]] =
         run(query[RealtyObject].filter(_.addedByUserId == lift(userId)).sortBy(_.location)).map(_.toList)
 
+    /** Retrieves all RealtyObjects from the database. */
+    override def getAll: QIO[List[RealtyObject]] = run(query[RealtyObject]).map(_.toList)
+
+    /** Retrieves all RealtyObjects where latitude and longitude is null from the database. */
+    override def getAllWithoutCoordinates: QIO[List[RealtyObject]] =
+        run(query[RealtyObject].filter(obj => obj.longitude.isEmpty || obj.latitude.isEmpty))
+
+    /** Retrieves all RealtyObjects of User where latitude and longitude is null from the database. */
+    override def getAllWithoutCoordinatesForUser(userId: UserId): QIO[List[RealtyObject]] =
+        run(query[RealtyObject].filter(_.addedByUserId == lift(userId)))
+
     /** Updates info of an existing User. */
     override def updateInfo(
         id: RealtyObjectId,
@@ -74,7 +89,11 @@ final case class RealtyObjectRepositoryLive() extends RealtyObjectRepository {
         gotBalcony: Option[Boolean] = None,
         condition: Option[String] = None,
         distanceFromMetro: Option[Int] = None,
-        calculatedValue: Option[Long] = None): QIO[Unit] = {
+        calculatedValue: Option[Long] = None,
+        poolId: Option[RealtyObjectPoolId] = None,
+        latitude: Option[String] = None,
+        longitude: Option[String] = None
+    ): QIO[Unit] = {
         run(
           dynamicQuery[RealtyObject]
               .filter(_.id == lift(id))
@@ -90,7 +109,10 @@ final case class RealtyObjectRepositoryLive() extends RealtyObjectRepository {
                 setOpt(_.gotBalcony, gotBalcony),
                 setOpt(_.condition, condition),
                 setOpt(_.distanceFromMetro, distanceFromMetro),
-                setOpt(_.calculatedValue, calculatedValue.map(Option(_))),
+                setOpt(_.calculatedValue, calculatedValue.map(Option.apply)),
+                setOpt(_.poolId, poolId),
+                setOpt(_.latitude, latitude.map(Option.apply)),
+                setOpt(_.longitude, longitude.map(Option.apply)),
                 setValue(_.updatedAt, LocalDateTime.now())
               )
         ).unit

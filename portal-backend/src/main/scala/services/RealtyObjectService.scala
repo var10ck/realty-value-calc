@@ -1,8 +1,9 @@
 package services
 import dao.entities.auth.{User, UserId}
-import dao.entities.realty.{RealtyObject, RealtyObjectId}
+import dao.entities.realty.{RealtyObject, RealtyObjectId, RealtyObjectPoolId}
 import dao.repositories.realty.RealtyObjectRepository
 import dto.realty.{CreateRealtyObjectDTO, DeleteRealtyObjectDTO, RealtyObjectInfoDTO, UpdateRealtyObjectDTO}
+import zhttp.service.{ChannelFactory, EventLoopGroup}
 import zio.{Scope, ULayer, ZIO}
 import zio.stream.ZStream
 
@@ -21,20 +22,31 @@ trait RealtyObjectService {
     def importFromXlsx(
         bodyStream: ZStream[Any, Throwable, Byte],
         userId: UserId
-    ): ZIO[DataSource with RealtyObjectRepository with Any with Scope, Throwable, Unit]
+    ): ZIO[
+      DataSource
+          with RealtyObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
+          with GeoSuggestionService with Any with Scope,
+      Throwable,
+      Unit]
 
     /** Getting all RealtyObjects added by User and writes it into xlsx-file */
     def exportRealtyObjectsOfUserToXlsx(user: User)
         : ZIO[Any with Scope with DataSource with RealtyObjectRepository with RealtyObjectService, Throwable, File]
 
+    /** Export Objects of user with poolId to xlsx */
+    def exportPoolOfObjectsToXlsx(user: User, poolId: String)
+        : ZIO[Any with Scope with DataSource with RealtyObjectRepository with RealtyObjectService, Throwable, File]
+
     /** Creates RealtyObject and writes into database */
     def createRealtyObject(
         dto: CreateRealtyObjectDTO,
-        userId: UserId): ZIO[DataSource with RealtyObjectRepository, Throwable, RealtyObject]
+        userId: UserId,
+        latitude: Option[String],
+        longitude: Option[String]): ZIO[DataSource with RealtyObjectRepository, Throwable, RealtyObject]
 
     /** Get all realty objects, created and imported by user */
     def getRealtyObjectsForUser(
-        userId: UserId): ZIO[DataSource with RealtyObjectRepository, SQLException, List[RealtyObject]]
+        userId: UserId): ZIO[DataSource with RealtyObjectRepository, Throwable, List[RealtyObject]]
 
     /** Delete Realty object with checking that it was created by user */
     def deleteRealtyObject(
@@ -54,6 +66,14 @@ trait RealtyObjectService {
         dto: UpdateRealtyObjectDTO,
         userId: UserId
     ): ZIO[DataSource with RealtyObjectRepository, Throwable, Unit]
+
+    /** Retrieves all RealityObject where coordinates is not set and try fill it using GeoSuggestionService */
+    def fillCoordinatesOnAllRealtyObjects: ZIO[
+      DataSource
+          with RealtyObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
+          with GeoSuggestionService,
+      Throwable,
+      Unit]
 }
 
 object RealtyObjectService {
@@ -67,21 +87,37 @@ object RealtyObjectService {
     def importFromXlsx(
         bodyStream: ZStream[Any, Throwable, Byte],
         userId: UserId
-    ): ZIO[DataSource with RealtyObjectRepository with Any with Scope with RealtyObjectService, Throwable, Unit] =
+    ): ZIO[
+      DataSource
+          with RealtyObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
+          with GeoSuggestionService with Any with Scope with RealtyObjectService,
+      Throwable,
+      Unit] =
         ZIO.serviceWithZIO[RealtyObjectService](_.importFromXlsx(bodyStream, userId))
 
+    /** Getting all RealtyObjects added by User and writes it into xlsx-file */
     def exportRealtyObjectsOfUserToXlsx(user: User)
         : ZIO[Any with Scope with DataSource with RealtyObjectRepository with RealtyObjectService, Throwable, File] =
         ZIO.serviceWithZIO[RealtyObjectService](_.exportRealtyObjectsOfUserToXlsx(user))
 
+    /** Getting RealtyObjects added by User and belong to RealtyObjectsPool with poolId, then writes it into xlsx-file
+      */
+    def exportPoolOfObjectsToXlsx(user: User, poolId: String)
+        : ZIO[Any with Scope with DataSource with RealtyObjectRepository with RealtyObjectService, Throwable, File] =
+        ZIO.serviceWithZIO[RealtyObjectService](_.exportPoolOfObjectsToXlsx(user, poolId))
+
     /** Creates RealtyObject and writes into database */
-    def createRealtyObject(dto: CreateRealtyObjectDTO, userId: UserId)
+    def createRealtyObject(
+        dto: CreateRealtyObjectDTO,
+        userId: UserId,
+        latitude: Option[String],
+        longitude: Option[String])
         : ZIO[DataSource with RealtyObjectRepository with RealtyObjectService, Throwable, RealtyObject] =
-        ZIO.serviceWithZIO[RealtyObjectService](_.createRealtyObject(dto, userId))
+        ZIO.serviceWithZIO[RealtyObjectService](_.createRealtyObject(dto, userId, latitude, longitude))
 
     /** Get all realty objects, created and imported by user */
     def getRealtyObjectsForUser(userId: UserId)
-        : ZIO[DataSource with RealtyObjectRepository with RealtyObjectService, SQLException, List[RealtyObject]] =
+        : ZIO[DataSource with RealtyObjectRepository with RealtyObjectService, Throwable, List[RealtyObject]] =
         ZIO.serviceWithZIO[RealtyObjectService](_.getRealtyObjectsForUser(userId))
 
     /** Delete Realty object with checking that it was created by user */
@@ -90,6 +126,7 @@ object RealtyObjectService {
         userId: UserId): ZIO[DataSource with RealtyObjectRepository with RealtyObjectService, Throwable, Unit] =
         ZIO.serviceWithZIO[RealtyObjectService](_.deleteRealtyObject(realtyObjectId, userId))
 
+    /** Return information about realty object with check that this object was added by attempting user */
     def getRealtyObjectInfo(realtyObjectId: String, userId: UserId)
         : ZIO[DataSource with RealtyObjectRepository with RealtyObjectService, Throwable, RealtyObjectInfoDTO] =
         ZIO.serviceWithZIO[RealtyObjectService](_.getRealtyObjectInfo(realtyObjectId, userId))
@@ -103,6 +140,14 @@ object RealtyObjectService {
         userId: UserId
     ): ZIO[DataSource with RealtyObjectRepository with RealtyObjectService, Throwable, Unit] =
         ZIO.serviceWithZIO[RealtyObjectService](_.updateRealtyObjectInfo(dto, userId))
+
+    /** Retrieves all RealityObject where coordinates is not set and try fill it using GeoSuggestionService */
+    def fillCoordinatesOnAllRealtyObjects: ZIO[
+      DataSource
+          with RealtyObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
+          with GeoSuggestionService with RealtyObjectService,
+      Throwable,
+      Unit] = ZIO.serviceWithZIO[RealtyObjectService](_.fillCoordinatesOnAllRealtyObjects)
 
     val live: ULayer[RealtyObjectService] = RealtyObjectServiceLive.layer
 }

@@ -5,6 +5,28 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                             http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
+    <changeSet id="create RealtyObjectPool table" author="Victor Nguen">
+        <createTable tableName="RealtyObjectPool">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="userId" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint
+                baseColumnNames="userId"
+                baseTableName="RealtyObjectPool"
+                constraintName="fk_RealtyObjectPool_userId_User_id"
+                referencedColumnNames="id"
+                referencedTableName="User"
+                onDelete="CASCADE"
+        />
+    </changeSet>
+
     <changeSet id="create RealtyObject table" author="Victor Nguen">
         <createTable tableName="RealtyObject">
             <column name="id" type="uuid">
@@ -54,6 +76,15 @@
             </column>
             <column name="updatedAt" type="datetime">
                 <constraints nullable="false"/>
+            </column>
+            <column name="poolId" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="latitude" type="varchar(12)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="longitude" type="varchar(12)">
+                <constraints nullable="true"/>
             </column>
         </createTable>
         <addForeignKeyConstraint

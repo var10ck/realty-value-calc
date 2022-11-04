@@ -20,7 +20,9 @@ case class RealtyObject(
     calculatedValue: Option[Long],
     createdAt: java.time.LocalDateTime,
     updatedAt: java.time.LocalDateTime,
-    poolId: RealtyObjectPoolId
+    poolId: RealtyObjectPoolId,
+    latitude: Option[String],
+    longitude: Option[String]
 )
 
 object RealtyObject {
@@ -44,7 +46,9 @@ object RealtyObject {
         calculatedValue: Option[Long] = None,
         createdAt: java.time.LocalDateTime = java.time.LocalDateTime.now(),
         updatedAt: java.time.LocalDateTime = java.time.LocalDateTime.now(),
-        poolId: RealtyObjectPoolId): ZIO[Any, Nothing, RealtyObject] =
+        poolId: RealtyObjectPoolId,
+        latitude: Option[String] = None,
+        longitude: Option[String] = None): ZIO[Any, Nothing, RealtyObject] =
         RealtyObjectId.random.map(
           RealtyObject(
             _,
@@ -63,7 +67,9 @@ object RealtyObject {
             calculatedValue,
             createdAt,
             updatedAt,
-            poolId
+            poolId,
+            latitude,
+            longitude
           ))
 
     /** JSON codec */
