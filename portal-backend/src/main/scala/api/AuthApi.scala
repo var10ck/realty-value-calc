@@ -44,8 +44,7 @@ object AuthApi {
               },
               {
                   case Some(session) =>
-                      //                    Response.json(SessionCreatedDTO(session).toJson)
-                      Response.ok.setHeaders(Headers.setCookie(Cookie("userSessionId", session.id.id.toString)))
+                      Response.json(SessionCreatedDTO(session.id.id.toString).toJson)
                   case None => Response.status(Status.BadRequest)
               }
             )
