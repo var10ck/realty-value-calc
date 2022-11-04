@@ -1,16 +1,17 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import RealtyObjects from '../views/RealtyObjects.vue'
 import Login from '@/components/Login';
 import Registry from '@/components/Registry';
+import RequestService from "@/services/RequestService";
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: Home
+    name: 'RealtyObjects',
+    component: RealtyObjects
   },
   {
     path: '/about',
@@ -22,15 +23,17 @@ const routes = [
   },
   {
     path: '/login',
+    name: 'Login',
     component: Login,
   },
   {
     path: '/registry',
+    name: 'Registry',
     component: Registry,
   },
   {
     path: '/:pathMatch(.*)*',
-    component: Login,
+    component: RealtyObjects,
   },
  
 ]
@@ -41,6 +44,9 @@ const router = new VueRouter({
   routes
 })
 
-router.replace('/login');
+router.beforeEach((to, from, next) => {
+  if (!['Login', 'Registry'].includes(to.name) && !RequestService.getCookie('userSessionId')) next({ name: 'Login' })
+  else next()
+})
 
 export default router

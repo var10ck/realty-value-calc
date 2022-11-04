@@ -1,13 +1,102 @@
 import axios from "axios";
 
 export default class RequestService {
-  // static interactionId = "21bac548-d2de-1238-b106-880a5018460d";
-  // static token =
-  //   "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjM4MTI5MjkwMjIsImlhdCI6MTY2NTQ0NTM3NSwidXNlcm5hbWUiOiJhZG1pbiIsInBlcm1pc3Npb25zIjpbImRvU29tZXRoaW5nIl19.g3wn3Sm7CjK4bqjO3i64ysDOzhAXzW-vtcCfxSXeqSAgp_eITLFDb54agLcHatJWll53w8XhjuEBdNKP4GJ9Qg";
-  // static config = {
-  //   "x-fapi-interaction-id": this.interactionId,
-  //   Authorization: `Bearer ${this.token}`,
-  // };
+  static axiosInstance = this.initAxiosInstance();
+
+  static initAxiosInstance() {
+    return axios.create({
+      withCredentials: true,
+      headers: {
+        userSessionId: this.getCookie('userSessionId')
+      }
+    })
+  }
+
+  static async registerAsync(data) {
+    const result = await this.axiosInstance.post("/auth/register", 
+      JSON.stringify(data)
+    );
+    if (result.data) {
+      return result.data;
+    }
+  }
+
+  static async authAsync(data) {
+    const result = await this.axiosInstance.post("/auth/user", 
+      JSON.stringify(data),
+      {withCredentials: true}
+    );
+    if (result?.data?.sessionId) {
+      this.setCookie('userSessionId', result.data.sessionId);
+      this.axiosInstance = this.initAxiosInstance();
+    }
+  }
+
+  static async loadFileAsync(data) {
+    const result = await this.axiosInstance.put("/realty/objects/import",
+      data,
+      {
+        // headers: JSON.stringify({
+        //   userSessionId: this.sessionId
+        // })
+      }
+    );
+    console.log(result)
+    if (result.data) {
+      return result.data;
+    }
+  }
+
+  static async getAllRealtyObjectsAsync() {
+    const result = await this.axiosInstance.get("/realty/objects",
+      {
+        // headers: JSON.stringify({
+        //   userSessionId: this.sessionId
+        // })
+      }
+    );
+    if (result.data) {
+      return result.data;
+    }
+  }
+
+  static setCookie(name, value, options = {}) {
+
+    options = {
+      path: '/',
+      ...options
+    };
+  
+    if (options.expires instanceof Date) {
+      options.expires = options.expires.toUTCString();
+    }
+  
+    let updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+  
+    for (let optionKey in options) {
+      updatedCookie += "; " + optionKey;
+      let optionValue = options[optionKey];
+      if (optionValue !== true) {
+        updatedCookie += "=" + optionValue;
+      }
+    }
+  
+    document.cookie = updatedCookie;
+  }
+
+  static getCookie(name) {
+    let matches = document.cookie.match(new RegExp(
+      // eslint-disable-next-line no-useless-escape
+      "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+    ));
+    return matches ? decodeURIComponent(matches[1]) : undefined;
+  }
+
+  static deleteCookie(name) {
+    this.setCookie(name, "", {
+      'max-age': -1
+    })
+  }
 
   // static async loadAccountsAsync() {
   //   try {

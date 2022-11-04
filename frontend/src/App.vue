@@ -1,27 +1,26 @@
 <template>
-  <div id="app">
     <v-app id="app">
       <v-main>
-        <template v-if="!['/login', '/registry'].includes($route.path)">
-          <v-app-bar dark color="#162130" style="height: 100px; padding: 18px">
+        <template v-if="isAuthenticated">
+          <v-app-bar dark color="#162130" style="height: 63px; padding: 0px 10vw">
             <v-app-bar-title class="white--text">
               <div>
                 <v-img
                   :src="require('@/assets/apartments.svg')"
-                  class="my-3"
                   contain
-                  height="55"
+                  height="48"
+                  width="48"
                 />
               </div>
             </v-app-bar-title>
 
             <v-spacer></v-spacer>
             <v-tabs fixed-tabs>
-              <v-tab to="/">Home</v-tab>
+              <v-tab to="/">Объекты</v-tab>
               <v-tab to="/about">About</v-tab>
             </v-tabs>
             <v-spacer></v-spacer>
-            <v-btn @click="$router.push('login')">Выход</v-btn>
+            <v-btn @click="logout" light>Выход</v-btn>
           </v-app-bar>
           <!-- <v-container>
             <router-view/>
@@ -47,7 +46,6 @@
             </v-btn>
             </template>
         </v-snackbar>
-
         <v-snackbar
             top
             right
@@ -68,14 +66,13 @@
             </v-btn>
             </template>
         </v-snackbar>
-        <keep-alive :include="['Login']">
-          <router-view></router-view>
-        </keep-alive>
+        <router-view :style=" isAuthenticated ? 'width: 80vw; margin: 0 auto' : ''"></router-view>
       </v-main>
     </v-app>
-  </div>
 </template>
 <script>
+import RequestService from "@/services/RequestService";
+
 export default {
    data: () => ({
       snackbarSuccess: false,
@@ -94,6 +91,12 @@ export default {
      this.$bus.$off('showError')
    },
 
+   computed: {
+     isAuthenticated() {
+       return !['Login', 'Registry'].includes(this.$route.name) && RequestService.getCookie('userSessionId');
+     }
+   },
+
    methods: {
       showSuccess(successMessage = "Успех") {
         this.snackbarSuccess = true;
@@ -103,12 +106,19 @@ export default {
       showError(successMessage = "Ошибка") {
         this.snackbarError = true;
         this.snackbarMessage = successMessage;
+      },
+
+      logout() {
+        RequestService.deleteCookie('userSessionId');
+        this.$router.push('login');
       }
    },
 }
 </script>
 
 <style lang="scss">
+html { overflow-y: auto }
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -128,5 +138,9 @@ export default {
   .v-tab--active {
     color: #EFEBE9;
   }
+}
+
+.v-toolbar__content {
+  padding: 0 ;
 }
 </style>
