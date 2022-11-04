@@ -1,11 +1,19 @@
 package services
 import dao.entities.auth.{User, UserId}
-import dao.entities.realty.{RealtyObject, RealtyObjectId}
+import dao.entities.realty.{RealtyObject, RealtyObjectId, RealtyObjectPoolId}
 import dao.repositories.realty.RealtyObjectRepository
-import dto.realty.{CreateRealtyObjectDTO, DeleteRealtyObjectDTO, RealtyObjectInfoDTO, UpdateRealtyObjectDTO}
+import dto.realty.{
+    CoordinatesDTO,
+    CreateRealtyObjectDTO,
+    DeleteRealtyObjectDTO,
+    RealtyObjectInfoDTO,
+    UpdateRealtyObjectDTO
+}
 import helpers.{ExcelHelper, FileHelper}
+import zhttp.service.{ChannelFactory, EventLoopGroup}
 import zio.{Scope, ULayer, ZIO, ZLayer}
 import zio.stream.{ZSink, ZStream}
+import zio.Console
 
 import java.io.{File, FileInputStream}
 import java.sql.SQLException
@@ -20,17 +28,24 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
       * @param userId
       *   user that uploads file
       */
-    override def importFromXlsx(
-        bodyStream: ZStream[Any, Throwable, Byte],
-        userId: UserId): ZIO[DataSource with RealtyObjectRepository with Any with Scope, Throwable, Unit] =
+    override def importFromXlsx(bodyStream: ZStream[Any, Throwable, Byte], userId: UserId): ZIO[
+      DataSource
+          with RealtyObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
+          with GeoSuggestionService with Any with Scope,
+      Throwable,
+      Unit] =
         for {
+            // make temp file and write stream to it
             tempFile <- FileHelper.makeTempFileZIO("upload", ".xlsx")
             bytesWritten <- bodyStream.run(ZSink.fromFile(tempFile))
-            _ <- zio.Console.printLine(s"created temp file $tempFile and $bytesWritten written")
+            _ <- Console.printLine(s"created temp file $tempFile and $bytesWritten written")
+            // read file and convert rows in xlsx to objects in database
             _ <- transmitXlsxObjectsToDatabase(tempFile, userId)
+            // run filling coordinates of objects in background
+            _ <- fillCoordinatesOnAllRealtyObjects.forkDaemon
         } yield ()
 
-    /** takes xlsx-file, transforms it to RealtyObject entities and writes into database
+    /** Takes xlsx-file, transforms it to RealtyObject entities and writes into database
       * @param file
       *   xlsx-file with records about realty objects
       * @param userId
@@ -43,6 +58,8 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
             fileInputStream <- FileHelper.makeFileInputStream(file)
             realtyObjectsExcelDtoList <- ExcelHelper.transformXlsxToObject(fileInputStream) <*
                 ZIO.from(file.delete())
+            _ <- Console.printLine(s"objects imported from ${file.getAbsolutePath}")
+            poolId <- RealtyObjectPoolId.random
             _ <- (ZIO foreach realtyObjectsExcelDtoList) { dto =>
                 RealtyObjectRepository
                     .create(
@@ -57,42 +74,68 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
                       gotBalcony = dto.gotBalcony,
                       condition = dto.condition,
                       distanceFromMetro = dto.distanceFromMetro,
-                      addedByUserId = userId
+                      addedByUserId = userId,
+                      poolId = poolId
                     )
             }
         } yield ()
-
 
     /** Getting all RealtyObjects added by User and writes it into xlsx-file */
     override def exportRealtyObjectsOfUserToXlsx(user: User)
         : ZIO[Any with Scope with DataSource with RealtyObjectRepository with RealtyObjectService, Throwable, File] =
         for {
             realtyObjects <- RealtyObjectService.getRealtyObjectsForUser(user.id)
-            tempFile <- FileHelper.makeTempFileZIO("upload", ".xlsx")
-            _ <- zio.Console.printLine(s"Created temporary file \"${tempFile.getAbsolutePath}\"")
+            tempFile <- FileHelper.makeTempFileZIO("upload-", ".xlsx")
+            _ <- Console.printLine(s"Created temporary file \"${tempFile.getAbsolutePath}\"")
             inputStream <- FileHelper.makeFileOutputStream(tempFile)
             _ <- ExcelHelper.transformObjectsToXlsx(inputStream, realtyObjects)
-            _ <- zio.Console.printLine(s"Wrote ${realtyObjects.length} objects $realtyObjects to file ${tempFile.getAbsolutePath}")
-    } yield tempFile
+            _ <- Console.printLine(
+              s"Wrote ${realtyObjects.length} objects $realtyObjects to file ${tempFile.getAbsolutePath}"
+            ) // <* ZIO.from(tempFile.delete()).forkDaemon
+        } yield tempFile
+
+    /** Getting RealtyObjects added by User and belong to RealtyObjectsPool with poolId, then writes it into xlsx-file
+      */
+    override def exportPoolOfObjectsToXlsx(user: User, poolId: String)
+        : ZIO[Any with Scope with DataSource with RealtyObjectRepository with RealtyObjectService, Throwable, File] =
+        for {
+            poolIdTyped <- RealtyObjectPoolId.fromString(poolId)
+            allRealtyObjectsOfUser <- RealtyObjectService.getRealtyObjectsForUser(user.id)
+            poolObjects = allRealtyObjectsOfUser.filter(_.poolId == poolIdTyped)
+            tempFile <- FileHelper.makeTempFileZIO("upload", ".xlsx")
+            _ <- Console.printLine(s"Created temporary file \"${tempFile.getAbsolutePath}\"")
+            inputStream <- FileHelper.makeFileOutputStream(tempFile)
+            _ <- ExcelHelper.transformObjectsToXlsx(inputStream, poolObjects)
+            _ <- Console.printLine(
+              s"Wrote ${poolObjects.length} objects $poolObjects to file ${tempFile.getAbsolutePath}")
+        } yield tempFile
 
     /** Creates RealtyObject and writes into database */
     override def createRealtyObject(
         dto: CreateRealtyObjectDTO,
-        userId: UserId): ZIO[DataSource with RealtyObjectRepository, SQLException, RealtyObject] =
-        RealtyObjectRepository.create(
-          dto.location,
-          dto.roomsNumber,
-          dto.segment,
-          dto.floorCount,
-          dto.wallMaterial,
-          dto.floorNumber,
-          dto.totalArea,
-          dto.kitchenArea,
-          dto.gotBalcony,
-          dto.condition,
-          dto.distanceFromMetro,
-          userId
-        )
+        userId: UserId,
+        latitude: Option[String],
+        longitude: Option[String]): ZIO[DataSource with RealtyObjectRepository, Throwable, RealtyObject] =
+        for {
+            poolId <- RealtyObjectPoolId.fromString(dto.poolId)
+            realtyObject <- RealtyObjectRepository.create(
+              dto.location,
+              dto.roomsNumber,
+              dto.segment,
+              dto.floorCount,
+              dto.wallMaterial,
+              dto.floorNumber,
+              dto.totalArea,
+              dto.kitchenArea,
+              dto.gotBalcony,
+              dto.condition,
+              dto.distanceFromMetro,
+              userId,
+              poolId = poolId,
+              latitude = latitude,
+              longitude = longitude
+            )
+        } yield realtyObject
 
     /** Get all realty objects, created and imported by user */
     override def getRealtyObjectsForUser(
@@ -128,28 +171,12 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
               ZIO.succeed(entity),
               ZIO.fail(exceptions.NotEnoughRightsException("User is not author of object"))
             )
-        } yield RealtyObjectInfoDTO(
-          obj.id,
-          obj.location,
-          obj.roomsNumber,
-          obj.segment,
-          obj.floorCount,
-          obj.wallMaterial,
-          obj.floorNumber,
-          obj.totalArea,
-          obj.kitchenArea,
-          obj.gotBalcony,
-          obj.condition,
-          obj.distanceFromMetro,
-          obj.calculatedValue,
-          obj.createdAt,
-          obj.updatedAt
-        )
+        } yield RealtyObjectInfoDTO.fromEntity(obj)
 
-    /**
-     * Updates RealtyObject if this object was added by attempting User
-     * @param userId retrieving User's id
-     */
+    /** Updates RealtyObject if this object was added by attempting User
+      * @param userId
+      *   retrieving User's id
+      */
     override def updateRealtyObjectInfo(
         dto: UpdateRealtyObjectDTO,
         userId: UserId): ZIO[DataSource with RealtyObjectRepository, Throwable, Unit] = for {
@@ -170,11 +197,31 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
             dto.gotBalcony,
             dto.condition,
             dto.distanceFromMetro,
-              dto.calculatedValue
+            dto.calculatedValue
           ),
           ZIO.fail(exceptions.NotEnoughRightsException("Realty object was added by another user"))
         )
     } yield ()
+
+    override def fillCoordinatesOnAllRealtyObjects: ZIO[
+      DataSource
+          with RealtyObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
+          with GeoSuggestionService,
+      Throwable,
+      Unit] =
+        for {
+            objectsToFill <- RealtyObjectRepository.getAllWithoutCoordinates
+            res <- ZIO.foreach(objectsToFill) { obj =>
+                for {
+                    coordsDto <- GeoSuggestionService.getCoordinatedByAddress(obj.location)
+                    _ <- RealtyObjectRepository.updateInfo(
+                      obj.id,
+                      latitude = Some(coordsDto.lat),
+                      longitude = Some(coordsDto.lon))
+                } yield ()
+            }
+        } yield ()
+
 }
 
 object RealtyObjectServiceLive {

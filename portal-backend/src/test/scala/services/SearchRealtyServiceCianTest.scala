@@ -14,7 +14,7 @@ object SearchRealtyServiceCianTest extends ZIOSpecDefault {
         suite("SearchRealtyServiceCian Test")(
           test("get flats suggestions") {
               for {
-                  polygon <- ZIO.from(GeoHelper.makeSquareAroundLocation("55.641473", "37.519063", 10000))
+                  polygon <- ZIO.from(GeoHelper.makeSquareAroundLocation("55.641473", "37.519063", 5000))
                   res <- SearchRealtyService.searchRealtyInSquare(polygon)
                   _ <- zio.Console.printLine(res)
               } yield assertTrue(res.nonEmpty)

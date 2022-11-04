@@ -10,13 +10,15 @@ object SuggestionResponseDTO {
     implicit val encoder: Encoder[SuggestionResponseDTO] = deriveEncoder
 
     implicit val decoder: Decoder[SuggestionResponseDTO] = new Decoder[SuggestionResponseDTO] {
-        final def apply(c: HCursor): Decoder.Result[SuggestionResponseDTO] =
+        final def apply(c: HCursor): Decoder.Result[SuggestionResponseDTO] = {
+            val data = c.downField("suggestions").downArray.downField("data")
             for {
-                lon <- c.downField("suggestions").downArray.downField("data").downField("geo_lon").as[String]
-                lat <- c.downField("suggestions").downArray.downField("data").downField("geo_lat").as[String]
+                lon <- data.downField("geo_lon").as[String]
+                lat <- data.downField("geo_lat").as[String]
             } yield {
                 new SuggestionResponseDTO(lat, lon)
             }
+        }
     }
 
 }

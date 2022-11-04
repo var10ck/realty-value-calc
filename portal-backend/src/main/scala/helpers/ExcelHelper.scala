@@ -9,6 +9,7 @@ import zio.ZIO
 
 import java.io.{FileOutputStream, InputStream}
 import java.time.format.{DateTimeFormatter, FormatStyle}
+import scala.util.Try
 
 object ExcelHelper {
 
@@ -43,26 +44,33 @@ object ExcelHelper {
                     _ <- ZIO.from(kitchenArea.setCellType(CellType.STRING))
                     gotBalcony <- ZIO.from(row.getCell(8))
                     _ <- ZIO.from(gotBalcony.setCellType(CellType.STRING))
-                    condition <- ZIO.from(row.getCell(9))
-                    _ <- ZIO.from(condition.setCellType(CellType.STRING))
-                    distanceFromMetro <- ZIO.from(row.getCell(10))
+                    distanceFromMetro <- ZIO.from(row.getCell(9))
                     _ <- ZIO.from(distanceFromMetro.setCellType(CellType.STRING))
+                    condition <- ZIO.from(row.getCell(10))
+                    _ <- ZIO.from(condition.setCellType(CellType.STRING))
+                    // "студия" и другие данные будут считаться как 1 комната
+                    roomsNumberTransformed <- ZIO
+                        .whenCase(roomsNumber.getStringCellValue.toLowerCase) {
+                            case num if Try(num.toInt).isSuccess => ZIO.succeed(num.toInt)
+                            case _ => ZIO.succeed(1)
+                        }.map(_.get)
                     gotBalconyBool <- ZIO
                         .whenCase(gotBalcony.getStringCellValue.toLowerCase) {
-                            case "есть" => ZIO.succeed(true)
+                            case "да" => ZIO.succeed(true)
                             case "нет" => ZIO.succeed(false)
-                            case _ => ZIO.fail(new Exception(s"Invalid data in cell (${rowNum + 1}, 8)"))
+                            case invalidData =>
+                                ZIO.fail(new Exception(s"Invalid data in cell (${rowNum + 1}, 8): $invalidData"))
                         }
                         .map(_.get)
                 } yield RealtyObjectExcelDTO(
                   location.getStringCellValue,
-                  roomsNumber.getStringCellValue.toInt,
+                    roomsNumberTransformed,
                   segment.getStringCellValue,
                   floorCount.getStringCellValue.toInt,
                   wallMaterial.getStringCellValue,
                   floorNumber.getStringCellValue.toInt,
-                  totalArea.getStringCellValue.toDouble,
-                  kitchenArea.getStringCellValue.toDouble,
+                  totalArea.getStringCellValue.replace(",", ".").toDouble,
+                  kitchenArea.getStringCellValue.replace(",", ".").toDouble,
                   gotBalconyBool,
                   condition.getStringCellValue,
                   distanceFromMetro.getStringCellValue.toInt

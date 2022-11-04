@@ -38,5 +38,10 @@ package object configuration {
                 )
             }
         }
+
+        lazy val sslContext: SslContext = SslContextBuilder
+            .forClient()
+            .protocols("TLSv1.3", "TLSv1.2")
+            .build()
     }
 }

@@ -41,10 +41,11 @@ db {
 integration {
   daData {
     daDataUrl = "https://suggestions.dadata.ru"
-    daDataApiKey = "your key"
+    daDataApiKey = "your key" // только для локального запуска в целях разработки
+    daDataApiKey = ${?DADATA_KEY}
   }
 
   cian{
-    url = "https://map.cian.ru"
+    url = "https://api.cian.ru"
   }
 }

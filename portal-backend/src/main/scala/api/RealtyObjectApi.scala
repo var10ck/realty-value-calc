@@ -1,16 +1,14 @@
 package api
 import dao.entities.realty.RealtyObjectId
-import dto.realty.{CreateRealtyObjectDTO, RealtyObjectCreatedDTO, UpdateRealtyObjectDTO}
+import dto.realty.{CreateRealtyObjectDTO, RealtyObjectInfoDTO, UpdateRealtyObjectDTO}
 import exceptions._
 import helpers.AuthHelper._
 import helpers.HttpExceptionHandlers.{basicAuthExceptionHandler, bodyParsingExceptionHandler, lastResortHandler}
-import services.RealtyObjectService
+import services.{GeoSuggestionService, RealtyObjectService}
 import zhttp.http._
 import zio.ZIO
 import zio.json.{DecoderOps, EncoderOps}
 import zio.stream.ZStream
-
-import java.io.File
 
 object RealtyObjectApi {
 
@@ -25,6 +23,7 @@ object RealtyObjectApi {
               _ => Response.ok
             )
 
+        /** Export all RealtyObjects of User to xlsx */
         case req @ Method.GET -> !! / "realty" / "objects" / "export" =>
             withUserContextZIO(req) { user =>
                 for {
@@ -32,15 +31,41 @@ object RealtyObjectApi {
                 } yield tempFile
             }.fold(
               exportRealtyObjectsToXlsxExceptionsHandler,
-              file => Response(body = Body.fromStream(ZStream.fromFile(file)))
-                  .addHeader(HeaderNames.contentDisposition, HeaderValues.attachment)
-                  .addHeader(HeaderNames.contentType, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+              file =>
+                  Response(body = Body.fromStream(ZStream.fromFile(file)))
+                      .addHeader(HeaderNames.contentDisposition, HeaderValues.attachment)
+                      .addHeader(
+                        HeaderNames.contentType,
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                      )
             )
+
+        /** Export all RealtyObjects of User to xlsx */
+        case req @ Method.GET -> !! / "realty" / "objects" / "export" / poolId=>
+            withUserContextZIO(req) { user =>
+                for {
+                    tempFile <- RealtyObjectService.exportPoolOfObjectsToXlsx(user, poolId)
+                } yield tempFile
+            }.fold(
+                exportRealtyObjectsToXlsxExceptionsHandler,
+                file =>
+                    Response(body = Body.fromStream(ZStream.fromFile(file)))
+                        .addHeader(HeaderNames.contentDisposition, HeaderValues.attachment)
+                        .addHeader(
+                            HeaderNames.contentType,
+                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                        )
+            )
+
+//        case
 
         /** Get all RealtyObject created by attempting User */
         case req @ Method.GET -> !! / "realty" / "objects" =>
             withUserContextZIO(req) { user =>
-                RealtyObjectService.getRealtyObjectsForUser(user.id)
+                for {
+                    objects <- RealtyObjectService.getRealtyObjectsForUser(user.id)
+                    res <- ZIO.foreach(objects) { obj => ZIO.from(RealtyObjectInfoDTO.fromEntity(obj)) }
+                } yield res
             }.fold(
               authExceptionHandler,
               objectsList => Response.json(objectsList.toJson)
@@ -54,11 +79,16 @@ object RealtyObjectApi {
                     dto <- ZIO
                         .fromEither(requestBody.fromJson[CreateRealtyObjectDTO])
                         .orElseFail(BodyParsingException("CreateRealtyObjectDTO"))
-                    realtyObject <- RealtyObjectService.createRealtyObject(dto, user.id)
+                    coordinates <- GeoSuggestionService.getCoordinatedByAddress(dto.location)
+                    realtyObject <- RealtyObjectService.createRealtyObject(
+                      dto,
+                      user.id,
+                      Some(coordinates.lat),
+                      Some(coordinates.lon))
                 } yield realtyObject
             }.fold(
-              basicAuthExceptionHandler,
-              realtyObject => Response.json(RealtyObjectCreatedDTO.fromEntity(realtyObject).toJson)
+                realtyObjectActionsBasicHandler,
+              realtyObject => Response.json(RealtyObjectInfoDTO.fromEntity(realtyObject).toJson)
             )
 
         /** Get info about RealtyObject */
@@ -98,11 +128,6 @@ object RealtyObjectApi {
             )
 
     } @@ Middleware.debug
-
-    val exportApiTest = Http.collectHttp[Request]{
-        case req @ Method.GET -> !! / "realty" / "objects" / "testfile" =>
-            Http.fromFile(new File("C:\\Users\\nguen\\Projects\\scala\\realty-value-calc\\testData\\testData.xlsx"))
-    }
 
     private val authExceptionHandler: Throwable => Response = basicAuthExceptionHandler orElse lastResortHandler
 
