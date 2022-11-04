@@ -1,7 +1,7 @@
 package services
 import dao.entities.auth.{User, UserId}
 import dao.entities.realty.{RealtyObject, RealtyObjectId, RealtyObjectPoolId}
-import dao.repositories.realty.RealtyObjectRepository
+import dao.repositories.realty.{RealtyObjectPoolRepository, RealtyObjectRepository}
 import dto.realty.{CreateRealtyObjectDTO, DeleteRealtyObjectDTO, RealtyObjectInfoDTO, UpdateRealtyObjectDTO}
 import zhttp.service.{ChannelFactory, EventLoopGroup}
 import zio.{Scope, ULayer, ZIO}
@@ -24,10 +24,10 @@ trait RealtyObjectService {
         userId: UserId
     ): ZIO[
       DataSource
-          with RealtyObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
-          with GeoSuggestionService with Any with Scope,
+          with RealtyObjectPoolRepository with RealtyObjectRepository with EventLoopGroup with ChannelFactory
+          with configuration.ApplicationConfig with GeoSuggestionService with Any with Scope,
       Throwable,
-      Unit]
+      RealtyObjectPoolId]
 
     /** Getting all RealtyObjects added by User and writes it into xlsx-file */
     def exportRealtyObjectsOfUserToXlsx(user: User)
@@ -89,10 +89,10 @@ object RealtyObjectService {
         userId: UserId
     ): ZIO[
       DataSource
-          with RealtyObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
-          with GeoSuggestionService with Any with Scope with RealtyObjectService,
+          with RealtyObjectPoolRepository with RealtyObjectRepository with EventLoopGroup with ChannelFactory
+          with configuration.ApplicationConfig with GeoSuggestionService with Any with Scope with RealtyObjectService,
       Throwable,
-      Unit] =
+      RealtyObjectPoolId] =
         ZIO.serviceWithZIO[RealtyObjectService](_.importFromXlsx(bodyStream, userId))
 
     /** Getting all RealtyObjects added by User and writes it into xlsx-file */

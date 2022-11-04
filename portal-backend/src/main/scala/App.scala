@@ -23,7 +23,7 @@ object App {
             RealtyObjectPoolRepository.live >+> RealtyObjectPoolService.live
 
     val httpApp = AuthApi.api ++ FileUploadApi.api ++ RealtyObjectApi.api ++ RealtyObjectPoolApi.api
-    
+
     val serverConfig = zhttp.service.Server
         .app(httpApp)
         .withObjectAggregator(Int.MaxValue)

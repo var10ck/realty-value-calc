@@ -1,14 +1,8 @@
 package services
 import dao.entities.auth.{User, UserId}
 import dao.entities.realty.{RealtyObject, RealtyObjectId, RealtyObjectPoolId}
-import dao.repositories.realty.RealtyObjectRepository
-import dto.realty.{
-    CoordinatesDTO,
-    CreateRealtyObjectDTO,
-    DeleteRealtyObjectDTO,
-    RealtyObjectInfoDTO,
-    UpdateRealtyObjectDTO
-}
+import dao.repositories.realty.{RealtyObjectPoolRepository, RealtyObjectRepository}
+import dto.realty.{CoordinatesDTO, CreateRealtyObjectDTO, DeleteRealtyObjectDTO, RealtyObjectInfoDTO, UpdateRealtyObjectDTO}
 import helpers.{ExcelHelper, FileHelper}
 import zhttp.service.{ChannelFactory, EventLoopGroup}
 import zio.{Scope, ULayer, ZIO, ZLayer}
@@ -29,21 +23,21 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
       *   user that uploads file
       */
     override def importFromXlsx(bodyStream: ZStream[Any, Throwable, Byte], userId: UserId): ZIO[
-      DataSource
+      DataSource with RealtyObjectPoolRepository
           with RealtyObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
           with GeoSuggestionService with Any with Scope,
       Throwable,
-      Unit] =
+      RealtyObjectPoolId] =
         for {
             // make temp file and write stream to it
             tempFile <- FileHelper.makeTempFileZIO("upload", ".xlsx")
             bytesWritten <- bodyStream.run(ZSink.fromFile(tempFile))
             _ <- Console.printLine(s"created temp file $tempFile and $bytesWritten written")
             // read file and convert rows in xlsx to objects in database
-            _ <- transmitXlsxObjectsToDatabase(tempFile, userId)
+            poolId <- transmitXlsxObjectsToDatabase(tempFile, userId)
             // run filling coordinates of objects in background
             _ <- fillCoordinatesOnAllRealtyObjects.forkDaemon
-        } yield ()
+        } yield poolId
 
     /** Takes xlsx-file, transforms it to RealtyObject entities and writes into database
       * @param file
@@ -51,15 +45,14 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
       * @param userId
       *   user, importing these objects
       */
-    private def transmitXlsxObjectsToDatabase(
-        file: File,
-        userId: UserId): ZIO[DataSource with RealtyObjectRepository with Any with Scope, Throwable, Unit] =
+    private def transmitXlsxObjectsToDatabase(file: File, userId: UserId)
+        : ZIO[DataSource with RealtyObjectPoolRepository with RealtyObjectRepository with Any with Scope, Throwable, RealtyObjectPoolId] =
         for {
             fileInputStream <- FileHelper.makeFileInputStream(file)
             realtyObjectsExcelDtoList <- ExcelHelper.transformXlsxToObject(fileInputStream) <*
                 ZIO.from(file.delete())
             _ <- Console.printLine(s"objects imported from ${file.getAbsolutePath}")
-            poolId <- RealtyObjectPoolId.random
+            pool <- RealtyObjectPoolRepository.create(None, userId).mapError(e =>new Throwable(e.getMessage))
             _ <- (ZIO foreach realtyObjectsExcelDtoList) { dto =>
                 RealtyObjectRepository
                     .create(
@@ -75,10 +68,10 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
                       condition = dto.condition,
                       distanceFromMetro = dto.distanceFromMetro,
                       addedByUserId = userId,
-                      poolId = poolId
+                      poolId = pool.id
                     )
             }
-        } yield ()
+        } yield pool.id
 
     /** Getting all RealtyObjects added by User and writes it into xlsx-file */
     override def exportRealtyObjectsOfUserToXlsx(user: User)
