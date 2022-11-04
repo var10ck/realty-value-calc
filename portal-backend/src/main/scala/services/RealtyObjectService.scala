@@ -27,7 +27,7 @@ trait RealtyObjectService {
           with RealtyObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
           with GeoSuggestionService with Any with Scope,
       Throwable,
-      Unit]
+      RealtyObjectPoolId]
 
     /** Getting all RealtyObjects added by User and writes it into xlsx-file */
     def exportRealtyObjectsOfUserToXlsx(user: User)
@@ -92,7 +92,7 @@ object RealtyObjectService {
           with RealtyObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
           with GeoSuggestionService with Any with Scope with RealtyObjectService,
       Throwable,
-      Unit] =
+      RealtyObjectPoolId] =
         ZIO.serviceWithZIO[RealtyObjectService](_.importFromXlsx(bodyStream, userId))
 
     /** Getting all RealtyObjects added by User and writes it into xlsx-file */

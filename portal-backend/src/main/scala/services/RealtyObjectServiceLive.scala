@@ -33,17 +33,17 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
           with RealtyObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
           with GeoSuggestionService with Any with Scope,
       Throwable,
-      Unit] =
+      RealtyObjectPoolId] =
         for {
             // make temp file and write stream to it
             tempFile <- FileHelper.makeTempFileZIO("upload", ".xlsx")
             bytesWritten <- bodyStream.run(ZSink.fromFile(tempFile))
             _ <- Console.printLine(s"created temp file $tempFile and $bytesWritten written")
             // read file and convert rows in xlsx to objects in database
-            _ <- transmitXlsxObjectsToDatabase(tempFile, userId)
+            poolId <- transmitXlsxObjectsToDatabase(tempFile, userId)
             // run filling coordinates of objects in background
             _ <- fillCoordinatesOnAllRealtyObjects.forkDaemon
-        } yield ()
+        } yield poolId
 
     /** Takes xlsx-file, transforms it to RealtyObject entities and writes into database
       * @param file
@@ -51,9 +51,8 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
       * @param userId
       *   user, importing these objects
       */
-    private def transmitXlsxObjectsToDatabase(
-        file: File,
-        userId: UserId): ZIO[DataSource with RealtyObjectRepository with Any with Scope, Throwable, Unit] =
+    private def transmitXlsxObjectsToDatabase(file: File, userId: UserId)
+        : ZIO[DataSource with RealtyObjectRepository with Any with Scope, Throwable, RealtyObjectPoolId] =
         for {
             fileInputStream <- FileHelper.makeFileInputStream(file)
             realtyObjectsExcelDtoList <- ExcelHelper.transformXlsxToObject(fileInputStream) <*
@@ -78,7 +77,7 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
                       poolId = poolId
                     )
             }
-        } yield ()
+        } yield poolId
 
     /** Getting all RealtyObjects added by User and writes it into xlsx-file */
     override def exportRealtyObjectsOfUserToXlsx(user: User)

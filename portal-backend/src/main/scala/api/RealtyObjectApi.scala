@@ -20,7 +20,7 @@ object RealtyObjectApi {
                 RealtyObjectService.importFromXlsx(req.body.asStream, user.id)
             }.fold(
               importFromXlsxExceptionHandler,
-              _ => Response.ok
+              poolId => Response.json(poolId.toJson)
             )
 
         /** Export all RealtyObjects of User to xlsx */
