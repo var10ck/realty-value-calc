@@ -12,8 +12,8 @@ object HttpExceptionHandlers {
             Response.text("User is not author of object").setStatus(Status.BadRequest)
     }
 
-    val lastResortHandler: PartialFunction[Throwable, Response] = { case _ =>
-        Response.text("Unknown exception").setStatus(Status.InternalServerError)
+    val lastResortHandler: PartialFunction[Throwable, Response] = { case e =>
+        Response.text(e.getMessage).setStatus(Status.InternalServerError)
     }
 
     val bodyParsingExceptionHandler: PartialFunction[Throwable, Response] = { case e: BodyParsingException =>
