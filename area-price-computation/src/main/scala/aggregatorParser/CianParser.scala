@@ -2,7 +2,7 @@ package aggregatorParser
 
 import data._
 import io.circe.parser._
-import io.circe.{Decoder, HCursor, Json}
+import io.circe.{HCursor, Json}
 import zio.{Task, ZIO}
 
 import java.io.OutputStreamWriter
@@ -58,100 +58,6 @@ object CianParser extends AggregatorParser {
         ZIO.attempt(parse(response).getOrElse(Json.Null))
     }
 
-    def getAllApartmentsJson: Task[String] = {
-        val url = new URL("https://api.cian.ru/search-offers/v2/search-offers-desktop/")
-        val httpConn = url.openConnection.asInstanceOf[HttpURLConnection]
-        httpConn.setRequestMethod("POST")
-        httpConn.setRequestProperty("authority", "api.cian.ru")
-        httpConn.setRequestProperty("accept", "*/*")
-        httpConn.setRequestProperty("accept-language", "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7")
-        httpConn.setRequestProperty("content-type", "text/plain;charset=UTF-8")
-        httpConn.setRequestProperty(
-          "cookie",
-          "_CIAN_GK=dfcfc2df-dca4-4849-98ee-6a46748d8954; session_region_id=1; login_mro_popup=1; _ga=GA1.2.391488065.1667158809; _gid=GA1.2.894530781.1667158809; sopr_utm=%7B%22utm_source%22%3A+%22google%22%2C+%22utm_medium%22%3A+%22organic%22%7D; sopr_session=0e6d6f419c014a26; uxfb_usertype=searcher; tmr_lvid=70ba0f661b0e1d0c7b58c6d6c9db745e; tmr_lvidTS=1630411085447; _ym_uid=1630411427243206670; _ym_d=1667158810; _ym_isad=2; _ym_visorc=b; _gpVisits={\"isFirstVisitDomain\":true,\"todayD\":\"Sun%20Oct%2030%202022\",\"idContainer\":\"10002511\"}; afUserId=c68d9454-f4f8-49cc-96e4-336a014652e5-p; AF_SYNC=1667158810216; adrdel=1; adrcid=Ayv54DNVfzD0TEtcfXm9b4Q; _cc_id=baf21f8c6b022a8e371272e2d7847915; panoramaId_expiry=1667763611070; panoramaId=94ceb95a3e215f8c56c72db5ec1016d539383db30c3a64ce74fa95487a66a0c4; session_main_town_region_id=1; _gcl_au=1.1.1879688524.1667158867; _gp10002511={\"hits\":2,\"vc\":1,\"ac\":1,\"a6\":1}; cookie_agreement_accepted=1; __cf_bm=odcTuTAkNQIeYz3C_LU6X.ZND7ydJhrguBkVgt5zWWs-1667159901-0-AVCQ+0oNnP0BCoZw695URR5PPrGX2ScTJt91iHsLeYWEsCe9tMyee/UDew74yklvvOfT+NZxzB7Log5sb3RgsfA=; tmr_reqNum=315; _dc_gtm_UA-30374201-1=1"
-        )
-        httpConn.setRequestProperty("origin", "https://www.cian.ru")
-        httpConn.setRequestProperty("referer", "https://www.cian.ru/")
-        httpConn.setRequestProperty(
-          "sec-ch-ua",
-          "\"Chromium\";v=\"106\", \"Google Chrome\";v=\"106\", \"Not;A=Brand\";v=\"99\"")
-        httpConn.setRequestProperty("sec-ch-ua-mobile", "?0")
-        httpConn.setRequestProperty("sec-ch-ua-platform", "\"Windows\"")
-        httpConn.setRequestProperty("sec-fetch-dest", "empty")
-        httpConn.setRequestProperty("sec-fetch-mode", "cors")
-        httpConn.setRequestProperty("sec-fetch-site", "same-site")
-        httpConn.setRequestProperty(
-          "user-agent",
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36")
-        httpConn.setDoOutput(true)
-        val writer = new OutputStreamWriter(httpConn.getOutputStream)
-        writer.write(
-          "{\"jsonQuery\":{\"_type\":\"flatsale\",\"engine_version\":{\"type\":\"term\",\"value\":2},\"region\":{\"type\":\"terms\",\"value\":[1]},\"room\":{\"type\":\"terms\",\"value\":[1,2,3,4,5,6,7,9]},\"for_day\":{\"type\":\"term\",\"value\":\"!1\"}}}")
-        writer.flush()
-        writer.close()
-        httpConn.getOutputStream.close()
-        val responseStream =
-            if (httpConn.getResponseCode / 100 == 2) httpConn.getInputStream
-            else httpConn.getErrorStream
-        val s = new Scanner(responseStream).useDelimiter("\\A")
-        val response =
-            if (s.hasNext) s.next
-            else ""
-
-        val doc: Json = parse(response).getOrElse(Json.Null)
-
-        val cursor: HCursor = doc.hcursor
-
-        val seqOffers = cursor.downField("data").downField("offersSerialized").as[Seq[Json]].getOrElse(Seq.empty[Json])
-        println(seqOffers.head.hcursor.keys)
-        println(seqOffers map { json =>
-            val under = json.hcursor.downField("geo").downField("undergrounds").as[Seq[Json]].getOrElse(Seq.empty[Json])
-            val districts =
-                json.hcursor.downField("geo").downField("districts").as[Seq[Json]].getOrElse(Seq.empty[Json])
-            val address = json.hcursor.downField("geo").downField("address").as[Seq[Json]].getOrElse(Seq.empty[Json])
-            (
-              json.hcursor.downField("decoration").as[String],
-              json.hcursor.downField("category").as[String],
-              json.hcursor.downField("balconiesCount").as[String],
-              json.hcursor.downField("cianId").as[Int],
-              json.hcursor.downField("totalArea").as[Double],
-              json.hcursor.downField("roomsCount").as[Int],
-              json.hcursor.downField("building").downField("materialType").as[String],
-              json.hcursor.downField("building").downField("floorsCount").as[Int],
-              json.hcursor.downField("floorNumber").as[Int],
-              json.hcursor.downField("fullUrl").as[String],
-              json.hcursor.downField("bargainTerms").downField("priceRur").as[Int],
-              under map { jsUnder =>
-                  (
-                    jsUnder.hcursor.downField("time").as[Int],
-                    jsUnder.hcursor.downField("name").as[String],
-                    jsUnder.hcursor.downField("transportType").as[String])
-              },
-              districts map { jsDistrict =>
-                  (
-                    jsDistrict.hcursor.downField("type").as[String],
-                    jsDistrict.hcursor.downField("title").as[String],
-                    jsDistrict.hcursor.downField("name").as[String],
-                    jsDistrict.hcursor.downField("fullName").as[String]
-                  )
-              },
-              json.hcursor.downField("geo").downField("coordinates").downField("lng").as[Double],
-              json.hcursor.downField("geo").downField("coordinates").downField("lat").as[Double],
-              address map { add =>
-                  (
-                    add.hcursor.downField("type").as[String],
-                    add.hcursor.downField("title").as[String],
-                    add.hcursor.downField("name").as[String],
-                    add.hcursor.downField("fullName").as[String]
-                  )
-              }
-            )
-        })
-        println(seqOffers.apply(2))
-
-        val decoder = Decoder[String].prepare(_.downField("data").downField("offersSerialized"))
-        ZIO.attempt("")
-    }
     def parseJson(json: Json): Task[Seq[Apartment]] = {
 
         val cursor: HCursor = json.hcursor
