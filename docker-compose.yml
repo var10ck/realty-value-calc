@@ -10,9 +10,9 @@ services:
       - "-c"
       - "max_connections=50"
       - "-c"
-      - "shared_buffers=1GB"
+      - "shared_buffers=50MB"
       - "-c"
-      - "effective_cache_size=4GB"
+      - "effective_cache_size=100MB"
       - "-c"
       - "work_mem=16MB"
       - "-c"
@@ -20,7 +20,7 @@ services:
       - "-c"
       - "random_page_cost=1.1"
       - "-c"
-      - "temp_file_limit=10GB"
+      - "temp_file_limit=1GB"
       - "-c"
       - "log_min_duration_statement=200ms"
       - "-c"
@@ -43,7 +43,6 @@ services:
       POSTGRES_PASSWORD: "${DB_PASSWORD}"
       PGDATA: "/var/lib/postgresql/data/pgdata"
     volumes:
-      - ./init/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./data:/var/lib/postgresql/data
     expose:
       - ${DB_PORT}
@@ -66,7 +65,9 @@ services:
   
 
   realty-value-calc-backend:
-    image: "vnguen/realty-value-calc-backend:0.1.1"
+    depends_on:
+      - postgres
+    image: "vnguen/realty-value-calc-backend:0.1.6"
     ports:
       - "${API_PORT}:${API_PORT}"
     environment:
@@ -78,6 +79,8 @@ services:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
+      - DADATA_KEY=${DADATA_KEY}
+    restart: unless-stopped
     networks:
       - realty-value-calc-network
 

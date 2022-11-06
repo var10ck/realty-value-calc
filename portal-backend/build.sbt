@@ -1,5 +1,5 @@
 ThisBuild / scalaVersion     := "2.13.9"
-ThisBuild / version          := "0.1.1"
+ThisBuild / version          := "0.1.6"
 ThisBuild / organization     := "org.scalalazy"
 ThisBuild / organizationName := "scalalazy"
 ThisBuild / name             := "RealtyValueCalcBackend"
@@ -12,6 +12,7 @@ lazy val root = (project in file("."))
           Dependencies.liquibase ++
           Dependencies.testContainers ++
           Dependencies.quill ++
+          Dependencies.circe ++
 //          Dependencies.tapir ++
           Seq(
             Dependencies.zioHttp,

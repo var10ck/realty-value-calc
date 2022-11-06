@@ -9,6 +9,10 @@ package object exceptions {
 
     case class RealtyObjectNotFound(field: String, value: String) extends EntityNotFound("RealtyObject", field, value)
 
+    case class RealityObjectsPoolNotFound(field: String, value: String) extends EntityNotFound("RealityObjectsPool", field, value)
+
+    case class CorrectionNotFound(field: String, value: String) extends EntityNotFound("Correction", field, value)
+
     // Invalid input
     case class BodyParsingException(dtoName: String) extends CustomException(s"Cannot parse body as $dtoName")
 

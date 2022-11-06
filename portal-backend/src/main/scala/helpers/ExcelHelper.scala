@@ -3,14 +3,13 @@ package helpers
 import dao.entities.realty.RealtyObject
 import dto.realty.RealtyObjectExcelDTO
 import exceptions._
-import org.apache.poi.ss.usermodel.{BorderStyle, CellStyle, CellType, FillPatternType, IndexedColors}
-import org.apache.poi.xssf.usermodel.{XSSFCell, XSSFFactory, XSSFWorkbook}
+import org.apache.poi.ss.usermodel.{BorderStyle, CellType, FillPatternType, IndexedColors}
+import org.apache.poi.xssf.usermodel.{XSSFCell, XSSFWorkbook}
 import zio.ZIO
 
-import java.io.{FileInputStream, FileOutputStream, InputStream}
+import java.io.{FileOutputStream, InputStream}
 import java.time.format.{DateTimeFormatter, FormatStyle}
-import org.apache.poi.xssf.usermodel.XSSFFont
-import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import scala.util.Try
 
 object ExcelHelper {
 
@@ -19,78 +18,65 @@ object ExcelHelper {
       *   input stream containing binary xlsx encoded data
       */
     def transformXlsxToObject(in: InputStream): ZIO[Any, Throwable, List[RealtyObjectExcelDTO]] =
-        ZIO.from {
-            val workbook = new XSSFWorkbook(in)
-            val sheet = workbook.getSheetAt(0)
-            val lastNum = sheet.getLastRowNum
-            val data = (1 to lastNum).map { rowNum =>
-                val row = sheet.getRow(rowNum)
-                // местоположение
-                val location = row.getCell(0)
-                location.setCellType(CellType.STRING)
+        (for {
+            workbook <- ZIO.from(new XSSFWorkbook(in))
+            sheet <- ZIO.from(workbook.getSheetAt(0))
+            lastNum = sheet.getLastRowNum
+            data <- ZIO.foreachPar((1 to lastNum).toList) { rowNum =>
+                for {
+                    row <- ZIO.from(sheet.getRow(rowNum))
+                    location <- ZIO.from(row.getCell(0))
+                    _ <- ZIO.from(location.setCellType(CellType.STRING))
 
-                // Количество комнат
-                val roomsNumber = row.getCell(1)
-                roomsNumber.setCellType(CellType.STRING)
-
-                // Сегмент
-                val segment = row.getCell(2)
-                segment.setCellType(CellType.STRING)
-
-                // Количество этажей
-                val floorCount = row.getCell(3)
-                floorCount.setCellType(CellType.STRING)
-
-                // Материал стен
-                val wallMaterial = row.getCell(4)
-                wallMaterial.setCellType(CellType.STRING)
-
-                // Этаж расположения
-                val floorNumber = row.getCell(5)
-                floorNumber.setCellType(CellType.STRING)
-
-                // Площадь квартиры
-                val totalArea = row.getCell(6)
-                totalArea.setCellType(CellType.STRING)
-
-                // Площаль кухни
-                val kitchenArea = row.getCell(7)
-                kitchenArea.setCellType(CellType.STRING)
-
-                // Наличие балкона/лоджии
-                val gotBalcony = row.getCell(8)
-                gotBalcony.setCellType(CellType.STRING)
-
-                // Состояние квартиры
-                val condition = row.getCell(9)
-                condition.setCellType(CellType.STRING)
-
-                // Удаленность от метро
-                val distanceFromMetro = row.getCell(10)
-                distanceFromMetro.setCellType(CellType.STRING)
-
-                val gotBalconyBool: Boolean = gotBalcony.getStringCellValue.toLowerCase match {
-                    case "есть" => true
-                    case "нет" => false
-                    case _ => throw new Exception(s"Invalid data in cell (${rowNum + 1}, 8)")
-                }
-                RealtyObjectExcelDTO(
+                    roomsNumber <- ZIO.from(row.getCell(1))
+                    _ <- ZIO.from(roomsNumber.setCellType(CellType.STRING))
+                    segment <- ZIO.from(row.getCell(2))
+                    _ <- ZIO.from(segment.setCellType(CellType.STRING))
+                    floorCount <- ZIO.from(row.getCell(3))
+                    _ <- ZIO.from(floorCount.setCellType(CellType.STRING))
+                    wallMaterial <- ZIO.from(row.getCell(4))
+                    _ <- ZIO.from(wallMaterial.setCellType(CellType.STRING))
+                    floorNumber <- ZIO.from(row.getCell(5))
+                    _ <- ZIO.from(floorNumber.setCellType(CellType.STRING))
+                    totalArea <- ZIO.from(row.getCell(6))
+                    _ <- ZIO.from(totalArea.setCellType(CellType.STRING))
+                    kitchenArea <- ZIO.from(row.getCell(7))
+                    _ <- ZIO.from(kitchenArea.setCellType(CellType.STRING))
+                    gotBalcony <- ZIO.from(row.getCell(8))
+                    _ <- ZIO.from(gotBalcony.setCellType(CellType.STRING))
+                    distanceFromMetro <- ZIO.from(row.getCell(9))
+                    _ <- ZIO.from(distanceFromMetro.setCellType(CellType.STRING))
+                    condition <- ZIO.from(row.getCell(10))
+                    _ <- ZIO.from(condition.setCellType(CellType.STRING))
+                    // "студия" и другие данные будут считаться как 1 комната
+                    roomsNumberTransformed <- ZIO
+                        .whenCase(roomsNumber.getStringCellValue.toLowerCase) {
+                            case num if Try(num.toInt).isSuccess => ZIO.succeed(num.toInt)
+                            case _ => ZIO.succeed(1)
+                        }.map(_.get)
+                    gotBalconyBool <- ZIO
+                        .whenCase(gotBalcony.getStringCellValue.toLowerCase) {
+                            case "да" => ZIO.succeed(true)
+                            case "нет" => ZIO.succeed(false)
+                            case invalidData =>
+                                ZIO.fail(new Exception(s"Invalid data in cell (${rowNum + 1}, 8): $invalidData"))
+                        }
+                        .map(_.get)
+                } yield RealtyObjectExcelDTO(
                   location.getStringCellValue,
-                  roomsNumber.getStringCellValue.toInt,
+                    roomsNumberTransformed,
                   segment.getStringCellValue,
                   floorCount.getStringCellValue.toInt,
                   wallMaterial.getStringCellValue,
                   floorNumber.getStringCellValue.toInt,
-                  totalArea.getStringCellValue.toDouble,
-                  kitchenArea.getStringCellValue.toDouble,
+                  totalArea.getStringCellValue.replace(",", ".").toDouble,
+                  kitchenArea.getStringCellValue.replace(",", ".").toDouble,
                   gotBalconyBool,
                   condition.getStringCellValue,
                   distanceFromMetro.getStringCellValue.toInt
                 )
             }
-            in.close()
-            data.toList
-        }.mapError(e => ExcelParsingException(e.getMessage))
+        } yield data).mapError(e => ExcelParsingException(e.getMessage))
 
     /** Writes RealtyObjects in file within xlsx format
       * @param fos
@@ -100,134 +86,141 @@ object ExcelHelper {
       */
     def transformObjectsToXlsx(
         fos: FileOutputStream,
-        objects: List[RealtyObject]): ZIO[Any, ExcelWritingException, Unit] = ZIO.from {
-        // Create workbook
-        val workbook = new XSSFWorkbook()
-        val sheet = workbook.createSheet("RealtyObjects")
+        objects: List[RealtyObject]): ZIO[Any, ExcelWritingException, Unit] = {
         val widthInChar: Int => Int = _ * 256
-        sheet.setColumnWidth(0, widthInChar(40))
-        sheet.setColumnWidth(1, widthInChar(10))
-        sheet.setColumnWidth(2, widthInChar(18))
-        sheet.setColumnWidth(3, widthInChar(9))
-        sheet.setColumnWidth(4, widthInChar(14))
-        sheet.setColumnWidth(5, widthInChar(17))
-        sheet.setColumnWidth(6, widthInChar(12))
-        sheet.setColumnWidth(7, widthInChar(12))
-        sheet.setColumnWidth(8, widthInChar(20))
-        sheet.setColumnWidth(9, widthInChar(15))
-        sheet.setColumnWidth(10, widthInChar(14))
-        sheet.setColumnWidth(11, widthInChar(20))
-        sheet.setColumnWidth(12, widthInChar(24))
-        sheet.setColumnWidth(13, widthInChar(24))
+        (for {
+            // Create workbook
+            workbook <- ZIO.from(new XSSFWorkbook())
+            sheet <- ZIO.from(workbook.createSheet("RealtyObjects"))
+            _ = sheet.setColumnWidth(0, widthInChar(40))
+            _ = sheet.setColumnWidth(1, widthInChar(10))
+            _ = sheet.setColumnWidth(2, widthInChar(18))
+            _ = sheet.setColumnWidth(3, widthInChar(9))
+            _ = sheet.setColumnWidth(4, widthInChar(14))
+            _ = sheet.setColumnWidth(5, widthInChar(17))
+            _ = sheet.setColumnWidth(6, widthInChar(12))
+            _ = sheet.setColumnWidth(7, widthInChar(12))
+            _ = sheet.setColumnWidth(8, widthInChar(20))
+            _ = sheet.setColumnWidth(9, widthInChar(15))
+            _ = sheet.setColumnWidth(10, widthInChar(14))
+            _ = sheet.setColumnWidth(11, widthInChar(20))
+            _ = sheet.setColumnWidth(12, widthInChar(24))
+            _ = sheet.setColumnWidth(13, widthInChar(24))
 
-        // Create header style
-        val headerStyle = workbook.createCellStyle
-        headerStyle.setFillForegroundColor(IndexedColors.AQUA.getIndex)
-        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND)
-        headerStyle.setWrapText(true)
+            // Create header style
+            headerStyle = workbook.createCellStyle
+            _ = headerStyle.setFillForegroundColor(IndexedColors.AQUA.getIndex)
+            _ = headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND)
+            _ = headerStyle.setWrapText(true)
 
-        val headerFont = workbook.createFont
-        headerFont.setFontName("Arial")
-        headerFont.setFontHeightInPoints(12.toShort)
-        headerFont.setBold(true)
-        headerStyle.setFont(headerFont)
+            headerFont = workbook.createFont
+            _ = headerFont.setFontName("Arial")
+            _ = headerFont.setFontHeightInPoints(12.toShort)
+            _ = headerFont.setBold(true)
+            _ = headerStyle.setFont(headerFont)
 
-        headerStyle.setBorderTop(BorderStyle.THICK)
-        headerStyle.setBorderLeft(BorderStyle.THICK)
-        headerStyle.setBorderRight(BorderStyle.THICK)
-        headerStyle.setBorderBottom(BorderStyle.THICK)
+            _ = headerStyle.setBorderTop(BorderStyle.THICK)
+            _ = headerStyle.setBorderLeft(BorderStyle.THICK)
+            _ = headerStyle.setBorderRight(BorderStyle.THICK)
+            _ = headerStyle.setBorderBottom(BorderStyle.THICK)
 
-        // Create cell style
-        val dataCellStyle = workbook.createCellStyle
-        dataCellStyle.setWrapText(true)
-        dataCellStyle.setBorderTop(BorderStyle.THIN)
-        dataCellStyle.setBorderLeft(BorderStyle.THIN)
-        dataCellStyle.setBorderRight(BorderStyle.THIN)
-        dataCellStyle.setBorderBottom(BorderStyle.THIN)
+            // Create cell style
+            dataCellStyle = workbook.createCellStyle
+            _ = dataCellStyle.setWrapText(true)
+            _ = dataCellStyle.setBorderTop(BorderStyle.THIN)
+            _ = dataCellStyle.setBorderLeft(BorderStyle.THIN)
+            _ = dataCellStyle.setBorderRight(BorderStyle.THIN)
+            _ = dataCellStyle.setBorderBottom(BorderStyle.THIN)
 
-        val cellFont = workbook.createFont
-        cellFont.setFontName("Arial")
-        cellFont.setFontHeightInPoints(12.toShort)
-        dataCellStyle.setFont(cellFont)
+            cellFont = workbook.createFont
+            _ = cellFont.setFontName("Arial")
+            _ = cellFont.setFontHeightInPoints(12.toShort)
+            _ = dataCellStyle.setFont(cellFont)
 
-        // Create header and set it's style
-        val headerRow = sheet.createRow(0)
+            // Create header and set it's style
+            headerRow = sheet.createRow(0)
 
-        val locationCell = headerRow.createCell(0)
-        locationCell.setCellValue("Местоположение")
-        val roomsCountCell = headerRow.createCell(1)
-        roomsCountCell.setCellValue("Количество комнат")
-        val segmentCell = headerRow.createCell(2)
-        segmentCell.setCellValue("Сегмент")
-        val floorCount = headerRow.createCell(3)
-        floorCount.setCellValue("Этажность дома")
-        val wallMaterialCell = headerRow.createCell(4)
-        wallMaterialCell.setCellValue("Материал стен")
-        val floorNumberCell = headerRow.createCell(5)
-        floorNumberCell.setCellValue("Этаж расположения")
-        val totalAreaCell = headerRow.createCell(6)
-        totalAreaCell.setCellValue("Площадь квартиры, кв.м")
-        val kitchenAreaCell = headerRow.createCell(7)
-        kitchenAreaCell.setCellValue("Площадь кухни, кв.м")
-        val gotBalconyCell = headerRow.createCell(8)
-        gotBalconyCell.setCellValue("Наличие балкона/лоджии")
-        val conditionCell = headerRow.createCell(9)
-        conditionCell.setCellValue("Удаленность от станции метро")
-        val distanceFromMetroCell = headerRow.createCell(10)
-        distanceFromMetroCell.setCellValue("Состояние")
-        val calculatedValueCell = headerRow.createCell(11)
-        calculatedValueCell.setCellValue("Рассчитанная рыночная стоимость")
-        val createdAtCell = headerRow.createCell(12)
-        createdAtCell.setCellValue("Добавлено на портал")
-        val updatedAtCell = headerRow.createCell(13)
-        updatedAtCell.setCellValue("Время последнего обновления")
+            locationCell = headerRow.createCell(0)
+            _ = locationCell.setCellValue("Местоположение")
+            roomsCountCell = headerRow.createCell(1)
+            _ = roomsCountCell.setCellValue("Количество комнат")
+            segmentCell = headerRow.createCell(2)
+            _ = segmentCell.setCellValue("Сегмент")
+            floorCount = headerRow.createCell(3)
+            _ = floorCount.setCellValue("Этажность дома")
+            wallMaterialCell = headerRow.createCell(4)
+            _ = wallMaterialCell.setCellValue("Материал стен")
+            floorNumberCell = headerRow.createCell(5)
+            _ = floorNumberCell.setCellValue("Этаж расположения")
+            totalAreaCell = headerRow.createCell(6)
+            _ = totalAreaCell.setCellValue("Площадь квартиры, кв.м")
+            kitchenAreaCell = headerRow.createCell(7)
+            _ = kitchenAreaCell.setCellValue("Площадь кухни, кв.м")
+            gotBalconyCell = headerRow.createCell(8)
+            _ = gotBalconyCell.setCellValue("Наличие балкона/лоджии")
+            conditionCell = headerRow.createCell(9)
+            _ = conditionCell.setCellValue("Удаленность от станции метро")
+            distanceFromMetroCell = headerRow.createCell(10)
+            _ = distanceFromMetroCell.setCellValue("Состояние")
+            calculatedValueCell = headerRow.createCell(11)
+            _ = calculatedValueCell.setCellValue("Рассчитанная рыночная стоимость")
+            createdAtCell = headerRow.createCell(12)
+            _ = createdAtCell.setCellValue("Добавлено на портал")
+            updatedAtCell = headerRow.createCell(13)
+            _ = updatedAtCell.setCellValue("Время последнего обновления")
+            _ = List(
+              locationCell,
+              roomsCountCell,
+              segmentCell,
+              floorCount,
+              wallMaterialCell,
+              floorNumberCell,
+              totalAreaCell,
+              kitchenAreaCell,
+              gotBalconyCell,
+              conditionCell,
+              distanceFromMetroCell,
+              calculatedValueCell,
+              createdAtCell,
+              updatedAtCell
+            ).foreach(_.setCellStyle(headerStyle))
 
-        List(
-          locationCell,
-          roomsCountCell,
-          segmentCell,
-          floorCount,
-          wallMaterialCell,
-          floorNumberCell,
-          totalAreaCell,
-          kitchenAreaCell,
-          gotBalconyCell,
-          conditionCell,
-          distanceFromMetroCell,
-          calculatedValueCell,
-          createdAtCell,
-          updatedAtCell
-        ).foreach(_.setCellStyle(headerStyle))
-
-        val dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
-
-        objects.filter(_.calculatedValue.isDefined).zipWithIndex.foreach {
-            case (realtyObject: RealtyObject, index: Int) =>
-                val row = sheet.createRow(index + 1)
-                chainCell(row.createCell(0))(_.setCellValue(realtyObject.location)).setCellStyle(dataCellStyle)
-                chainCell(row.createCell(1))(_.setCellValue(realtyObject.roomsNumber)).setCellStyle(dataCellStyle)
-                chainCell(row.createCell(2))(_.setCellValue(realtyObject.segment)).setCellStyle(dataCellStyle)
-                chainCell(row.createCell(3))(_.setCellValue(realtyObject.floorCount)).setCellStyle(dataCellStyle)
-                chainCell(row.createCell(4))(_.setCellValue(realtyObject.wallMaterial)).setCellStyle(dataCellStyle)
-                chainCell(row.createCell(5))(_.setCellValue(realtyObject.floorNumber)).setCellStyle(dataCellStyle)
-                chainCell(row.createCell(6))(_.setCellValue(realtyObject.totalArea)).setCellStyle(dataCellStyle)
-                chainCell(row.createCell(7))(_.setCellValue(realtyObject.kitchenArea)).setCellStyle(dataCellStyle)
-                chainCell(row.createCell(8))(_.setCellValue(if (realtyObject.gotBalcony) "есть" else "нет"))
-                    .setCellStyle(dataCellStyle)
-                chainCell(row.createCell(9))(_.setCellValue(realtyObject.condition)).setCellStyle(dataCellStyle)
-                chainCell(row.createCell(10))(_.setCellValue(realtyObject.distanceFromMetro))
-                    .setCellStyle(dataCellStyle)
-                chainCell(row.createCell(11))(_.setCellValue(realtyObject.calculatedValue.getOrElse(0L)))
-                    .setCellStyle(dataCellStyle)
-                chainCell(row.createCell(12))(_.setCellValue(realtyObject.createdAt.format(dateTimeFormatter)))
-                    .setCellStyle(dataCellStyle)
-                chainCell(row.createCell(13))(_.setCellValue(realtyObject.updatedAt.format(dateTimeFormatter)))
-                    .setCellStyle(dataCellStyle)
+            dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
+            result <- ZIO.foreachPar(objects.filter(_.calculatedValue.isDefined).zipWithIndex) {
+                case (realtyObject: RealtyObject, index: Int) =>
+                    ZIO.from {
+                        val row = sheet.createRow(index + 1)
+                        chainCell(row.createCell(0))(_.setCellValue(realtyObject.location)).setCellStyle(dataCellStyle)
+                        chainCell(row.createCell(1))(_.setCellValue(realtyObject.roomsNumber))
+                            .setCellStyle(dataCellStyle)
+                        chainCell(row.createCell(2))(_.setCellValue(realtyObject.segment)).setCellStyle(dataCellStyle)
+                        chainCell(row.createCell(3))(_.setCellValue(realtyObject.floorCount))
+                            .setCellStyle(dataCellStyle)
+                        chainCell(row.createCell(4))(_.setCellValue(realtyObject.wallMaterial))
+                            .setCellStyle(dataCellStyle)
+                        chainCell(row.createCell(5))(_.setCellValue(realtyObject.floorNumber))
+                            .setCellStyle(dataCellStyle)
+                        chainCell(row.createCell(6))(_.setCellValue(realtyObject.totalArea)).setCellStyle(dataCellStyle)
+                        chainCell(row.createCell(7))(_.setCellValue(realtyObject.kitchenArea))
+                            .setCellStyle(dataCellStyle)
+                        chainCell(row.createCell(8))(_.setCellValue(if (realtyObject.gotBalcony) "есть" else "нет"))
+                            .setCellStyle(dataCellStyle)
+                        chainCell(row.createCell(9))(_.setCellValue(realtyObject.condition)).setCellStyle(dataCellStyle)
+                        chainCell(row.createCell(10))(_.setCellValue(realtyObject.distanceFromMetro))
+                            .setCellStyle(dataCellStyle)
+                        chainCell(row.createCell(11))(_.setCellValue(realtyObject.calculatedValue.getOrElse(0L)))
+                            .setCellStyle(dataCellStyle)
+                        chainCell(row.createCell(12))(_.setCellValue(realtyObject.createdAt.format(dateTimeFormatter)))
+                            .setCellStyle(dataCellStyle)
+                        chainCell(row.createCell(13))(_.setCellValue(realtyObject.updatedAt.format(dateTimeFormatter)))
+                            .setCellStyle(dataCellStyle)
+                    }
+            }
+            _ <- ZIO.from(workbook.write(fos))
+        } yield ()).mapError { e =>
+            e.printStackTrace()
+            ExcelWritingException(e.getMessage)
         }
-        workbook.write(fos)
-    }.mapError { e =>
-        e.printStackTrace()
-        ExcelWritingException(e.getMessage)
     }
 
     private def chainCell[A](cell: XSSFCell)(f: XSSFCell => A): XSSFCell = {

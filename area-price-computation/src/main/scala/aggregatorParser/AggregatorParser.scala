@@ -1,0 +1,5 @@
+package aggregatorParser
+
+trait AggregatorParser {
+
+}
