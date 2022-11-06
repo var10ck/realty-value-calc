@@ -77,7 +77,7 @@ trait RealtyObjectService {
       Unit]
 
     /** Calculates market value of all objects in pool */
-    def calculateAllInPool(poolId: String, userId: UserId, withCorrections: Boolean, numPages: Int): ZIO[
+    def calculateAllInPool(poolId: String, userId: UserId, withCorrections: Boolean, numPages: Int, limitOfAnalogs: Int): ZIO[
       DataSource
           with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
           with SearchRealtyService,
@@ -89,7 +89,8 @@ trait RealtyObjectService {
         dto: CalculateValueOfSomeObjectsDTO,
         userId: UserId,
         withCorrections: Boolean,
-        numPages: Int): ZIO[
+        numPages: Int,
+        limitOfAnalogs: Int): ZIO[
       DataSource
           with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
           with SearchRealtyService,
@@ -171,26 +172,28 @@ object RealtyObjectService {
       Unit] = ZIO.serviceWithZIO[RealtyObjectService](_.fillCoordinatesOnAllRealtyObjects)
 
     /** Calculates market value of all objects in pool */
-    def calculateAllInPool(poolId: String, userId: UserId, withCorrections: Boolean, numPages: Int): ZIO[
+    def calculateAllInPool(poolId: String, userId: UserId, withCorrections: Boolean, numPages: Int,
+                           limitOfAnalogs: Int = 20): ZIO[
       DataSource
           with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
           with SearchRealtyService with RealtyObjectService,
       Throwable,
       Unit] =
-        ZIO.serviceWithZIO[RealtyObjectService](_.calculateAllInPool(poolId, userId, withCorrections, numPages))
+        ZIO.serviceWithZIO[RealtyObjectService](_.calculateAllInPool(poolId, userId, withCorrections, numPages, limitOfAnalogs))
 
     /** Calculates value of some RealtyObjects */
     def calculateForSome(
         dto: CalculateValueOfSomeObjectsDTO,
         userId: UserId,
         withCorrections: Boolean,
-        numPages: Int): ZIO[
+        numPages: Int,
+        limitOfAnalogs: Int = 20): ZIO[
       DataSource
           with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
           with SearchRealtyService with RealtyObjectService,
       Throwable,
       Unit] =
-        ZIO.serviceWithZIO[RealtyObjectService](_.calculateForSome(dto, userId, withCorrections, numPages))
+        ZIO.serviceWithZIO[RealtyObjectService](_.calculateForSome(dto, userId, withCorrections, numPages, limitOfAnalogs))
 
     val live: ULayer[RealtyObjectService] = RealtyObjectServiceLive.layer
 }
