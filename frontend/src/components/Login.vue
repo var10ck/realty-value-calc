@@ -24,7 +24,7 @@
             </v-form>
           </v-card-text>
           <v-card-actions>
-            <v-btn color="primary" to="/registry">Заррегистрироваться</v-btn>
+            <v-btn color="primary" to="/registry">Зарегистрироваться</v-btn>
             <v-spacer></v-spacer>
             <v-btn color="primary" @click="auth">Войти</v-btn>
           </v-card-actions>

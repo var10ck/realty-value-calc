@@ -69,9 +69,9 @@
             </v-form>
           </v-card-text>
           <v-card-actions>
-            <v-btn color="primary" to="/login">К странице входа</v-btn>
+            <v-btn color="primary" to="/login">Назад</v-btn>
             <v-spacer></v-spacer>
-            <v-btn color="primary" @click="register">Зарегестрировать</v-btn>
+            <v-btn color="primary" @click="register">Зарегистрироваться</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -124,7 +124,6 @@ export default {
         this.$bus.$emit("showError", "Проверьте корректность введенных данных");
         return; // !!!
       }
-      try {
         await RequestService.registerAsync({
           login: this.login,
           password: this.password,
@@ -134,9 +133,6 @@ export default {
         });
         this.$bus.$emit("showSuccess", "Регистрация успешно завершена");
         this.$router.push("/login");
-      } catch (e) {
-        this.$bus.$emit("showError", e);
-      }
     },
   },
 };

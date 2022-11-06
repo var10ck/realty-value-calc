@@ -3,6 +3,142 @@ import axios from "axios";
 export default class RequestService {
   static axiosInstance = this.initAxiosInstance();
 
+  static async createCorrection(data) {
+    const result = await this.axiosInstance.put(`/realty/corrections/numeric`, data);
+    if (result.data) {
+      return result.data;
+    }
+  }
+
+  static async editCorrection(data) {
+    const result = await this.axiosInstance.patch(`/realty/corrections/numeric`, data);
+    if (result.data) {
+      return result.data;
+    }
+  }
+
+  static async removeCorrection(id) {
+    const result = await this.axiosInstance.delete(`/realty/corrections/numeric/${id}`, 
+    );
+    if (result.status === 200) {
+      return true;
+    }
+    return false
+  }
+
+  static async getAllCorrections() {
+    const result = await this.axiosInstance.get(`/realty/corrections/numeric`);
+    if (result.data) {
+      return result.data;
+    }
+  }
+
+  static async exportPoolById(poolId, fileName) {
+    const result = await this.axiosInstance.get(`/realty/objects/export/${poolId}`, {
+      responseType: 'blob',
+    })
+    if (result.data) {
+      console.log(result.data)
+      const href = URL.createObjectURL(result.data);
+
+      const link = document.createElement('a');
+      link.href = href;
+      link.setAttribute('download', `${fileName}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+
+      document.body.removeChild(link);
+      URL.revokeObjectURL(href);
+    }
+  }
+
+  static async exportAllObjects(fileName) {
+    const result = await this.axiosInstance.get(`/realty/objects/export`, {responseType: 'blob'})
+    if (result.data) {
+      console.log(result.data)
+      const href = URL.createObjectURL(result.data);
+
+      const link = document.createElement('a');
+      link.href = href;
+      link.setAttribute('download', `${fileName}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+
+      document.body.removeChild(link);
+      URL.revokeObjectURL(href);
+    }
+  }
+
+  static async calculatePoolByIdAsync(id, useCorrections) {
+    const result = await this.axiosInstance.post(`/realty/objects/calculatePool`,
+    JSON.stringify({
+      poolId: id,
+      withCorrections: useCorrections
+    }));
+    if (result.data) {
+      return result.data;
+    }
+  }
+
+  static async geyObjectByIdAsync(id) {
+    const result = await this.axiosInstance.get(`/realty/objects/${id}`);
+    if (result.data) {
+      return result.data;
+    }
+  }
+
+  static async createPoolAsync(name) {
+    console.log(name)
+    const result = await this.axiosInstance.put(`/realty/pool`,
+    name ? JSON.stringify({name: name}) : {},
+    );
+    if (result.data) {
+      return result.data;
+    }
+  }
+
+  static async loadPoolByIdAsync(id) {
+    const result = await this.axiosInstance.get(`/realty/pool/${id}`);
+    if (result.data) {
+      return result.data;
+    }
+  }
+
+  static async loadlAllPoolsAsync() {
+    const result = await this.axiosInstance.get("/realty/pools");
+    if (result.data) {
+      return result.data;
+    }
+  }
+
+  static async createRealtyObjectAsync(data) {
+    const result = await this.axiosInstance.post("/realty/objects/create", 
+      JSON.stringify(data)
+    );
+    if (result.data) {
+      return result.data;
+    }
+  }
+
+  static async editRealtyObjectAsync(data) {
+    const result = await this.axiosInstance.patch("/realty/objects", 
+      JSON.stringify(data)
+    );
+    if (result.status === 200) {
+      return true;
+    }
+    return false
+  }
+
+  static async removeRealtyObjectAsync(id) {
+    const result = await this.axiosInstance.delete(`/realty/objects/${id}`, 
+    );
+    if (result.status === 200) {
+      return true;
+    }
+    return false
+  }
+
   static initAxiosInstance() {
     return axios.create({
       withCredentials: true,
@@ -35,13 +171,7 @@ export default class RequestService {
   static async loadFileAsync(data) {
     const result = await this.axiosInstance.put("/realty/objects/import",
       data,
-      {
-        // headers: JSON.stringify({
-        //   userSessionId: this.sessionId
-        // })
-      }
     );
-    console.log(result)
     if (result.data) {
       return result.data;
     }
@@ -49,11 +179,6 @@ export default class RequestService {
 
   static async getAllRealtyObjectsAsync() {
     const result = await this.axiosInstance.get("/realty/objects",
-      {
-        // headers: JSON.stringify({
-        //   userSessionId: this.sessionId
-        // })
-      }
     );
     if (result.data) {
       return result.data;

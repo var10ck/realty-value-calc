@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import RealtyObjects from '../views/RealtyObjects.vue'
+import AllRealtyObjects from '@/views/AllRealtyObjects.vue'
+import RealtyObject from '@/views/RealtyObject.vue'
+import MapPage from '@/views/MapPage.vue'
+import CorrectionsPage from '@/views/CorrectionsPage.vue'
 import Login from '@/components/Login';
 import Registry from '@/components/Registry';
 import RequestService from "@/services/RequestService";
@@ -10,16 +13,18 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'RealtyObjects',
-    component: RealtyObjects
+    name: 'AllRealtyObjects',
+    component: AllRealtyObjects
   },
   {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+    path: '/mapPage',
+    name: 'MapPage',
+    component: MapPage
+  },
+  {
+    path: '/correctionsPage',
+    name: 'CorrectionsPage',
+    component: CorrectionsPage
   },
   {
     path: '/login',
@@ -32,8 +37,13 @@ const routes = [
     component: Registry,
   },
   {
+    path: '/realtyObject/:id',
+    name: 'RealtyObject',
+    component: RealtyObject,
+  },
+  {
     path: '/:pathMatch(.*)*',
-    component: RealtyObjects,
+    component: AllRealtyObjects,
   },
  
 ]
