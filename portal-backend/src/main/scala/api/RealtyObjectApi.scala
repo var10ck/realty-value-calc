@@ -1,6 +1,13 @@
 package api
 import dao.entities.realty.RealtyObjectId
-import dto.realty.{CreateRealtyObjectDTO, RealtyObjectInfoDTO, UpdateRealtyObjectDTO}
+import dao.repositories.integration.AnalogueObjectRepository
+import dto.realty.{
+    AnalogueObjectInfoDTO,
+    CalculateObjectsInPoolDTO,
+    CreateRealtyObjectDTO,
+    RealtyObjectInfoDTO,
+    UpdateRealtyObjectDTO
+}
 import exceptions._
 import helpers.AuthHelper._
 import helpers.HttpExceptionHandlers.{basicAuthExceptionHandler, bodyParsingExceptionHandler, lastResortHandler}
@@ -41,20 +48,20 @@ object RealtyObjectApi {
             )
 
         /** Export all RealtyObjects of User to xlsx */
-        case req @ Method.GET -> !! / "realty" / "objects" / "export" / poolId=>
+        case req @ Method.GET -> !! / "realty" / "objects" / "export" / poolId =>
             withUserContextZIO(req) { user =>
                 for {
                     tempFile <- RealtyObjectService.exportPoolOfObjectsToXlsx(user, poolId)
                 } yield tempFile
             }.fold(
-                exportRealtyObjectsToXlsxExceptionsHandler,
-                file =>
-                    Response(body = Body.fromStream(ZStream.fromFile(file)))
-                        .addHeader(HeaderNames.contentDisposition, HeaderValues.attachment)
-                        .addHeader(
-                            HeaderNames.contentType,
-                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                        )
+              exportRealtyObjectsToXlsxExceptionsHandler,
+              file =>
+                  Response(body = Body.fromStream(ZStream.fromFile(file)))
+                      .addHeader(HeaderNames.contentDisposition, HeaderValues.attachment)
+                      .addHeader(
+                        HeaderNames.contentType,
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                      )
             )
 
 //        case
@@ -64,10 +71,16 @@ object RealtyObjectApi {
             withUserContextZIO(req) { user =>
                 for {
                     objects <- RealtyObjectService.getRealtyObjectsForUser(user.id)
-                    res <- ZIO.foreach(objects) { obj => ZIO.from(RealtyObjectInfoDTO.fromEntity(obj)) }
+                    res <- ZIO.foreachPar(objects) { obj =>
+                        for {
+                            analogs <- AnalogueObjectRepository.getAllByRealtyObjectId(obj.id)
+                            analogsDto = analogs.map(AnalogueObjectInfoDTO.fromEntity)
+                            objInfo <- ZIO.from(RealtyObjectInfoDTO.fromEntityWithAnalogs(obj, analogsDto))
+                        } yield objInfo
+                    }
                 } yield res
             }.fold(
-              authExceptionHandler,
+              realtyObjectActionsBasicHandler,
               objectsList => Response.json(objectsList.toJson)
             )
 
@@ -87,7 +100,7 @@ object RealtyObjectApi {
                       Some(coordinates.lon))
                 } yield realtyObject
             }.fold(
-                realtyObjectActionsBasicHandler,
+              realtyObjectActionsBasicHandler,
               realtyObject => Response.json(RealtyObjectInfoDTO.fromEntity(realtyObject).toJson)
             )
 
@@ -122,6 +135,15 @@ object RealtyObjectApi {
                         .orElseFail(BodyParsingException("UpdateRealtyObjectDTO"))
                     _ <- RealtyObjectService.updateRealtyObjectInfo(dto, user.id)
                 } yield ()
+            }.fold(
+              realtyObjectActionsBasicHandler,
+              _ => Response.ok
+            )
+
+        /** Calculate value for all objects on pool */
+        case req @ Method.POST -> !! / "realty" / "objects" / "calculatePool" =>
+            withUserContextAndDtoZIO(req) { (user, dto: CalculateObjectsInPoolDTO) =>
+                RealtyObjectService.calculateAllInPool(dto.poolId, user.id, withCorrections = false, 3)
             }.fold(
               realtyObjectActionsBasicHandler,
               _ => Response.ok

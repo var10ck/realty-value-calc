@@ -26,7 +26,8 @@ object CianSearchRequestDTOTest extends ZIOSpecDefault {
                   totalAreaLte = 60,
                   balconiesGt = 1,
                   floorGte = 1,
-                  floorLte = Some(20)
+                  floorLte = Some(20),
+                  page = 1
               )
               for {
                   jsonQueryBody <-  ZIO.from(queryBody.toJson)

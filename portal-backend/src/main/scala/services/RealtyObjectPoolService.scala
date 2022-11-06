@@ -2,6 +2,7 @@ package services
 import dao.entities.auth.UserId
 import dao.entities.realty.RealtyObjectPool
 import dao.repositories.realty.RealtyObjectPoolRepository
+import dto.realty.PoolInfoDTO
 import zio.{ULayer, ZIO}
 
 import java.sql.SQLException
@@ -17,6 +18,8 @@ trait RealtyObjectPoolService {
         poolId: String,
         userId: UserId): ZIO[DataSource with RealtyObjectPoolRepository, Throwable, RealtyObjectPool]
 
+    def getAllOfUser(userId: UserId): ZIO[DataSource with RealtyObjectPoolRepository, Throwable, List[PoolInfoDTO]]
+
     def delete(poolId: String, userId: UserId): ZIO[DataSource with RealtyObjectPoolRepository, Throwable, Unit]
 }
 
@@ -28,6 +31,11 @@ object RealtyObjectPoolService {
     def get(poolId: String, userId: UserId)
         : ZIO[DataSource with RealtyObjectPoolRepository with RealtyObjectPoolService, Throwable, RealtyObjectPool] =
         ZIO.serviceWithZIO[RealtyObjectPoolService](_.get(poolId, userId))
+
+    def getAllOfUser(userId: UserId): ZIO[
+      DataSource with RealtyObjectPoolRepository with RealtyObjectPoolService,
+      Throwable,
+      List[PoolInfoDTO]] = ZIO.serviceWithZIO[RealtyObjectPoolService](_.getAllOfUser(userId))
 
     def delete(
         poolId: String,

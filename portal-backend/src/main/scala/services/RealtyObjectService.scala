@@ -1,8 +1,9 @@
 package services
 import dao.entities.auth.{User, UserId}
 import dao.entities.realty.{RealtyObject, RealtyObjectId, RealtyObjectPoolId}
+import dao.repositories.integration.AnalogueObjectRepository
 import dao.repositories.realty.{RealtyObjectPoolRepository, RealtyObjectRepository}
-import dto.realty.{CreateRealtyObjectDTO, DeleteRealtyObjectDTO, RealtyObjectInfoDTO, UpdateRealtyObjectDTO}
+import dto.realty.{CalculateValueOfSomeObjectsDTO, CreateRealtyObjectDTO, DeleteRealtyObjectDTO, RealtyObjectInfoDTO, UpdateRealtyObjectDTO}
 import zhttp.service.{ChannelFactory, EventLoopGroup}
 import zio.{Scope, ULayer, ZIO}
 import zio.stream.ZStream
@@ -56,7 +57,7 @@ trait RealtyObjectService {
     /** Return information about realty object with check that this object was added by attempting user */
     def getRealtyObjectInfo(
         realtyObjectId: String,
-        userId: UserId): ZIO[DataSource with RealtyObjectRepository, Throwable, RealtyObjectInfoDTO]
+        userId: UserId): ZIO[DataSource with RealtyObjectRepository with AnalogueObjectRepository, Throwable, RealtyObjectInfoDTO]
 
     /** Updates RealtyObject if this object was added by attempting User
       * @param userId
@@ -72,6 +73,26 @@ trait RealtyObjectService {
       DataSource
           with RealtyObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
           with GeoSuggestionService,
+      Throwable,
+      Unit]
+
+    /** Calculates market value of all objects in pool */
+    def calculateAllInPool(poolId: String, userId: UserId, withCorrections: Boolean, numPages: Int): ZIO[
+      DataSource
+          with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
+          with SearchRealtyService,
+      Throwable,
+      Unit]
+
+    /** Calculates value of some RealtyObjects */
+    def calculateForSome(
+        dto: CalculateValueOfSomeObjectsDTO,
+        userId: UserId,
+        withCorrections: Boolean,
+        numPages: Int): ZIO[
+      DataSource
+          with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
+          with SearchRealtyService,
       Throwable,
       Unit]
 }
@@ -128,7 +149,7 @@ object RealtyObjectService {
 
     /** Return information about realty object with check that this object was added by attempting user */
     def getRealtyObjectInfo(realtyObjectId: String, userId: UserId)
-        : ZIO[DataSource with RealtyObjectRepository with RealtyObjectService, Throwable, RealtyObjectInfoDTO] =
+        : ZIO[DataSource with RealtyObjectRepository with AnalogueObjectRepository with RealtyObjectService, Throwable, RealtyObjectInfoDTO] =
         ZIO.serviceWithZIO[RealtyObjectService](_.getRealtyObjectInfo(realtyObjectId, userId))
 
     /** Updates RealtyObject if this object was added by attempting User
@@ -148,6 +169,28 @@ object RealtyObjectService {
           with GeoSuggestionService with RealtyObjectService,
       Throwable,
       Unit] = ZIO.serviceWithZIO[RealtyObjectService](_.fillCoordinatesOnAllRealtyObjects)
+
+    /** Calculates market value of all objects in pool */
+    def calculateAllInPool(poolId: String, userId: UserId, withCorrections: Boolean, numPages: Int): ZIO[
+      DataSource
+          with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
+          with SearchRealtyService with RealtyObjectService,
+      Throwable,
+      Unit] =
+        ZIO.serviceWithZIO[RealtyObjectService](_.calculateAllInPool(poolId, userId, withCorrections, numPages))
+
+    /** Calculates value of some RealtyObjects */
+    def calculateForSome(
+        dto: CalculateValueOfSomeObjectsDTO,
+        userId: UserId,
+        withCorrections: Boolean,
+        numPages: Int): ZIO[
+      DataSource
+          with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
+          with SearchRealtyService with RealtyObjectService,
+      Throwable,
+      Unit] =
+        ZIO.serviceWithZIO[RealtyObjectService](_.calculateForSome(dto, userId, withCorrections, numPages))
 
     val live: ULayer[RealtyObjectService] = RealtyObjectServiceLive.layer
 }

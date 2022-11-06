@@ -19,7 +19,8 @@ case class RealtyObjectInfoDTO(
     createdAt: java.time.LocalDateTime,
     updatedAt: java.time.LocalDateTime,
     poolId: RealtyObjectPoolId,
-    coordinates: CoordinatesDTO
+    coordinates: CoordinatesDTO,
+    analogs: Option[List[AnalogueObjectInfoDTO]] = None
 )
 
 case class CoordinatesDTO(lat: String, lon: String)
@@ -47,6 +48,9 @@ object RealtyObjectInfoDTO {
           realtyObject.poolId,
           CoordinatesDTO(realtyObject.latitude.getOrElse(""), realtyObject.longitude.getOrElse(""))
         )
+
+    def fromEntityWithAnalogs(realtyObject: RealtyObject, analogs: List[AnalogueObjectInfoDTO]): RealtyObjectInfoDTO =
+        fromEntity(realtyObject).copy(analogs = Some(analogs))
 }
 
 object CoordinatesDTO {

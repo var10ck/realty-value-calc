@@ -1,18 +1,20 @@
 package services
 import dao.entities.auth.{User, UserId}
+import dao.entities.integration.AnalogueObject
 import dao.entities.realty.{RealtyObject, RealtyObjectId, RealtyObjectPoolId}
+import dao.repositories.integration.AnalogueObjectRepository
 import dao.repositories.realty.{RealtyObjectPoolRepository, RealtyObjectRepository}
-import dto.realty.{CoordinatesDTO, CreateRealtyObjectDTO, DeleteRealtyObjectDTO, RealtyObjectInfoDTO, UpdateRealtyObjectDTO}
-import helpers.{ExcelHelper, FileHelper}
+import dto.realty.{AnalogueObjectInfoDTO, CalculateValueOfSomeObjectsDTO, CreateRealtyObjectDTO, RealtyObjectInfoDTO, UpdateRealtyObjectDTO}
+import helpers.{ExcelHelper, FileHelper, GeoHelper}
 import zhttp.service.{ChannelFactory, EventLoopGroup}
-import zio.{Scope, ULayer, ZIO, ZLayer}
 import zio.stream.{ZSink, ZStream}
-import zio.Console
+import zio.{Console, Scope, ULayer, ZIO, ZLayer}
 
-import java.io.{File, FileInputStream}
+import java.io.File
 import java.sql.SQLException
 import javax.sql.DataSource
 
+//noinspection SimplifyForeachInspection
 final case class RealtyObjectServiceLive() extends RealtyObjectService {
 
     /** Takes ZStream, containing xlsx-file, converts xlsx rows to RealtyObject entities and writes them in database.
@@ -23,9 +25,9 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
       *   user that uploads file
       */
     override def importFromXlsx(bodyStream: ZStream[Any, Throwable, Byte], userId: UserId): ZIO[
-      DataSource with RealtyObjectPoolRepository
-          with RealtyObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
-          with GeoSuggestionService with Any with Scope,
+      DataSource
+          with RealtyObjectPoolRepository with RealtyObjectRepository with EventLoopGroup with ChannelFactory
+          with configuration.ApplicationConfig with GeoSuggestionService with Any with Scope,
       Throwable,
       RealtyObjectPoolId] =
         for {
@@ -45,14 +47,16 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
       * @param userId
       *   user, importing these objects
       */
-    private def transmitXlsxObjectsToDatabase(file: File, userId: UserId)
-        : ZIO[DataSource with RealtyObjectPoolRepository with RealtyObjectRepository with Any with Scope, Throwable, RealtyObjectPoolId] =
+    private def transmitXlsxObjectsToDatabase(file: File, userId: UserId): ZIO[
+      DataSource with RealtyObjectPoolRepository with RealtyObjectRepository with Any with Scope,
+      Throwable,
+      RealtyObjectPoolId] =
         for {
             fileInputStream <- FileHelper.makeFileInputStream(file)
             realtyObjectsExcelDtoList <- ExcelHelper.transformXlsxToObject(fileInputStream) <*
                 ZIO.from(file.delete())
             _ <- Console.printLine(s"objects imported from ${file.getAbsolutePath}")
-            pool <- RealtyObjectPoolRepository.create(None, userId).mapError(e =>new Throwable(e.getMessage))
+            pool <- RealtyObjectPoolRepository.create(None, userId).mapError(e => new Throwable(e.getMessage))
             _ <- (ZIO foreach realtyObjectsExcelDtoList) { dto =>
                 RealtyObjectRepository
                     .create(
@@ -153,18 +157,21 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
     }
 
     /** Return information about realty object with check that this object was added by attempting user */
-    def getRealtyObjectInfo(
+    override def getRealtyObjectInfo(
         realtyObjectId: String,
-        userId: UserId): ZIO[DataSource with RealtyObjectRepository, Throwable, RealtyObjectInfoDTO] =
+        userId: UserId): ZIO[DataSource with RealtyObjectRepository with AnalogueObjectRepository, Throwable, RealtyObjectInfoDTO] =
         for {
             id <- RealtyObjectId.fromString(realtyObjectId)
             realtyObjectOpt <- RealtyObjectRepository.get(id)
             entity <- ZIO.fromOption(realtyObjectOpt).orElseFail(exceptions.RealtyObjectNotFound("id", realtyObjectId))
+            analogsOfObject <- AnalogueObjectRepository.getAllByRealtyObjectId(entity.id)
+            analogsDtoList = analogsOfObject.map(AnalogueObjectInfoDTO.fromEntity)
+
             obj <- ZIO.ifZIO(ZIO.succeed(entity.addedByUserId == userId))(
               ZIO.succeed(entity),
               ZIO.fail(exceptions.NotEnoughRightsException("User is not author of object"))
             )
-        } yield RealtyObjectInfoDTO.fromEntity(obj)
+        } yield RealtyObjectInfoDTO.fromEntityWithAnalogs(obj, analogsDtoList)
 
     /** Updates RealtyObject if this object was added by attempting User
       * @param userId
@@ -190,12 +197,18 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
             dto.gotBalcony,
             dto.condition,
             dto.distanceFromMetro,
-            dto.calculatedValue
+            dto.calculatedValue,
+            dto.poolId,
+            dto.latitude,
+            dto.longitude
           ),
           ZIO.fail(exceptions.NotEnoughRightsException("Realty object was added by another user"))
         )
     } yield ()
 
+    /** Get all objects with unfilled coordinates and fill them. Using GeoSuggestionService to get latitude and
+      * longitude by address in human-readable representation. Should be used as background task.
+      */
     override def fillCoordinatesOnAllRealtyObjects: ZIO[
       DataSource
           with RealtyObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
@@ -204,7 +217,7 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
       Unit] =
         for {
             objectsToFill <- RealtyObjectRepository.getAllWithoutCoordinates
-            res <- ZIO.foreach(objectsToFill) { obj =>
+            _ <- ZIO.foreach(objectsToFill) { obj =>
                 for {
                     coordsDto <- GeoSuggestionService.getCoordinatedByAddress(obj.location)
                     _ <- RealtyObjectRepository.updateInfo(
@@ -214,6 +227,130 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
                 } yield ()
             }
         } yield ()
+
+    /** Calculates market value of all objects in pool */
+    override def calculateAllInPool(poolId: String, userId: UserId, withCorrections: Boolean, numPages: Int): ZIO[
+      DataSource
+          with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory
+          with configuration.ApplicationConfig with SearchRealtyService,
+      Throwable,
+      Unit] =
+        for {
+            typedPoolId <- RealtyObjectPoolId.fromString(poolId)
+
+            realtyObjectsToCalculate <- RealtyObjectRepository
+                .getAllInPoolByUser(typedPoolId, userId)
+                .map(_.filter(o => o.latitude.isDefined && o.longitude.isDefined))
+            _ <- calculateValueOfObjects(realtyObjectsToCalculate, withCorrections, numPages).forkDaemon
+        } yield ()
+
+    /** Calculates value of some RealtyObjects */
+    override def calculateForSome(
+        dto: CalculateValueOfSomeObjectsDTO,
+        userId: UserId,
+        withCorrections: Boolean,
+        numPages: Int): ZIO[
+      DataSource
+          with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory
+          with configuration.ApplicationConfig with SearchRealtyService,
+      Throwable,
+      Unit] =
+        for {
+            typedObjectIds <- ZIO.foreach(dto.objectsIds)(RealtyObjectId.fromString)
+            realtyObjectsToCalculate <- ZIO
+                .foreach(typedObjectIds) { id =>
+                    for {
+                        objOpt <- RealtyObjectRepository.get(id)
+                        realtyObject <- ZIO
+                            .fromOption(objOpt)
+                            .orElseFail(exceptions.RealtyObjectNotFound("id", id.id.toString))
+                    } yield realtyObject
+                }
+                .map(_.filter(o => o.latitude.isDefined && o.longitude.isDefined))
+
+            _ <- calculateValueOfObjects(realtyObjectsToCalculate, withCorrections, numPages).forkDaemon
+        } yield ()
+
+    /** Calculates value of all RealtyObject in list */
+    private def calculateValueOfObjects(
+        realtyObjects: List[RealtyObject],
+        withCorrections: Boolean,
+        numPages: Int): ZIO[
+      DataSource
+          with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory
+          with configuration.ApplicationConfig with SearchRealtyService,
+      Throwable,
+      Unit] =
+        ZIO.foreach(realtyObjects)(calculateValueOfSingleObject(_, withCorrections, numPages)).unit
+
+    /** Calculates value of RealtyObject using Cian API */
+    private def calculateValueOfSingleObject(
+        objToCalculate: RealtyObject,
+        withCorrections: Boolean,
+        numPages: Int): ZIO[
+      DataSource
+          with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory
+          with configuration.ApplicationConfig with SearchRealtyService,
+      Throwable,
+      Unit] =
+        for {
+            polygon <- ZIO.from(
+              GeoHelper
+                  .makeSquareAroundLocation(objToCalculate.latitude.get, objToCalculate.longitude.get, 1000))
+            rooms =
+//                List(objToCalculate.roomsNumber)
+                if (objToCalculate.roomsNumber >= 4)
+                    List(objToCalculate.roomsNumber - 1, objToCalculate.roomsNumber, objToCalculate.roomsNumber + 1)
+                else List(objToCalculate.roomsNumber)
+            analoguesOfObject <- SearchRealtyService.searchRealtyInSquare(
+              polygon,
+              rooms = rooms,
+              totalAreaGte = 15,
+              totalAreaLte = objToCalculate.totalArea.toInt + 50,
+              floorGte = 1,
+              floorLte = 80,
+              pages = numPages)
+            //
+            _ <- ZIO
+                .foreach(analoguesOfObject) { analogue =>
+                    for {
+                        analogueObject <- AnalogueObject.fromApartment(analogue, objToCalculate.id)
+                        _ <- AnalogueObjectRepository.insert(analogueObject)
+                    } yield ()
+                }
+                .forkDaemon
+            _ <- zio.Console.printLine(analoguesOfObject.length) *> ZIO.attempt(analoguesOfObject)
+            analoguesOfObjectFiltered = analoguesOfObject.view
+                .filter(_.material.contains(wallMaterialTranslate(objToCalculate.wallMaterial)))
+//                .filter(_.coordinates.floors.contains(objToCalculate.floorCount)) // possibly problem filter by exact floor number
+                .filter(_.apartmentsType.contains(segmentTranslate(objToCalculate.segment)))
+                .filter(a => a.price.isDefined && a.area.isDefined)
+                .toList
+            _ <- zio.Console.printLine(analoguesOfObjectFiltered)
+            _ <- zio.Console.printLine(analoguesOfObjectFiltered.length) *> ZIO.attempt(analoguesOfObjectFiltered)
+            averageCalculatedValueOfSquareMeterOfAnalogs = analoguesOfObjectFiltered.map { o =>
+                val priceOfSqMeter = o.price.get / o.area.get
+                //                          val correctedPrice =
+                priceOfSqMeter
+            }.sum / analoguesOfObjectFiltered.length
+            objToCalculatePrice = averageCalculatedValueOfSquareMeterOfAnalogs * objToCalculate.totalArea
+            _ <- RealtyObjectRepository.updateInfo(
+              objToCalculate.id,
+              calculatedValue = Some(objToCalculatePrice.toLong))
+        } yield ()
+
+    private def wallMaterialTranslate(s: String): String = Map(
+      "кирпич" -> "brick",
+      "монолит" -> "monolith",
+      "панель" -> "panel",
+      "смешанный" -> "monolithBrick"
+    )(s.toLowerCase)
+
+    private def segmentTranslate(s: String): String = Map(
+      "новостройка" -> "newBuildingFlatSale",
+      "современное жилье" -> "newBuildingFlatSale",
+      "старый жилой фонд" -> "flatSale"
+    )(s.toLowerCase)
 
 }
 
