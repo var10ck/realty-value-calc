@@ -13,6 +13,8 @@ trait RealtyObjectPoolRepository {
 
     def get(poolId: RealtyObjectPoolId): QIO[Option[RealtyObjectPool]]
 
+    def filterByUser(userId: UserId): QIO[List[RealtyObjectPool]]
+
     def delete(id: RealtyObjectPoolId): QIO[Unit]
 
 }
@@ -26,6 +28,10 @@ object RealtyObjectPoolRepository {
     def get(poolId: RealtyObjectPoolId)
         : ZIO[DataSource with RealtyObjectPoolRepository, SQLException, Option[RealtyObjectPool]] =
         ZIO.serviceWithZIO[RealtyObjectPoolRepository](_.get(poolId))
+
+    def filterByUser(userId: UserId)
+        : ZIO[DataSource with RealtyObjectPoolRepository, SQLException, List[RealtyObjectPool]] =
+        ZIO.serviceWithZIO[RealtyObjectPoolRepository](_.filterByUser(userId))
 
     def delete(id: RealtyObjectPoolId): ZIO[DataSource with RealtyObjectPoolRepository, SQLException, Unit] =
         ZIO.serviceWithZIO[RealtyObjectPoolRepository](_.delete(id))

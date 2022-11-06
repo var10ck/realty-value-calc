@@ -2,6 +2,7 @@ package services
 import dao.entities.auth.UserId
 import dao.entities.realty.{RealtyObjectPool, RealtyObjectPoolId}
 import dao.repositories.realty.{RealtyObjectPoolRepository, RealtyObjectPoolRepositoryLive}
+import dto.realty.PoolInfoDTO
 import zio.{ULayer, ZIO, ZLayer}
 
 import java.sql.SQLException
@@ -28,6 +29,14 @@ final case class RealtyObjectPoolServiceLive() extends RealtyObjectPoolService {
             )
         } yield result
     }
+
+    override def getAllOfUser(userId: UserId): ZIO[
+      DataSource with RealtyObjectPoolRepository,
+      Throwable,
+      List[PoolInfoDTO]] =
+        for{
+            pools <- RealtyObjectPoolRepository.filterByUser(userId)
+        } yield pools.map(PoolInfoDTO.fromEntity)
 
     override def delete(poolId: String, userId: UserId): ZIO[DataSource with RealtyObjectPoolRepository, Throwable, Unit] =
         for {

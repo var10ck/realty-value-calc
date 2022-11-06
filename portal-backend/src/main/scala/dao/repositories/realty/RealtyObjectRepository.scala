@@ -37,6 +37,8 @@ trait RealtyObjectRepository {
     /** Retrieves all RealtyObjects of User from the database. */
     def getAllByUser(userId: UserId): QIO[List[RealtyObject]]
 
+    def getAllInPoolByUser(poolId: RealtyObjectPoolId, userId: UserId): QIO[List[RealtyObject]]
+
     /** Retrieves all RealtyObjects from the database. */
     def getAll: QIO[List[RealtyObject]]
 
@@ -121,6 +123,11 @@ object RealtyObjectRepository {
     /** Retrieves all RealtyObjects from the database. */
     def getAllByUser(userId: UserId): ZIO[DataSource with RealtyObjectRepository, SQLException, List[RealtyObject]] =
         ZIO.serviceWithZIO[RealtyObjectRepository](_.getAllByUser(userId))
+
+    def getAllInPoolByUser(
+        poolId: RealtyObjectPoolId,
+        userId: UserId): ZIO[DataSource with RealtyObjectRepository, SQLException, List[RealtyObject]] =
+        ZIO.serviceWithZIO[RealtyObjectRepository](_.getAllInPoolByUser(poolId, userId))
 
     /** Updates info of an existing User. */
     def updateInfo(

@@ -23,7 +23,7 @@ object GeoHelper {
       *   \- radius in meters
       */
     def makeSquareAroundLocation(lat: String, lon: String, r: Int): GeoPolygon = {
-        val dist: Double = r / 1.36 / 1000000
+        val dist: Double = r / 0.1136 / 1000000
         val bottomLeft = Point(lat.toDouble - dist, lon.toDouble - dist)
         val bottomRight = Point(lat.toDouble + dist, lon.toDouble - dist)
         val topLeft = Point(lat.toDouble - dist, lon.toDouble + dist)

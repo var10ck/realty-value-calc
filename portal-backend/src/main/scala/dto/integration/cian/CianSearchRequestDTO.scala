@@ -78,7 +78,7 @@ import zio.json.{jsonField, jsonHint, JsonCodec}
 
 sealed trait CianJsonQuery
 
-object CianJsonQuery{
+object CianJsonQuery {
     implicit val codec: JsonCodec[CianJsonQuery] = zio.json.DeriveJsonCodec.gen[CianJsonQuery]
 }
 
@@ -86,7 +86,8 @@ object CianJsonQuery{
     @jsonField("_type") adType: String = "flatsale",
     @jsonField("engine_version") engineVersion: TermProperty = TermProperty(value = 2),
     geo: Geo,
-    rooms: TermsProperty,
+    page: TermProperty,
+    @jsonField("room") rooms: TermsProperty,
     @jsonField("total_area") totalArea: RangeProperty,
     balconies: RangeProperty,
     repair: Option[TermsProperty],
@@ -98,6 +99,7 @@ object CianSearchRequestDTO {
 
     def make(
         coordinates: List[(String, String)],
+        page: Int,
         rooms: List[Int],
         totalAreaGte: Int,
         totalAreaLte: Int,
@@ -118,13 +120,16 @@ object CianSearchRequestDTO {
 
         val floorProp = RangeProperty.make(Some(floorGte), floorLte)
 
+        val pageProp = TermProperty(value = page)
+
         CianSearchRequestDTO(
           geo = geo,
           rooms = roomsProp,
           totalArea = totalAreaProp,
           balconies = balconiesProp,
           repair = repairProp,
-          floor = floorProp
+          floor = floorProp,
+          page = pageProp
         )
     }
 }
@@ -161,7 +166,7 @@ case class TermProperty(
     value: Int
 )
 
-object TermProperty{
+object TermProperty {
     implicit val codec: JsonCodec[TermProperty] = zio.json.DeriveJsonCodec.gen[TermProperty]
 }
 

@@ -17,7 +17,12 @@ final case class RealtyObjectPoolRepositoryLive() extends RealtyObjectPoolReposi
         } yield pool
 
     override def get(poolId: RealtyObjectPoolId): QIO[Option[RealtyObjectPool]] =
-        run(query[RealtyObjectPool].filter(pool => pool.id == lift(poolId))).map(_.headOption)
+        run(query[RealtyObjectPool].filter(_.id == lift(poolId))).map(_.headOption)
+
+    override def filterByUser(userId: UserId): QIO[List[RealtyObjectPool]] =
+        run(
+          dynamicQuery[RealtyObjectPool].filter(_.userId == lift(userId)).sortBy(_.name)
+        ).map(_.toList)
 
     override def delete(id: RealtyObjectPoolId): QIO[Unit] =
         run(query[RealtyObjectPool].filter(_.id == lift(id)).delete).unit

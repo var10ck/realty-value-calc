@@ -64,6 +64,10 @@ final case class RealtyObjectRepositoryLive() extends RealtyObjectRepository {
     override def getAllByUser(userId: UserId): QIO[List[RealtyObject]] =
         run(query[RealtyObject].filter(_.addedByUserId == lift(userId)).sortBy(_.location)).map(_.toList)
 
+    override def getAllInPoolByUser(poolId: RealtyObjectPoolId, userId: UserId): QIO[List[RealtyObject]] =
+        run(query[RealtyObject].filter(obj => obj.addedByUserId == lift(userId) && obj.poolId == lift(poolId)))
+            .map(_.toList)
+
     /** Retrieves all RealtyObjects from the database. */
     override def getAll: QIO[List[RealtyObject]] = run(query[RealtyObject]).map(_.toList)
 
