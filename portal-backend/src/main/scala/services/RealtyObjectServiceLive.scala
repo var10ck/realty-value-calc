@@ -4,7 +4,13 @@ import dao.entities.integration.AnalogueObject
 import dao.entities.realty.{RealtyObject, RealtyObjectId, RealtyObjectPoolId}
 import dao.repositories.integration.AnalogueObjectRepository
 import dao.repositories.realty.{RealtyObjectPoolRepository, RealtyObjectRepository}
-import dto.realty.{AnalogueObjectInfoDTO, CalculateValueOfSomeObjectsDTO, CreateRealtyObjectDTO, RealtyObjectInfoDTO, UpdateRealtyObjectDTO}
+import dto.realty.{
+    AnalogueObjectInfoDTO,
+    CalculateValueOfSomeObjectsDTO,
+    CreateRealtyObjectDTO,
+    RealtyObjectInfoDTO,
+    UpdateRealtyObjectDTO
+}
 import helpers.{ExcelHelper, FileHelper, GeoHelper}
 import zhttp.service.{ChannelFactory, EventLoopGroup}
 import zio.stream.{ZSink, ZStream}
@@ -157,9 +163,8 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
     }
 
     /** Return information about realty object with check that this object was added by attempting user */
-    override def getRealtyObjectInfo(
-        realtyObjectId: String,
-        userId: UserId): ZIO[DataSource with RealtyObjectRepository with AnalogueObjectRepository, Throwable, RealtyObjectInfoDTO] =
+    override def getRealtyObjectInfo(realtyObjectId: String, userId: UserId)
+        : ZIO[DataSource with RealtyObjectRepository with AnalogueObjectRepository, Throwable, RealtyObjectInfoDTO] =
         for {
             id <- RealtyObjectId.fromString(realtyObjectId)
             realtyObjectOpt <- RealtyObjectRepository.get(id)
@@ -229,7 +234,12 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
         } yield ()
 
     /** Calculates market value of all objects in pool */
-    override def calculateAllInPool(poolId: String, userId: UserId, withCorrections: Boolean, numPages: Int): ZIO[
+    override def calculateAllInPool(
+        poolId: String,
+        userId: UserId,
+        withCorrections: Boolean,
+        numPages: Int,
+        limitOfAnalogs: Int = 20): ZIO[
       DataSource
           with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory
           with configuration.ApplicationConfig with SearchRealtyService,
@@ -241,7 +251,7 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
             realtyObjectsToCalculate <- RealtyObjectRepository
                 .getAllInPoolByUser(typedPoolId, userId)
                 .map(_.filter(o => o.latitude.isDefined && o.longitude.isDefined))
-            _ <- calculateValueOfObjects(realtyObjectsToCalculate, withCorrections, numPages).forkDaemon
+            _ <- calculateValueOfObjects(realtyObjectsToCalculate, withCorrections, numPages, limitOfAnalogs).forkDaemon
         } yield ()
 
     /** Calculates value of some RealtyObjects */
@@ -249,7 +259,8 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
         dto: CalculateValueOfSomeObjectsDTO,
         userId: UserId,
         withCorrections: Boolean,
-        numPages: Int): ZIO[
+        numPages: Int,
+        limitOfAnalogs: Int = 20): ZIO[
       DataSource
           with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory
           with configuration.ApplicationConfig with SearchRealtyService,
@@ -268,26 +279,28 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
                 }
                 .map(_.filter(o => o.latitude.isDefined && o.longitude.isDefined))
 
-            _ <- calculateValueOfObjects(realtyObjectsToCalculate, withCorrections, numPages).forkDaemon
+            _ <- calculateValueOfObjects(realtyObjectsToCalculate, withCorrections, numPages, limitOfAnalogs).forkDaemon
         } yield ()
 
     /** Calculates value of all RealtyObject in list */
     private def calculateValueOfObjects(
         realtyObjects: List[RealtyObject],
         withCorrections: Boolean,
-        numPages: Int): ZIO[
+        numPages: Int,
+        limitOfAnalogs: Int): ZIO[
       DataSource
           with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory
           with configuration.ApplicationConfig with SearchRealtyService,
       Throwable,
       Unit] =
-        ZIO.foreach(realtyObjects)(calculateValueOfSingleObject(_, withCorrections, numPages)).unit
+        ZIO.foreach(realtyObjects)(calculateValueOfSingleObject(_, withCorrections, numPages, limitOfAnalogs)).unit
 
     /** Calculates value of RealtyObject using Cian API */
     private def calculateValueOfSingleObject(
         objToCalculate: RealtyObject,
         withCorrections: Boolean,
-        numPages: Int): ZIO[
+        numPages: Int,
+        limitOfAnalogs: Int): ZIO[
       DataSource
           with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory
           with configuration.ApplicationConfig with SearchRealtyService,
@@ -311,21 +324,22 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
               floorLte = 80,
               pages = numPages)
             //
-            _ <- ZIO
-                .foreach(analoguesOfObject) { analogue =>
-                    for {
-                        analogueObject <- AnalogueObject.fromApartment(analogue, objToCalculate.id)
-                        _ <- AnalogueObjectRepository.insert(analogueObject)
-                    } yield ()
-                }
-                .forkDaemon
             _ <- zio.Console.printLine(analoguesOfObject.length) *> ZIO.attempt(analoguesOfObject)
             analoguesOfObjectFiltered = analoguesOfObject.view
                 .filter(_.material.contains(wallMaterialTranslate(objToCalculate.wallMaterial)))
 //                .filter(_.coordinates.floors.contains(objToCalculate.floorCount)) // possibly problem filter by exact floor number
                 .filter(_.apartmentsType.contains(segmentTranslate(objToCalculate.segment)))
                 .filter(a => a.price.isDefined && a.area.isDefined)
+                .take(limitOfAnalogs)
                 .toList
+            _ <- ZIO
+                .foreach(analoguesOfObjectFiltered) { analogue =>
+                    for {
+                        analogueObject <- AnalogueObject.fromApartment(analogue, objToCalculate.id)
+                        _ <- AnalogueObjectRepository.insert(analogueObject)
+                    } yield ()
+                }
+                .forkDaemon
             _ <- zio.Console.printLine(analoguesOfObjectFiltered)
             _ <- zio.Console.printLine(analoguesOfObjectFiltered.length) *> ZIO.attempt(analoguesOfObjectFiltered)
             averageCalculatedValueOfSquareMeterOfAnalogs = analoguesOfObjectFiltered.map { o =>
