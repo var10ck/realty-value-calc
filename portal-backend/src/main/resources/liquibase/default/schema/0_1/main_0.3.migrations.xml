@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="create AnalogueObject table" author="Victor Nguen">
+        <createTable tableName="AnalogueObject">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="url" type="varchar(300)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="latitude" type="double">
+                <constraints nullable="true"/>
+            </column>
+            <column name="longitude" type="double">
+                <constraints nullable="true"/>
+            </column>
+            <column name="price" type="int">
+                <constraints nullable="true"/>
+            </column>
+            <column name="roomsNumber" type="int">
+                <constraints nullable="true"/>
+            </column>
+            <column name="apartmentsType" type="varchar(40)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="material" type="varchar(40)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="floor" type="int">
+                <constraints nullable="true"/>
+            </column>
+            <column name="area" type="double">
+                <constraints nullable="true"/>
+            </column>
+            <column name="kitchenArea" type="double">
+                <constraints nullable="true"/>
+            </column>
+            <column name="balcony" type="boolean">
+                <constraints nullable="true"/>
+            </column>
+            <column name="distanceToMetroInMinutes" type="int">
+                <constraints nullable="true"/>
+            </column>
+            <column name="condition" type="varchar(50)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="floors" type="int">
+                <constraints nullable="true"/>
+            </column>
+            <column name="realtyObjectId" type="uuid">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint
+                baseColumnNames="realtyObjectId"
+                baseTableName="AnalogueObject"
+                constraintName="fk_AnalogueObject_realtyObjectId_RealtyObject_id"
+                referencedColumnNames="id"
+                referencedTableName="RealtyObject"
+                onDelete="CASCADE"
+        />
+    </changeSet>
+
+    <changeSet id="create CorrectionNumeric table" author="Victor Nguen">
+        <createTable tableName="CorrectionNumeric">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="fieldName" type="varchar(40)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="referenceValue" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="referenceValueType" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="analogueValue" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="analogueValueType" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="correction" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="correctionType" type="varchar(10)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addUniqueConstraint
+                tableName="CorrectionNumeric"
+                constraintName="unique_CorrectionNumeric_allValueFields"
+                columnNames="fieldName, referenceValue, referenceValueType, analogueValue, analogueValueType, correction, correctionType"
+        />
+
+    </changeSet>
+
+
+</databaseChangeLog>

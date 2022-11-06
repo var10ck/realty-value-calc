@@ -1,6 +1,6 @@
 package api
 import dao.repositories.realty.RealtyObjectPoolRepository
-import dto.realty.CreatePoolDTO
+import dto.realty.{CreatePoolDTO, PoolInfoDTO}
 import exceptions._
 import helpers.AuthHelper._
 import helpers.HttpExceptionHandlers.{basicAuthExceptionHandler, bodyParsingExceptionHandler, lastResortHandler}
@@ -27,6 +27,14 @@ object RealtyObjectPoolApi {
                 newPool => Response.json(newPool.toJson)
             )
 
+        case req @ Method.GET -> !! / "realty" / "pools" =>
+            withUserContextZIO(req){user =>
+              RealtyObjectPoolService.getAllOfUser(user.id)
+            }.fold(
+                realtyObjectsPoolExceptionHandler,
+                pools => Response.json(pools.toJson)
+            )
+
         /** Get RealtyObjectPool */
         case req @ Method.GET -> !! / "realty" / "pool" / poolId =>
             withUserContextZIO(req) { user =>
@@ -35,6 +43,7 @@ object RealtyObjectPoolApi {
                 realtyObjectsPoolExceptionHandler,
                 pool => Response.json(pool.toJson)
             )
+
     } @@ Middleware.debug
 
     private val realtyObjectsPoolExceptionHandler = basicAuthExceptionHandler orElse
