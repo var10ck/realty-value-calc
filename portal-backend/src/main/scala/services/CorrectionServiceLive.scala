@@ -1,8 +1,8 @@
 package services
 import dao.entities.corrections.{CorrectionId, CorrectionNumeric}
 import dao.repositories.corrections.CorrectionNumericRepository
-import dto.corrections.{CreateNumericCorrectionDTO, UpdateCorrectionDTO}
-import zio.ZIO
+import dto.corrections.{CreateNumericCorrectionDTO, UpdateNumericCorrectionDTO}
+import zio.{ULayer, ZIO, ZLayer}
 
 import java.sql.SQLException
 import javax.sql.DataSource
@@ -40,7 +40,7 @@ case class CorrectionServiceLive() extends CorrectionService {
         CorrectionNumericRepository.getAll
 
     override def updateNumeric(
-        dto: UpdateCorrectionDTO): ZIO[DataSource with CorrectionNumericRepository, SQLException, Unit] =
+        dto: UpdateNumericCorrectionDTO): ZIO[DataSource with CorrectionNumericRepository, SQLException, Unit] =
         CorrectionNumericRepository.update(
           dto.id,
           dto.fieldName,
@@ -51,4 +51,8 @@ case class CorrectionServiceLive() extends CorrectionService {
           dto.correction,
           dto.correctionType
         )
+}
+
+object CorrectionServiceLive{
+    val layer: ULayer[CorrectionService] = ZLayer.succeed(CorrectionServiceLive())
 }

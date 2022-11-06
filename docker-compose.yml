@@ -67,7 +67,7 @@ services:
   realty-value-calc-backend:
     depends_on:
       - postgres
-    image: "vnguen/realty-value-calc-backend:0.1.5"
+    image: "vnguen/realty-value-calc-backend:0.1.6"
     ports:
       - "${API_PORT}:${API_PORT}"
     environment:

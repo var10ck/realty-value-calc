@@ -2,7 +2,7 @@ package dto.corrections
 import dao.entities.corrections.CorrectionId
 import zio.json.JsonCodec
 
-case class UpdateCorrectionDTO(
+case class UpdateNumericCorrectionDTO(
     id: CorrectionId,
     fieldName: Option[String] = None,
     referenceValue: Option[String] = None,
@@ -13,6 +13,6 @@ case class UpdateCorrectionDTO(
     correctionType: Option[String] = None
 )
 
-object UpdateCorrectionDTO {
-    implicit val codec: JsonCodec[UpdateCorrectionDTO] = zio.json.DeriveJsonCodec.gen[UpdateCorrectionDTO]
+object UpdateNumericCorrectionDTO {
+    implicit val codec: JsonCodec[UpdateNumericCorrectionDTO] = zio.json.DeriveJsonCodec.gen[UpdateNumericCorrectionDTO]
 }

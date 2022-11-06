@@ -1,9 +1,9 @@
 package dto.corrections
 import zio.json.{JsonCodec, jsonHint}
 
-sealed abstract class CreateCorrectionDTO
+//sealed abstract class CreateCorrectionDTO
 
-@jsonHint("") case class CreateNumericCorrectionDTO(
+case class CreateNumericCorrectionDTO(
     fieldName: String,
     referenceValue: String,
     referenceValueType: Int,
@@ -11,11 +11,11 @@ sealed abstract class CreateCorrectionDTO
     analogueValueType: Int,
     correction: Int,
     correctionType: String
-) extends CreateCorrectionDTO
+)
 
-object CreateCorrectionDTO{
-    implicit val codec: JsonCodec[CreateCorrectionDTO] = zio.json.DeriveJsonCodec.gen[CreateCorrectionDTO]
-}
+//object CreateCorrectionDTO{
+//    implicit val codec: JsonCodec[CreateCorrectionDTO] = zio.json.DeriveJsonCodec.gen[CreateCorrectionDTO]
+//}
 
 object CreateNumericCorrectionDTO {
     implicit val codec: JsonCodec[CreateNumericCorrectionDTO] = zio.json.DeriveJsonCodec.gen[CreateNumericCorrectionDTO]
