@@ -379,7 +379,7 @@ export default {
       floorNumber: null,
       totalArea: null,
       kitchenArea: null,
-      gotBalcony: null,
+      gotBalcony: false,
       condition: null,
       distanceFromMetro: null,
       poolId: null,
@@ -526,6 +526,7 @@ export default {
         console.log('here')
         this.editedItem = Object.assign({}, item)
         // удаляем служебную информацию
+        delete this.editedItem.analogs;
         delete this.editedItem.id;
         delete this.editedItem.createdAt;
         delete this.editedItem.updatedAt;
