@@ -37,6 +37,7 @@ trait RealtyObjectRepository {
     /** Retrieves all RealtyObjects of User from the database. */
     def getAllByUser(userId: UserId): QIO[List[RealtyObject]]
 
+    /** Retrieves RealtyObjects of User in pool from the database. */
     def getAllInPoolByUser(poolId: RealtyObjectPoolId, userId: UserId): QIO[List[RealtyObject]]
 
     /** Retrieves all RealtyObjects from the database. */
@@ -120,10 +121,11 @@ object RealtyObjectRepository {
     def get(id: RealtyObjectId): ZIO[DataSource with RealtyObjectRepository, SQLException, Option[RealtyObject]] =
         ZIO.serviceWithZIO[RealtyObjectRepository](_.get(id))
 
-    /** Retrieves all RealtyObjects from the database. */
+    /** Retrieves all RealtyObjects of User from the database. */
     def getAllByUser(userId: UserId): ZIO[DataSource with RealtyObjectRepository, SQLException, List[RealtyObject]] =
         ZIO.serviceWithZIO[RealtyObjectRepository](_.getAllByUser(userId))
 
+    /** Retrieves RealtyObjects of User in pool from the database. */
     def getAllInPoolByUser(
         poolId: RealtyObjectPoolId,
         userId: UserId): ZIO[DataSource with RealtyObjectRepository, SQLException, List[RealtyObject]] =
@@ -176,9 +178,11 @@ object RealtyObjectRepository {
     def getAll: ZIO[DataSource with RealtyObjectRepository, SQLException, List[RealtyObject]] =
         ZIO.serviceWithZIO[RealtyObjectRepository](_.getAll)
 
+    /** Retrieves all RealtyObjects where latitude and longitude is null from the database. */
     def getAllWithoutCoordinates: ZIO[DataSource with RealtyObjectRepository, SQLException, List[RealtyObject]] =
         ZIO.serviceWithZIO[RealtyObjectRepository](_.getAllWithoutCoordinates)
 
+    /** Retrieves all RealtyObjects of User where latitude and longitude is null from the database. */
     def getAllWithoutCoordinatesForUser(
         userId: UserId): ZIO[DataSource with RealtyObjectRepository, SQLException, List[RealtyObject]] =
         ZIO.serviceWithZIO[RealtyObjectRepository](_.getAllWithoutCoordinatesForUser(userId))

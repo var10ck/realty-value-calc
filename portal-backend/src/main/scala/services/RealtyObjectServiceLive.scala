@@ -2,19 +2,15 @@ package services
 import dao.entities.auth.{User, UserId}
 import dao.entities.integration.AnalogueObject
 import dao.entities.realty.{RealtyObject, RealtyObjectId, RealtyObjectPoolId}
+import dao.repositories.corrections.CorrectionNumericRepository
 import dao.repositories.integration.AnalogueObjectRepository
 import dao.repositories.realty.{RealtyObjectPoolRepository, RealtyObjectRepository}
-import dto.realty.{
-    AnalogueObjectInfoDTO,
-    CalculateValueOfSomeObjectsDTO,
-    CreateRealtyObjectDTO,
-    RealtyObjectInfoDTO,
-    UpdateRealtyObjectDTO
-}
-import helpers.{ExcelHelper, FileHelper, GeoHelper}
+import dto.realty.{AnalogueObjectInfoDTO, CalculateValueOfSomeObjectsDTO, CreateRealtyObjectDTO, ExportSomeObjectsDTO, RealtyObjectInfoDTO, UpdateRealtyObjectDTO}
+import helpers.aggregatorParser.CianValuesTranslator.{segmentTranslate, wallMaterialTranslate}
+import helpers.{CorrectionHelper, ExcelHelper, FileHelper, GeoHelper}
 import zhttp.service.{ChannelFactory, EventLoopGroup}
 import zio.stream.{ZSink, ZStream}
-import zio.{Console, Scope, ULayer, ZIO, ZLayer}
+import zio.{Console, Scope, ULayer, ZIO, ZLayer, durationInt}
 
 import java.io.File
 import java.sql.SQLException
@@ -88,13 +84,7 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
         : ZIO[Any with Scope with DataSource with RealtyObjectRepository with RealtyObjectService, Throwable, File] =
         for {
             realtyObjects <- RealtyObjectService.getRealtyObjectsForUser(user.id)
-            tempFile <- FileHelper.makeTempFileZIO("upload-", ".xlsx")
-            _ <- Console.printLine(s"Created temporary file \"${tempFile.getAbsolutePath}\"")
-            inputStream <- FileHelper.makeFileOutputStream(tempFile)
-            _ <- ExcelHelper.transformObjectsToXlsx(inputStream, realtyObjects)
-            _ <- Console.printLine(
-              s"Wrote ${realtyObjects.length} objects $realtyObjects to file ${tempFile.getAbsolutePath}"
-            ) // <* ZIO.from(tempFile.delete()).forkDaemon
+            tempFile <- writeObjectsInXlsxFile(realtyObjects)
         } yield tempFile
 
     /** Getting RealtyObjects added by User and belong to RealtyObjectsPool with poolId, then writes it into xlsx-file
@@ -103,14 +93,25 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
         : ZIO[Any with Scope with DataSource with RealtyObjectRepository with RealtyObjectService, Throwable, File] =
         for {
             poolIdTyped <- RealtyObjectPoolId.fromString(poolId)
-            allRealtyObjectsOfUser <- RealtyObjectService.getRealtyObjectsForUser(user.id)
-            poolObjects = allRealtyObjectsOfUser.filter(_.poolId == poolIdTyped)
+            poolObjects <- RealtyObjectRepository.getAllInPoolByUser(poolIdTyped, user.id)
+            tempFile <- writeObjectsInXlsxFile(poolObjects)
+        } yield tempFile
+
+    private def writeObjectsInXlsxFile(objects: List[RealtyObject]): ZIO[Any with Scope, Throwable, File] =
+        for{
             tempFile <- FileHelper.makeTempFileZIO("upload", ".xlsx")
-            _ <- Console.printLine(s"Created temporary file \"${tempFile.getAbsolutePath}\"")
+            _ <- ZIO.debug(s"Created temporary file \"${tempFile.getAbsolutePath}\"")
             inputStream <- FileHelper.makeFileOutputStream(tempFile)
-            _ <- ExcelHelper.transformObjectsToXlsx(inputStream, poolObjects)
-            _ <- Console.printLine(
-              s"Wrote ${poolObjects.length} objects $poolObjects to file ${tempFile.getAbsolutePath}")
+            _ <- ExcelHelper.transformObjectsToXlsx(inputStream, objects) <* ZIO.from(tempFile.delete()).delay(15.minutes).forkDaemon
+            _ <- ZIO.debug(s"Wrote ${objects.length} objects $objects to file ${tempFile.getAbsolutePath}")
+        } yield tempFile
+
+    override def exportSelectedObjectsToXlsx(dto: ExportSomeObjectsDTO, userId: UserId)
+    : ZIO[Any with Scope with DataSource with RealtyObjectRepository, Throwable, File] =
+        for {
+            objects <- ZIO.foreach(dto.objectIds){objectId => RealtyObjectRepository.get(objectId)}
+                .map(_.flatten.filter(_.addedByUserId == userId))
+            tempFile <- writeObjectsInXlsxFile(objects)
         } yield tempFile
 
     /** Creates RealtyObject and writes into database */
@@ -242,7 +243,7 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
         limitOfAnalogs: Int = 20): ZIO[
       DataSource
           with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory
-          with configuration.ApplicationConfig with SearchRealtyService,
+          with configuration.ApplicationConfig with SearchRealtyService with CorrectionNumericRepository,
       Throwable,
       Unit] =
         for {
@@ -258,12 +259,11 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
     override def calculateForSome(
         dto: CalculateValueOfSomeObjectsDTO,
         userId: UserId,
-        withCorrections: Boolean,
         numPages: Int,
         limitOfAnalogs: Int = 20): ZIO[
       DataSource
           with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory
-          with configuration.ApplicationConfig with SearchRealtyService,
+          with configuration.ApplicationConfig with SearchRealtyService with CorrectionNumericRepository,
       Throwable,
       Unit] =
         for {
@@ -279,7 +279,11 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
                 }
                 .map(_.filter(o => o.latitude.isDefined && o.longitude.isDefined))
 
-            _ <- calculateValueOfObjects(realtyObjectsToCalculate, withCorrections, numPages, limitOfAnalogs).forkDaemon
+            _ <- calculateValueOfObjects(
+              realtyObjectsToCalculate,
+              dto.withCorrections,
+              numPages,
+              limitOfAnalogs).forkDaemon
         } yield ()
 
     /** Calculates value of all RealtyObject in list */
@@ -290,7 +294,7 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
         limitOfAnalogs: Int): ZIO[
       DataSource
           with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory
-          with configuration.ApplicationConfig with SearchRealtyService,
+          with configuration.ApplicationConfig with SearchRealtyService with CorrectionNumericRepository,
       Throwable,
       Unit] =
         ZIO.foreach(realtyObjects)(calculateValueOfSingleObject(_, withCorrections, numPages, limitOfAnalogs)).unit
@@ -303,7 +307,7 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
         limitOfAnalogs: Int): ZIO[
       DataSource
           with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory
-          with configuration.ApplicationConfig with SearchRealtyService,
+          with configuration.ApplicationConfig with SearchRealtyService with CorrectionNumericRepository,
       Throwable,
       Unit] =
         for {
@@ -315,16 +319,17 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
                 if (objToCalculate.roomsNumber >= 4)
                     List(objToCalculate.roomsNumber - 1, objToCalculate.roomsNumber, objToCalculate.roomsNumber + 1)
                 else List(objToCalculate.roomsNumber)
+            allCorrections <- CorrectionNumericRepository.getAll
+            correctionFunctions <- ZIO.attempt(allCorrections.map(CorrectionHelper.correctionNumericToFunction))
             analoguesOfObject <- SearchRealtyService.searchRealtyInSquare(
               polygon,
               rooms = rooms,
-              totalAreaGte = 15,
+              totalAreaGte = 10,
               totalAreaLte = objToCalculate.totalArea.toInt + 50,
               floorGte = 1,
-              floorLte = 80,
+              floorLte = 110,
               pages = numPages)
-            //
-            _ <- zio.Console.printLine(analoguesOfObject.length) *> ZIO.attempt(analoguesOfObject)
+
             analoguesOfObjectFiltered = analoguesOfObject.view
                 .filter(_.material.contains(wallMaterialTranslate(objToCalculate.wallMaterial)))
 //                .filter(_.coordinates.floors.contains(objToCalculate.floorCount)) // possibly problem filter by exact floor number
@@ -332,39 +337,35 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
                 .filter(a => a.price.isDefined && a.area.isDefined)
                 .take(limitOfAnalogs)
                 .toList
-            _ <- ZIO
-                .foreach(analoguesOfObjectFiltered) { analogue =>
-                    for {
-                        analogueObject <- AnalogueObject.fromApartment(analogue, objToCalculate.id)
-                        _ <- AnalogueObjectRepository.insert(analogueObject)
-                    } yield ()
+            _ <- ZIO.debug(analoguesOfObjectFiltered.length)
+            _ <- ZIO.foreach(analoguesOfObjectFiltered)(o => ZIO.debug(o))
+            averageCalculatedValueOfSquareMeterOfAnalogs =
+                if (withCorrections) {
+                    analoguesOfObjectFiltered.zipWithIndex.map { case (apartment, index) =>
+                        val priceOfSqMeter = apartment.price.get / apartment.area.get
+                        val correctedPrices = correctionFunctions.map(f => f(objToCalculate, apartment)(priceOfSqMeter))
+                        val correctedPricesFiltered = correctedPrices.filter(_ != priceOfSqMeter)
+                        (correctedPricesFiltered.sum + priceOfSqMeter) / (correctedPricesFiltered.length + 1)
+                    }.sum / analoguesOfObjectFiltered.length
+                } else {
+                    analoguesOfObjectFiltered.zipWithIndex.map { case (apartment, index) =>
+                        val priceOfSqMeter = apartment.price.get / apartment.area.get
+                        priceOfSqMeter
+                    }.sum / analoguesOfObjectFiltered.length
                 }
-                .forkDaemon
-            _ <- zio.Console.printLine(analoguesOfObjectFiltered)
-            _ <- zio.Console.printLine(analoguesOfObjectFiltered.length) *> ZIO.attempt(analoguesOfObjectFiltered)
-            averageCalculatedValueOfSquareMeterOfAnalogs = analoguesOfObjectFiltered.map { o =>
-                val priceOfSqMeter = o.price.get / o.area.get
-                //                          val correctedPrice =
-                priceOfSqMeter
-            }.sum / analoguesOfObjectFiltered.length
             objToCalculatePrice = averageCalculatedValueOfSquareMeterOfAnalogs * objToCalculate.totalArea
             _ <- RealtyObjectRepository.updateInfo(
               objToCalculate.id,
               calculatedValue = Some(objToCalculatePrice.toLong))
+            _ <- ZIO
+                .foreach(analoguesOfObjectFiltered) { analogue =>
+                    for {
+                        analogueObject <- AnalogueObject.fromApartment(analogue, objToCalculate.id)
+                        _ <- AnalogueObjectRepository.insert(analogueObject).ignore
+                    } yield ()
+                }
+                .forkDaemon
         } yield ()
-
-    private def wallMaterialTranslate(s: String): String = Map(
-      "кирпич" -> "brick",
-      "монолит" -> "monolith",
-      "панель" -> "panel",
-      "смешанный" -> "monolithBrick"
-    )(s.toLowerCase)
-
-    private def segmentTranslate(s: String): String = Map(
-      "новостройка" -> "newBuildingFlatSale",
-      "современное жилье" -> "newBuildingFlatSale",
-      "старый жилой фонд" -> "flatSale"
-    )(s.toLowerCase)
 
 }
 

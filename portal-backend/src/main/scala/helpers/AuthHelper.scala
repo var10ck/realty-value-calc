@@ -1,12 +1,13 @@
 package helpers
 import dao.entities.auth.{User, UserSessionId}
-import dao.repositories.auth.{UserRepository, UserSessionRepository}
+import dao.repositories.auth.UserSessionRepository
 import exceptions.BodyParsingException
-import zhttp.http.{Http, Request, Response, Status}
+import zhttp.http.{Http, Request}
 import zio.ZIO
 import zio.json.{DecoderOps, JsonDecoder}
 
 import javax.sql.DataSource
+import scala.reflect.ClassTag
 
 object AuthHelper {
 
@@ -56,7 +57,7 @@ object AuthHelper {
       * @tparam DTOType
       *   type of DTO, must have JsonDecoder[DTOType] instance
       */
-    def withUserContextAndDtoZIO[DTOType, R, A](request: Request)(f: (User, DTOType) => ZIO[R, Throwable, A])(implicit
+    def withUserContextAndDtoZIO[DTOType: ClassTag, R, A](request: Request)(f: (User, DTOType) => ZIO[R, Throwable, A])(implicit
         decoder: JsonDecoder[DTOType]): ZIO[R with DataSource with UserSessionRepository, Throwable, A] =
         for {
             sessionId <- ZIO
@@ -68,7 +69,7 @@ object AuthHelper {
             requestBody <- request.body.asString
             dto <- ZIO
                 .fromEither(requestBody.fromJson[DTOType])
-                .orElseFail(BodyParsingException("CreateRealtyObjectDTO"))
+                .orElseFail(BodyParsingException(implicitly[ClassTag[DTOType]].runtimeClass.getSimpleName))
             result <- f(user, dto)
         } yield result
 }

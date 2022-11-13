@@ -101,5 +101,9 @@
 
     </changeSet>
 
+    <changeSet id="add unique constraint on AnalogueObject(realtyObjectId, url)" author="Victor Nguen">
+        <addUniqueConstraint tableName="AnalogueObject" columnNames="url, realtyObjectId"/>
+    </changeSet>
+
 
 </databaseChangeLog>

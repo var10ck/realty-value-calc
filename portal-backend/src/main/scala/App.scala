@@ -22,7 +22,7 @@ object App {
         ApplicationConfig.live >+> zioLiveDS >+> LiquibaseService.live >+> UserRepository.live >+>
             UserSessionRepository.live >+> AuthService.live >+> LiquibaseServiceLive.liquibaseLayer >+>
             RealtyObjectRepository.live >+> RealtyObjectService.live >+> Scope.default >+> GeoSuggestionService.daDataLive >+>
-            RealtyObjectPoolRepositoryLive.layer >+> EventLoopGroup.auto() >+> ChannelFactory.auto >+> Scope.default >+>
+            RealtyObjectPoolRepository.live >+> EventLoopGroup.auto() >+> ChannelFactory.auto >+> Scope.default >+>
             RealtyObjectPoolRepository.live >+> RealtyObjectPoolService.live >+> SearchRealtyService.cian >+>
             AnalogueObjectRepository.live >+> CorrectionService.live >+> CorrectionNumericRepository.live
 

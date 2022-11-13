@@ -1,9 +1,10 @@
 package services
 import dao.entities.auth.{User, UserId}
 import dao.entities.realty.{RealtyObject, RealtyObjectId, RealtyObjectPoolId}
+import dao.repositories.corrections.CorrectionNumericRepository
 import dao.repositories.integration.AnalogueObjectRepository
 import dao.repositories.realty.{RealtyObjectPoolRepository, RealtyObjectRepository}
-import dto.realty.{CalculateValueOfSomeObjectsDTO, CreateRealtyObjectDTO, DeleteRealtyObjectDTO, RealtyObjectInfoDTO, UpdateRealtyObjectDTO}
+import dto.realty.{CalculateValueOfSomeObjectsDTO, CreateRealtyObjectDTO, DeleteRealtyObjectDTO, ExportSomeObjectsDTO, RealtyObjectInfoDTO, UpdateRealtyObjectDTO}
 import zhttp.service.{ChannelFactory, EventLoopGroup}
 import zio.{Scope, ULayer, ZIO}
 import zio.stream.ZStream
@@ -37,6 +38,10 @@ trait RealtyObjectService {
     /** Export Objects of user with poolId to xlsx */
     def exportPoolOfObjectsToXlsx(user: User, poolId: String)
         : ZIO[Any with Scope with DataSource with RealtyObjectRepository with RealtyObjectService, Throwable, File]
+
+    /** Export selected realty objects to xlsx */
+    def exportSelectedObjectsToXlsx(
+        dto: ExportSomeObjectsDTO, userId: UserId): ZIO[Any with Scope with DataSource with RealtyObjectRepository, Throwable, File]
 
     /** Creates RealtyObject and writes into database */
     def createRealtyObject(
@@ -80,7 +85,7 @@ trait RealtyObjectService {
     def calculateAllInPool(poolId: String, userId: UserId, withCorrections: Boolean, numPages: Int, limitOfAnalogs: Int): ZIO[
       DataSource
           with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
-          with SearchRealtyService,
+          with SearchRealtyService with CorrectionNumericRepository,
       Throwable,
       Unit]
 
@@ -88,12 +93,11 @@ trait RealtyObjectService {
     def calculateForSome(
         dto: CalculateValueOfSomeObjectsDTO,
         userId: UserId,
-        withCorrections: Boolean,
         numPages: Int,
         limitOfAnalogs: Int): ZIO[
       DataSource
           with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
-          with SearchRealtyService,
+          with SearchRealtyService with CorrectionNumericRepository,
       Throwable,
       Unit]
 }
@@ -127,6 +131,10 @@ object RealtyObjectService {
     def exportPoolOfObjectsToXlsx(user: User, poolId: String)
         : ZIO[Any with Scope with DataSource with RealtyObjectRepository with RealtyObjectService, Throwable, File] =
         ZIO.serviceWithZIO[RealtyObjectService](_.exportPoolOfObjectsToXlsx(user, poolId))
+
+    def exportSelectedObjectsToXlsx(dto: ExportSomeObjectsDTO, userId: UserId)
+        : ZIO[Any with Scope with DataSource with RealtyObjectRepository with RealtyObjectService, Throwable, File] =
+        ZIO.serviceWithZIO[RealtyObjectService](_.exportSelectedObjectsToXlsx(dto, userId))
 
     /** Creates RealtyObject and writes into database */
     def createRealtyObject(
@@ -176,7 +184,7 @@ object RealtyObjectService {
                            limitOfAnalogs: Int = 20): ZIO[
       DataSource
           with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
-          with SearchRealtyService with RealtyObjectService,
+          with SearchRealtyService with RealtyObjectService with CorrectionNumericRepository,
       Throwable,
       Unit] =
         ZIO.serviceWithZIO[RealtyObjectService](_.calculateAllInPool(poolId, userId, withCorrections, numPages, limitOfAnalogs))
@@ -185,15 +193,14 @@ object RealtyObjectService {
     def calculateForSome(
         dto: CalculateValueOfSomeObjectsDTO,
         userId: UserId,
-        withCorrections: Boolean,
         numPages: Int,
         limitOfAnalogs: Int = 20): ZIO[
       DataSource
           with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
-          with SearchRealtyService with RealtyObjectService,
+          with SearchRealtyService with RealtyObjectService with CorrectionNumericRepository,
       Throwable,
       Unit] =
-        ZIO.serviceWithZIO[RealtyObjectService](_.calculateForSome(dto, userId, withCorrections, numPages, limitOfAnalogs))
+        ZIO.serviceWithZIO[RealtyObjectService](_.calculateForSome(dto, userId, numPages, limitOfAnalogs))
 
     val live: ULayer[RealtyObjectService] = RealtyObjectServiceLive.layer
 }
