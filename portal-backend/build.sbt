@@ -1,5 +1,5 @@
 ThisBuild / scalaVersion     := "2.13.9"
-ThisBuild / version          := "0.1.9"
+ThisBuild / version          := "0.1.10"
 ThisBuild / organization     := "org.scalalazy"
 ThisBuild / organizationName := "scalalazy"
 ThisBuild / name             := "RealtyValueCalcBackend"

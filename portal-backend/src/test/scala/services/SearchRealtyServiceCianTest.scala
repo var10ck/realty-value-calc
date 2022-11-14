@@ -17,8 +17,8 @@ object SearchRealtyServiceCianTest extends ZIOSpecDefault {
                   polygon <- ZIO.from(GeoHelper.makeSquareAroundLocation("55.641473", "37.519063", 10000))
                   _ <- ZIO.debug(polygon)
                   res <- SearchRealtyService.searchRealtyInSquare(polygon, List(1,2), pages = 6)
-                  _ <- ZIO.succeed(res.foreach(println))
-                  _ <- zio.Console.printLine(res.length)
+                  _ <- ZIO.foreach(res)(ZIO.debug(_))
+                  _ <- ZIO.debug(res.length)
 
               } yield assertTrue(res.nonEmpty)
           }
