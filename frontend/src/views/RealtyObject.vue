@@ -2,7 +2,7 @@
   <div v-if="realtyObject && realtyObject.id">
     <div class="pt-5">
       <h1>Объект</h1>
-      <h3 v-if="realtyObject.calculatedValue" class="text-left">Оценка стоимости: {{ realtyObject.calculatedValue }} ₽</h3>
+      <h3 v-if="realtyObject.calculatedValue" class="text-left" style="white-space: nowrap;">Оценка стоимости: {{ (Math.round(realtyObject.calculatedValue / 1000) * 1000).toLocaleString() }} ₽</h3>
       <h3 v-else class="text-left ">Для данного объекта стоимость еще не рассчитана</h3>
       <v-card class="mt-2">
         <v-card-text>

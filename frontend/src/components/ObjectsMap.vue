@@ -213,7 +213,7 @@ export default {
 
       text = `<p>${item.location}</p>`;
       if (item.calculatedValue) {
-        text += `<p>Оценка стоимости: ${item.calculatedValue} ₽</p>`;
+        text += `<p style="white-space: nowrap;">Оценка стоимости: ${(Math.round(item.calculatedValue / 1000) *1000).toLocaleString()} ₽</p>`;
       }
 
       console.log(this.currentItem?.id)

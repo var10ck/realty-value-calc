@@ -10,6 +10,21 @@ export const conditions = [
   'Без отделки', 'Муниципальный ремонт', 'Современная отделка',
 ]
 
+export const valueFilter = [
+  {
+    value: 1,
+    label: 'Все',
+  },
+  {
+    value: 2,
+    label: 'Только с рассчитанной стоимостью',
+  },
+  {
+    value: 3,
+    label: 'Без рассчитанной стоимости',
+  },
+]
+
 export const comparisons = [
   {
     value: 1,

@@ -69,6 +69,17 @@ export default class RequestService {
     }
   }
 
+  static async calculateSelectedObjectsIdAsync(objectsIds, useCorrections) {
+    const result = await this.axiosInstance.post(`/realty/objects/calculateSome`,
+    JSON.stringify({
+      objectsIds: objectsIds,
+      withCorrections: useCorrections
+    }));
+    if (result.data) {
+      return result.data;
+    }
+  }
+
   static async calculatePoolByIdAsync(id, useCorrections) {
     const result = await this.axiosInstance.post(`/realty/objects/calculatePool`,
     JSON.stringify({
