@@ -6,7 +6,11 @@ import dto.integration.cian.Apartment
 
 object CorrectionHelper {
 
-    //noinspection SpellCheckingInspection
+    // noinspection SpellCheckingInspection
+    /** Translate numeric correction (that means correction of square meter price based on total area, kitchen area,
+      * floor number or distance from metro) representation stored in DB into function, that can be applied to appraised
+      * realty object and matched analogue object
+      */
     def correctionNumericToFunction(correction: CorrectionNumeric): (RealtyObject, Apartment) => Double => Double =
         (realtyObject: RealtyObject, analogueObject: Apartment) =>
             (price: Double) => {

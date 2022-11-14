@@ -15,7 +15,8 @@ final case class CorrectionNumericRepositoryLive() extends CorrectionNumericRepo
         analogueValue: String,
         analogueValueType: Int,
         correction: Int,
-        correctionType: String): QIO[CorrectionNumeric] = {
+        correctionType: String,
+        isEnabled: Boolean): QIO[CorrectionNumeric] = {
         for {
             correction <- CorrectionNumeric.make(
               fieldName,
@@ -24,7 +25,8 @@ final case class CorrectionNumericRepositoryLive() extends CorrectionNumericRepo
               analogueValue,
               analogueValueType,
               correction,
-              correctionType)
+              correctionType,
+              isEnabled)
             _ <- run(query[CorrectionNumeric].insertValue(lift(correction)))
             _ <- Metric.counter("correctionNumeric.created").increment
         } yield correction
@@ -34,6 +36,9 @@ final case class CorrectionNumericRepositoryLive() extends CorrectionNumericRepo
         run(query[CorrectionNumeric].filter(_.id == lift(id))).map(_.headOption)
 
     override def getAll: QIO[List[CorrectionNumeric]] = run(query[CorrectionNumeric]).map(_.toList)
+
+    override def getAllEnabled: QIO[
+      List[CorrectionNumeric]] = run(query[CorrectionNumeric].filter(_.isEnabled)).map(_.toList)
 
     override def delete(id: CorrectionId): QIO[Unit] = run(
       query[CorrectionNumeric].filter(_.id == lift(id)).delete).unit
@@ -46,7 +51,8 @@ final case class CorrectionNumericRepositoryLive() extends CorrectionNumericRepo
         analogueValue: Option[String] = None,
         analogueValueType: Option[Int] = None,
         correction: Option[Int] = None,
-        correctionType: Option[String] = None): QIO[Unit] =
+        correctionType: Option[String] = None,
+        isEnabled: Option[Boolean] = None): QIO[Unit] =
         run(
           dynamicQuery[CorrectionNumeric]
               .filter(_.id == lift(id))
@@ -57,7 +63,8 @@ final case class CorrectionNumericRepositoryLive() extends CorrectionNumericRepo
                 setOpt(_.analogueValue, analogueValue),
                 setOpt(_.analogueValueType, analogueValueType),
                 setOpt(_.correction, correction),
-                setOpt(_.correctionType, correctionType)
+                setOpt(_.correctionType, correctionType),
+                setOpt(_.isEnabled, isEnabled)
               )
         ).unit
 }

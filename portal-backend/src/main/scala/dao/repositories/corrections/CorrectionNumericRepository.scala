@@ -15,11 +15,14 @@ trait CorrectionNumericRepository {
         analogueValue: String,
         analogueValueType: Int,
         correction: Int,
-        correctionType: String): QIO[CorrectionNumeric]
+        correctionType: String,
+        isEnabled: Boolean): QIO[CorrectionNumeric]
 
     def getBy(id: CorrectionId): QIO[Option[CorrectionNumeric]]
 
     def getAll: QIO[List[CorrectionNumeric]]
+
+    def getAllEnabled: QIO[List[CorrectionNumeric]]
 
     def delete(id: CorrectionId): QIO[Unit]
 
@@ -31,7 +34,8 @@ trait CorrectionNumericRepository {
         analogueValue: Option[String],
         analogueValueType: Option[Int],
         correction: Option[Int],
-        correctionType: Option[String]
+        correctionType: Option[String],
+        isEnabled: Option[Boolean]
     ): QIO[Unit]
 
 }
@@ -45,7 +49,8 @@ object CorrectionNumericRepository {
         analogueValue: String,
         analogueValueType: Int,
         correction: Int,
-        correctionType: String): ZIO[DataSource with CorrectionNumericRepository, SQLException, CorrectionNumeric] =
+        correctionType: String,
+        isEnabled: Boolean): ZIO[DataSource with CorrectionNumericRepository, SQLException, CorrectionNumeric] =
         ZIO.serviceWithZIO[CorrectionNumericRepository](
           _.create(
             fieldName,
@@ -54,7 +59,8 @@ object CorrectionNumericRepository {
             analogueValue,
             analogueValueType,
             correction,
-            correctionType))
+            correctionType,
+            isEnabled))
 
     def getBy(
         id: CorrectionId): ZIO[DataSource with CorrectionNumericRepository, SQLException, Option[CorrectionNumeric]] =
@@ -62,6 +68,9 @@ object CorrectionNumericRepository {
 
     def getAll: ZIO[DataSource with CorrectionNumericRepository, SQLException, List[CorrectionNumeric]] =
         ZIO.serviceWithZIO[CorrectionNumericRepository](_.getAll)
+
+    def getAllEnabled: ZIO[DataSource with CorrectionNumericRepository, SQLException, List[CorrectionNumeric]] =
+        ZIO.serviceWithZIO[CorrectionNumericRepository](_.getAllEnabled)
 
     def delete(id: CorrectionId): ZIO[DataSource with CorrectionNumericRepository, SQLException, Unit] =
         ZIO.serviceWithZIO[CorrectionNumericRepository](_.delete(id))
@@ -74,7 +83,8 @@ object CorrectionNumericRepository {
         analogueValue: Option[String],
         analogueValueType: Option[Int],
         correction: Option[Int],
-        correctionType: Option[String]
+        correctionType: Option[String],
+        isEnabled: Option[Boolean]
     ): ZIO[DataSource with CorrectionNumericRepository, SQLException, Unit] =
         ZIO.serviceWithZIO[CorrectionNumericRepository](
           _.update(
@@ -85,7 +95,8 @@ object CorrectionNumericRepository {
             analogueValue,
             analogueValueType,
             correction,
-            correctionType))
+            correctionType,
+            isEnabled))
 
     def live: ULayer[CorrectionNumericRepository] = CorrectionNumericRepositoryLive.layer
 }

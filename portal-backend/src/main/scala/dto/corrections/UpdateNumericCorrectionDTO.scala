@@ -10,7 +10,8 @@ case class UpdateNumericCorrectionDTO(
     analogueValue: Option[String] = None,
     analogueValueType: Option[Int] = None,
     correction: Option[Int] = None,
-    correctionType: Option[String] = None
+    correctionType: Option[String] = None,
+    isEnabled: Option[Boolean] = None
 )
 
 object UpdateNumericCorrectionDTO {

@@ -57,7 +57,7 @@ object AuthHelper {
       * @tparam DTOType
       *   type of DTO, must have JsonDecoder[DTOType] instance
       */
-    def withUserContextAndDtoZIO[DTOType: ClassTag, R, A](request: Request)(f: (User, DTOType) => ZIO[R, Throwable, A])(implicit
+    def withUserContextAndDtoZIO[DTOType, R, A](request: Request)(f: (User, DTOType) => ZIO[R, Throwable, A])(implicit
         decoder: JsonDecoder[DTOType]): ZIO[R with DataSource with UserSessionRepository, Throwable, A] =
         for {
             sessionId <- ZIO
@@ -69,7 +69,7 @@ object AuthHelper {
             requestBody <- request.body.asString
             dto <- ZIO
                 .fromEither(requestBody.fromJson[DTOType])
-                .orElseFail(BodyParsingException(implicitly[ClassTag[DTOType]].runtimeClass.getSimpleName))
+                .orElseFail(BodyParsingException())
             result <- f(user, dto)
         } yield result
 }

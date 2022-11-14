@@ -319,7 +319,7 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
                 if (objToCalculate.roomsNumber >= 4)
                     List(objToCalculate.roomsNumber - 1, objToCalculate.roomsNumber, objToCalculate.roomsNumber + 1)
                 else List(objToCalculate.roomsNumber)
-            allCorrections <- CorrectionNumericRepository.getAll
+            allCorrections <- CorrectionNumericRepository.getAllEnabled
             correctionFunctions <- ZIO.attempt(allCorrections.map(CorrectionHelper.correctionNumericToFunction))
             analoguesOfObject <- SearchRealtyService.searchRealtyInSquare(
               polygon,
@@ -341,14 +341,14 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
             _ <- ZIO.foreach(analoguesOfObjectFiltered)(o => ZIO.debug(o))
             averageCalculatedValueOfSquareMeterOfAnalogs =
                 if (withCorrections) {
-                    analoguesOfObjectFiltered.zipWithIndex.map { case (apartment, index) =>
+                    analoguesOfObjectFiltered.map { apartment =>
                         val priceOfSqMeter = apartment.price.get / apartment.area.get
                         val correctedPrices = correctionFunctions.map(f => f(objToCalculate, apartment)(priceOfSqMeter))
                         val correctedPricesFiltered = correctedPrices.filter(_ != priceOfSqMeter)
                         (correctedPricesFiltered.sum + priceOfSqMeter) / (correctedPricesFiltered.length + 1)
                     }.sum / analoguesOfObjectFiltered.length
                 } else {
-                    analoguesOfObjectFiltered.zipWithIndex.map { case (apartment, index) =>
+                    analoguesOfObjectFiltered.map { apartment =>
                         val priceOfSqMeter = apartment.price.get / apartment.area.get
                         priceOfSqMeter
                     }.sum / analoguesOfObjectFiltered.length
