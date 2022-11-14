@@ -11,8 +11,10 @@
       />
     </div>
     <v-data-table
+      v-model="selectedObjects"
       :headers="headers"
       :items="filteredItems"
+      show-select
       item-key="id"
       class="elevation-1 mt-3"
       :search="searchValue"
@@ -47,6 +49,16 @@
                 return-object
               >
               </v-autocomplete>
+
+              <v-autocomplete
+                v-model="calculatedValue"
+                item-value="value"
+                item-text="label"
+                class="ml-5 mt-5"
+                :items="valueFilter"
+                label="Значение стоимости"
+              ></v-autocomplete>
+
               <v-text-field 
                 label="Поиск" class="ml-5 mt-5"
                 auto-select-first
@@ -56,11 +68,6 @@
                 return-object
               >
               </v-text-field>
-              <v-checkbox 
-                label="Только с рассчитаной стоимостью" class="ml-5 mt-6"
-                v-model="onlyWithCalculatedValue"
-              >
-              </v-checkbox>
             </div>
             <div class="d-flex flex-row-reverse flex-wrap">
               <v-btn
@@ -104,7 +111,7 @@
                 dark
                 small
                 class="mr-3 mt-3"
-                v-show="selectedPool.id"
+                v-show="selectedPool.id || selectedObjects.length"
                 @click="calculatePool"
               >
                 Рассчитать стоимость
@@ -379,13 +386,14 @@ export default {
       floorNumber: null,
       totalArea: null,
       kitchenArea: null,
-      gotBalcony: null,
+      gotBalcony: false,
       condition: null,
       distanceFromMetro: null,
       poolId: null,
     },
 
 
+    selectedObjects: [],
     dialog: false,
     dialogDelete: false,
     dialogPool: false,
@@ -393,7 +401,7 @@ export default {
     editedIndex: -1,
     isSelecting: false,
     useCorrections: false,
-    onlyWithCalculatedValue: false,
+    calculatedValue: 1,
 
     addressItems: [],
     searchValue: '',
@@ -432,9 +440,15 @@ export default {
         })
       }
 
-      if (this.onlyWithCalculatedValue) {
+      if (this.calculatedValue === 2) {
         res = res.filter(x => {
           return x.calculatedValue
+        })
+      }
+
+      if (this.calculatedValue === 3) {
+        res = res.filter(x => {
+          return !x.calculatedValue
         })
       }
 
@@ -457,6 +471,10 @@ export default {
 
     segments() {
       return consts.segments;
+    },
+
+    valueFilter() {
+      return consts.valueFilter;
     },
 
     headers() {
@@ -499,7 +517,14 @@ export default {
     },
 
     async calculatePool() {
-      await RequestService.calculatePoolByIdAsync(this.selectedPool?.id, this.useCorrections)
+      if (this.selectedObjects.length) {
+        await RequestService.calculateSelectedObjectsIdAsync(this.selectedObjects?.map(x => x.id), this.useCorrections);
+        this.$bus.$emit("showSuccess", "Выбранные объекты успешно отправлены для рассчета стоимости");
+      } else {
+        await RequestService.calculatePoolByIdAsync(this.selectedPool?.id, this.useCorrections);
+        console.log('here')
+        this.$bus.$emit("showSuccess", "Выбранный пул успешно отправлен для рассчета стоимости");
+      }
     },
     
     async createPool() {
@@ -526,6 +551,7 @@ export default {
         console.log('here')
         this.editedItem = Object.assign({}, item)
         // удаляем служебную информацию
+        delete this.editedItem.analogs;
         delete this.editedItem.id;
         delete this.editedItem.createdAt;
         delete this.editedItem.updatedAt;

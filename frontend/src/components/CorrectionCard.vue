@@ -3,7 +3,7 @@
     <v-card-text>
       <v-container>
         <v-row>
-          <v-col cols="12" sm="6" md="4">
+          <v-col cols="12" sm="4" md="3">
             <v-autocomplete
               v-model="editedCorrection.fieldName"
               item-value="value"
@@ -13,7 +13,7 @@
               :readonly="mode === 'read'"
             ></v-autocomplete>
           </v-col>
-          <v-col cols="12" sm="6" md="4">
+          <v-col cols="12" sm="4" md="3">
             <v-text-field
               v-model="editedCorrection.referenceValue"
               type="number"
@@ -21,7 +21,7 @@
               :readonly="mode === 'read'"
             ></v-text-field>
           </v-col>
-          <v-col cols="12" sm="6" md="4">
+          <v-col cols="12" sm="4" md="3">
             <v-autocomplete
               v-model="editedCorrection.referenceValueType"
               item-value="value"
@@ -31,7 +31,7 @@
               :readonly="mode === 'read'"
             ></v-autocomplete>
           </v-col>
-          <v-col cols="12" sm="6" md="4">
+          <v-col cols="12" sm="4" md="3">
             <v-text-field
               v-model="editedCorrection.analogueValue"
               label="Значение аналога"
@@ -39,7 +39,7 @@
               :readonly="mode === 'read'"
             ></v-text-field>
           </v-col>
-          <v-col cols="12" sm="6" md="4">
+          <v-col cols="12" sm="4" md="3">
             <v-autocomplete
               v-model="editedCorrection.analogueValueType"
               item-value="value"
@@ -49,7 +49,7 @@
               :readonly="mode === 'read'"
             ></v-autocomplete>
           </v-col>
-          <v-col cols="12" sm="6" md="4">
+          <v-col cols="12" sm="4" md="3">
             <v-text-field
               v-model="editedCorrection.correction"
               label="Значение корректировки"
@@ -57,7 +57,7 @@
               :readonly="mode === 'read'"
             ></v-text-field>
           </v-col>
-          <v-col cols="12" sm="6" md="4">
+          <v-col cols="12" sm="4" md="3">
             <v-autocomplete
               v-model="editedCorrection.correctionType"
               item-value="value"
@@ -68,10 +68,23 @@
             ></v-autocomplete>
           </v-col>
           <v-spacer></v-spacer>
-          <v-col v-if="mode !== 'read'" cols="12" sm="6" md="4" class="d-flex align-end justify-end">
-            <v-btn dark small v-if="mode === 'edit'" @click="remove">Удалить</v-btn>
-            <v-btn dark small v-if="mode === 'create'" @click="cancel">Отменить</v-btn>
-            <v-btn dark small @click="save" class="ml-5">Сохранить</v-btn>
+          
+          <v-col v-if="mode !== 'read'" cols="12" sm="4" md="3" >
+            <v-row  class="d-flex flex-nowrap align-end justify-end ">
+              <v-checkbox
+                v-model="editedCorrection.isEnabled"
+                item-value="value"
+                item-text="label"
+                :items="consts.correctionsTypes"
+                label="Активна"
+                :readonly="mode === 'read'"
+              />
+            </v-row>
+            <v-row class="d-flex flex-nowrap align-end justify-end ">
+              <v-btn dark small v-if="mode === 'edit'" @click="remove">Удалить</v-btn>
+              <v-btn dark small v-if="mode === 'create'" @click="cancel">Отменить</v-btn>
+              <v-btn dark small @click="save" class="ml-5">Сохранить</v-btn>
+            </v-row>
           </v-col>
         </v-row>
       </v-container>
@@ -116,9 +129,11 @@ export default {
     async save() {
       if (this.mode === 'create') {
         await RequestService.createCorrection(this.editedCorrection);
+        this.$bus.$emit("showSuccess", "Новая корректировка добавлена");
       }
       if (this.mode === 'edit') {
         await RequestService.editCorrection(this.editedCorrection);
+        this.$bus.$emit("showSuccess", "Корректировка успешно изменена");
       }
       
       this.$emit('correctionsCanged')
@@ -126,6 +141,7 @@ export default {
 
     async remove() {
       await RequestService.removeCorrection(this.editedCorrection.id);
+      this.$bus.$emit("showSuccess", "Корректировка успешно удалена");
       this.$emit('correctionsCanged')
     },
 

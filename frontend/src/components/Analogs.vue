@@ -11,12 +11,12 @@
         >
           <v-card-text v-if="item" class="text-left">
             <p v-if="item.price" class="text-h4 text--primary">
-              Цена: {{ item.price }}
+              Цена: {{ (Math.round(item.price / 1000) *1000).toLocaleString() }} ₽
             </p>
-            <div v-if="item.area" >Общая площадь: {{ item.area }}</div>
-            <div v-if="item.kitchenArea">Площадь кухни: {{ item.kitchenArea }}</div>
-            <div v-if="item.roomsNumber">Удаленность от станции метро, мин. пешком: {{ item.distanceToMetroInMinutes }}</div>
-            <div v-if="item.distanceToMetroInMinutes">Количество комнат: {{ item.roomsNumber }}</div>
+            <div v-if="item.area" >Общая площадь: {{ item.area }} м<sup>2</sup></div>
+            <div v-if="item.kitchenArea">Площадь кухни: {{ item.kitchenArea }} м<sup>2</sup></div>
+            <div v-if="item.roomsNumber">Удаленность от станции метро: {{ item.distanceToMetroInMinutes }} мин. пешком</div>
+            <div v-if="item.distanceToMetroInMinutes">Комнат: {{ item.roomsNumber }}</div>
           </v-card-text>
           <v-card-actions>
             <v-btn
