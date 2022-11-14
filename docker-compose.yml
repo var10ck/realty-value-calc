@@ -67,7 +67,7 @@ services:
   realty-value-calc-backend:
     depends_on:
       - postgres
-    image: "vnguen/realty-value-calc-backend:0.1.6"
+    image: "vnguen/realty-value-calc-backend:0.1.9"
     hostname: "realty-value-calc-backend"
     container_name: "realty-value-calc-backend"
     ports:
@@ -89,7 +89,7 @@ services:
   realty-value-calc-frontend:
     depends_on:
       - realty-value-calc-backend
-    image: "vanka3087/frontend:0.1.1"
+    image: "vanka3087/frontend:0.1.4"
     ports:
       - "8080:8080"
     networks:
