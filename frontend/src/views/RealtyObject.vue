@@ -2,7 +2,7 @@
   <div v-if="realtyObject && realtyObject.id">
     <div class="pt-5">
       <h1>Объект</h1>
-      <h3 v-if="realtyObject.calculatedValue" class="text-left">Оценка стоимости: {{ realtyObject.calculatedValue }} ₽</h3>
+      <h3 v-if="realtyObject.calculatedValue" class="text-left" style="white-space: nowrap;">Оценка стоимости: {{ (Math.round(realtyObject.calculatedValue / 1000) * 1000).toLocaleString() }} ₽</h3>
       <h3 v-else class="text-left ">Для данного объекта стоимость еще не рассчитана</h3>
       <v-card class="mt-2">
         <v-card-text>
@@ -162,7 +162,7 @@
       </v-card>
     </div>
     <h3 class="mt-2">Карта</h3>
-    <ObjectsMap :initialCoirdinates="[realtyObject.coordinates.lat, realtyObject.coordinates.lon]" :initialZoom="17" :currentItem="realtyObject"></ObjectsMap>
+    <ObjectsMap :key="key" :initialCoirdinates="[realtyObject.coordinates.lat, realtyObject.coordinates.lon]" :initialZoom="17" :currentItem="realtyObject"></ObjectsMap>
     <Analogs :analogs="realtyObject.analogs"></Analogs>
   </div>
 </template>
@@ -182,6 +182,7 @@ export default {
   data: () => ({
     objectMap: null,
     realtyObject: null,
+    key: 0,
   }),
 
   computed: {
@@ -193,8 +194,15 @@ export default {
       RequestService.geyObjectByIdAsync(this.$router?.currentRoute?.params?.id),
       this.$store.dispatch('loadlAllPoolsAsync')
     ])
-  }
+  },
 
-
+  async beforeRouteUpdate(to, from, next) {
+    if (to?.params?.id !== from?.params?.id) {
+      this.realtyObject = await RequestService.geyObjectByIdAsync(to?.params?.id);
+      this.key +=1;
+      next();
+    }
+    next();
+  },
 }
 </script>

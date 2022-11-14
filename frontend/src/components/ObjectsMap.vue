@@ -112,25 +112,29 @@ export default {
     },
 
     markers() {
+      const that = this;
       let markers = this.filteredItems.map((x) =>
-        DG.marker([x?.coordinates?.lat, x?.coordinates?.lon]).bindPopup(
-          this.getPopupText(x)
-        )
+        DG.marker([x?.coordinates?.lat, x?.coordinates?.lon])
+          .bindPopup(this.getPopupText(x))
+          .on("click", function () {
+            const el = document.getElementById(x?.id);
+            if (el) {
+              console.log(el)
+              el.addEventListener("click", () =>
+                that.$router.push(`/realtyObject/${x?.id}`)
+              );
+            }
+          })
       );
 
       if (this.withAnalogs && this.currentItem?.id) {
         this.currentItem.analogs?.forEach((x) => {
-          // if (!x?.analogs) {
-          //   return;
-          // }
-
           markers.push(
             DG.marker([x?.latitude, x?.longitude]).bindPopup(
               this.getPopupText(x)
             )
-          )
-        }
-        );
+          );
+        });
       }
 
       if (this.withAnalogs && !this.currentItem?.id) {
@@ -167,7 +171,6 @@ export default {
     ]);
 
     this.showMarkers();
-    console.log('here')
   },
 
   beforeDestroy() {
@@ -175,11 +178,11 @@ export default {
   },
 
   methods: {
-    showOnMap(coordinates) {
+    async showOnMap(coordinates) {
       this.$refs?.map?.scrollIntoView({ behavior: "smooth" });
       this.withAnalogs = true;
-      this.map.setZoom(18)
       this.map.panTo(coordinates);
+      setTimeout(() => this.map.setZoom(18), 500)
     },
 
     showMarkers() {
@@ -194,27 +197,29 @@ export default {
     },
 
     getPopupText(item) {
-      let text ='';
+      let text = "";
       if (item.url) {
         if (item.area) {
-        text += `<p>Площадь: ${item.area} </p>`;
+          text += `<p>Площадь: ${item.area} </p>`;
         }
         if (item.price) {
-        text += `<p>Cтоимость: ${item.price} ₽</p>`;
+          text += `<p>Cтоимость: ${item.price} ₽</p>`;
         }
         if (item.roomsNumber) {
-        text += `<p>Комнат: ${item.roomsNumber}</p>`;
+          text += `<p>Комнат: ${item.roomsNumber}</p>`;
         }
-        return text += `<a href="${item.url}" target="_blank">Внешняя ссылка</a>`;
+        return (text += `<a href="${item.url}" target="_blank">Внешняя ссылка</a>`);
       }
 
       text = `<p>${item.location}</p>`;
       if (item.calculatedValue) {
-        text += `<p>Оценка стоимости: ${item.calculatedValue} ₽</p>`;
+        text += `<p style="white-space: nowrap;">Оценка стоимости: ${(Math.round(item.calculatedValue / 1000) *1000).toLocaleString()} ₽</p>`;
       }
 
+      console.log(this.currentItem?.id)
+      console.log( item?.id)
       if (this.currentItem?.id !== item?.id) {
-        text += `<a href="/realtyObject/${item?.id}">Подробнее</a>`;
+        text += `<a id="${item?.id}">Подробнее</a>`;
       }
       return text;
     },
