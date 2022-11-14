@@ -14,7 +14,7 @@ package object exceptions {
     case class CorrectionNotFound(field: String, value: String) extends EntityNotFound("Correction", field, value)
 
     // Invalid input
-    case class BodyParsingException(dtoName: String) extends CustomException(s"Cannot parse body as $dtoName")
+    case class BodyParsingException() extends CustomException(s"Invalid body content")
 
     case class DataValidationException(message: String) extends CustomException(message)
 

@@ -19,7 +19,7 @@ object RealtyObjectPoolApi {
                     body <- req.body.asString
                     dto <- ZIO
                         .fromEither(body.fromJson[CreatePoolDTO])
-                        .orElseFail(BodyParsingException(CreatePoolDTO.getClass.getName))
+                        .orElseFail(BodyParsingException())
                     newPool <- RealtyObjectPoolRepository.create(dto.name, user.id)
                 } yield newPool
             }.fold(

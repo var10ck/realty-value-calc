@@ -7,6 +7,8 @@ import zhttp.http.{Http, Method, Request, Response, Status}
 import zhttp.http._
 import zio.json.EncoderOps
 
+import java.sql.SQLException
+
 object CorrectionApi {
 
     val api = Http.collectZIO[Request] {
@@ -33,7 +35,7 @@ object CorrectionApi {
             withUserContextZIO(req) { _ => CorrectionService.deleteNumeric(correctionId) }
                 .fold(
                   correctionExceptionsHandler,
-                    _ => Response.ok
+                  _ => Response.ok
                 )
 
         case req @ Method.GET -> !! / "realty" / "corrections" / "numeric" =>
@@ -46,6 +48,8 @@ object CorrectionApi {
     }
 
     private val correctionExceptionsHandler =
-        basicAuthExceptionHandler orElse bodyParsingExceptionHandler orElse lastResortHandler
+        basicAuthExceptionHandler orElse bodyParsingExceptionHandler orElse [Throwable, Response] {
+            case _: SQLException => Response.ok
+        } orElse lastResortHandler
 
 }

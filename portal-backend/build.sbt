@@ -1,12 +1,12 @@
 ThisBuild / scalaVersion     := "2.13.9"
-ThisBuild / version          := "0.1.6"
+ThisBuild / version          := "0.1.9"
 ThisBuild / organization     := "org.scalalazy"
 ThisBuild / organizationName := "scalalazy"
 ThisBuild / name             := "RealtyValueCalcBackend"
 
 lazy val root = (project in file("."))
     .settings(
-      name := "innoagency-hackathon",
+      name := "realty-value-calc-backend",
       libraryDependencies ++= Dependencies.zio ++
           Dependencies.zioConfig ++
           Dependencies.liquibase ++

@@ -101,5 +101,16 @@
 
     </changeSet>
 
+    <changeSet id="add unique constraint on AnalogueObject(realtyObjectId, url)" author="Victor Nguen">
+        <addUniqueConstraint tableName="AnalogueObject" columnNames="url, realtyObjectId"/>
+    </changeSet>
+
+    <changeSet id="add 'isEnabled' field to CorrectionNumeric" author="Victor Nguen">
+        <addColumn tableName="CorrectionNumeric">
+            <column name="isEnabled" type="boolean" defaultValueBoolean="true">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>

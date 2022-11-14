@@ -30,7 +30,7 @@ object CianSearchRequestDTOTest extends ZIOSpecDefault {
                   page = 1
               )
               for {
-                  jsonQueryBody <-  ZIO.from(queryBody.toJson)
+                  jsonQueryBody <-  ZIO.attempt(queryBody.toJson)
                   _ <- zio.Console.printLine(jsonQueryBody)
               } yield assertTrue(jsonQueryBody.fromJson[CianJsonQuery].isRight)
           }

@@ -10,7 +10,8 @@ case class CreateNumericCorrectionDTO(
     analogueValue: String,
     analogueValueType: Int,
     correction: Int,
-    correctionType: String
+    correctionType: String,
+    isEnabled: Boolean
 )
 
 //object CreateCorrectionDTO{

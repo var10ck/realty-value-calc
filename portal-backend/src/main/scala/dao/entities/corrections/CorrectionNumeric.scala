@@ -10,7 +10,8 @@ case class CorrectionNumeric(
     analogueValue: String,
     analogueValueType: Int,
     correction: Int,
-    correctionType: String
+    correctionType: String,
+    isEnabled: Boolean
 ) extends Correction
 
 object CorrectionNumeric {
@@ -24,7 +25,8 @@ object CorrectionNumeric {
         analogueValue: String,
         analogueValueType: Int,
         correction: Int,
-        correctionType: String): ZIO[Any, Nothing, CorrectionNumeric] =
+        correctionType: String,
+        isEnabled: Boolean): ZIO[Any, Nothing, CorrectionNumeric] =
         CorrectionId.random.map(
           CorrectionNumeric(
             _,
@@ -34,7 +36,8 @@ object CorrectionNumeric {
             analogueValue,
             analogueValueType,
             correction,
-            correctionType))
+            correctionType,
+            isEnabled))
 
     lazy val valueTypes: Map[String, Int] = Map(
       "range" -> 1,

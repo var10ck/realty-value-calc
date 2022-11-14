@@ -18,7 +18,8 @@ case class CorrectionServiceLive() extends CorrectionService {
           dto.analogueValue,
           dto.analogueValueType,
           dto.correction,
-          dto.correctionType)
+          dto.correctionType,
+          dto.isEnabled)
 
     override def deleteNumeric(id: String): ZIO[DataSource with CorrectionNumericRepository, Throwable, Unit] = {
         for {
@@ -49,10 +50,11 @@ case class CorrectionServiceLive() extends CorrectionService {
           dto.analogueValue,
           dto.analogueValueType,
           dto.correction,
-          dto.correctionType
+          dto.correctionType,
+          dto.isEnabled
         )
 }
 
-object CorrectionServiceLive{
+object CorrectionServiceLive {
     val layer: ULayer[CorrectionService] = ZLayer.succeed(CorrectionServiceLive())
 }

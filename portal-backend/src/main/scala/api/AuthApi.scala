@@ -17,7 +17,7 @@ object AuthApi {
                 requestBody <- req.body.asString
                 dto <- ZIO
                     .fromEither(requestBody.fromJson[CreateUserDTO])
-                    .orElseFail(BodyParsingException("CreateUserDTO"))
+                    .orElseFail(BodyParsingException())
                 createdUser <- AuthService.createUser(dto)
             } yield createdUser).fold(
               {
@@ -35,7 +35,7 @@ object AuthApi {
         case req @ Method.POST -> !! / "auth" / "user" =>
             (for {
                 requestBody <- req.body.asString
-                dto <- ZIO.fromEither(requestBody.fromJson[AuthUserDTO]).orElseFail(BodyParsingException("AuthUserDTO"))
+                dto <- ZIO.fromEither(requestBody.fromJson[AuthUserDTO]).orElseFail(BodyParsingException())
                 sessionOpt <- AuthService.authUser(dto)
             } yield sessionOpt).fold(
               {

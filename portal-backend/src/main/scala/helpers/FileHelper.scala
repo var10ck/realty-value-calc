@@ -14,8 +14,8 @@ object FileHelper {
 
     def makeFileZIO(path: String): ZIO[Any, Throwable, File] = for {
         newFile <- ZIO.from(new File(path))
-        _ <- ZIO.from(newFile.getParentFile.mkdirs)
-        _ <- ZIO.from(newFile.createNewFile())
+        _ <- ZIO.attemptBlocking(newFile.getParentFile.mkdirs)
+        _ <- ZIO.attemptBlocking(newFile.createNewFile())
     } yield newFile
 
     def makeFile(path: String): File = {

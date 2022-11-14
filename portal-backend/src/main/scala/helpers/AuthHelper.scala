@@ -1,12 +1,13 @@
 package helpers
 import dao.entities.auth.{User, UserSessionId}
-import dao.repositories.auth.{UserRepository, UserSessionRepository}
+import dao.repositories.auth.UserSessionRepository
 import exceptions.BodyParsingException
-import zhttp.http.{Http, Request, Response, Status}
+import zhttp.http.{Http, Request}
 import zio.ZIO
 import zio.json.{DecoderOps, JsonDecoder}
 
 import javax.sql.DataSource
+import scala.reflect.ClassTag
 
 object AuthHelper {
 
@@ -68,7 +69,7 @@ object AuthHelper {
             requestBody <- request.body.asString
             dto <- ZIO
                 .fromEither(requestBody.fromJson[DTOType])
-                .orElseFail(BodyParsingException("CreateRealtyObjectDTO"))
+                .orElseFail(BodyParsingException())
             result <- f(user, dto)
         } yield result
 }

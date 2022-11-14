@@ -35,7 +35,7 @@ final case class GeoSuggestionServiceDaData() extends GeoSuggestionService {
             body <- response.body.asString
             _ <- zio.Console.printLine(body)
             dto <- ZIO.fromEither(circe.jawn.decode[SuggestionResponseDTO](body))
-                .orElseFail(exceptions.BodyParsingException("SuggestionResponseDTO"))
+                .orElseFail(exceptions.BodyParsingException())
         } yield dto
     }
 

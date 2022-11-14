@@ -1,7 +1,7 @@
 package dto.realty
 import zio.json.JsonCodec
 
-case class CalculateValueOfSomeObjectsDTO(objectsIds: List[String])
+case class CalculateValueOfSomeObjectsDTO(objectsIds: List[String], withCorrections: Boolean)
 
 object CalculateValueOfSomeObjectsDTO {
     implicit val codec: JsonCodec[CalculateValueOfSomeObjectsDTO] =
