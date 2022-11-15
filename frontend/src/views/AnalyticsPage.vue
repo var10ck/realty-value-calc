@@ -81,7 +81,7 @@ export default {
       },
 
       xaxis: {
-        categories: ["Пользователем", "Всего"],
+        categories: ["Всего", "Пользователем"],
         position: "top",
         axisBorder: {
           show: false,
@@ -162,7 +162,7 @@ export default {
       },
 
       xaxis: {
-        categories: ["Пользователем", "Всего"],
+        categories: ["Всего", "Пользователем"],
         position: "top",
         axisBorder: {
           show: false,
