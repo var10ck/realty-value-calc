@@ -115,7 +115,7 @@ export default {
         labels: {
           show: false,
           formatter: function (val) {
-            return val;
+            return  Math.round(val);
           },
         },
       },
@@ -156,6 +156,9 @@ export default {
           fontSize: "12px",
           colors: ["#304758"],
         },
+        formatter: function (val) {
+            return Math.round(val);
+          },
       },
 
       xaxis: {
@@ -189,6 +192,12 @@ export default {
         },
         axisTicks: {
           show: false,
+        },
+        labels: {
+          show: false,
+          formatter: function (val) {
+            return  Math.round(val);
+          },
         },
       },
       title: {
@@ -265,7 +274,7 @@ export default {
           show: false,
         },
         labels: {
-          show: false,
+          // show: false,
           formatter: function (val) {
             return val.toLocaleString() + "₽";
           },
@@ -369,10 +378,5 @@ export default {
 };
 </script>
 <style>
-svg g text:first-child {
-  transform: translateX(20px);
-}
-svg g text:last-child {
-  transform: translateX(-20px);
-}
+
 </style>
