@@ -27,6 +27,7 @@
         'show-current-page': true,
       }"
       @dblclick:row="(e, options) => $router.push(`/realtyObject/${options.item.id}`)"
+      @click:row="(e, options) => isMobile ? $router.push(`/realtyObject/${options.item.id}`) : null"
     >
     <template v-slot:top>
       <v-toolbar
@@ -369,6 +370,7 @@
 
 <script>
 import RequestService from "@/services/RequestService";
+import MobileDetect from "mobile-detect";
 import * as consts from "@/consts/consts";
 import { mapGetters } from 'vuex'
 
@@ -475,6 +477,10 @@ export default {
 
     valueFilter() {
       return consts.valueFilter;
+    },
+
+    isMobile() {
+      return !!new MobileDetect(window.navigator.userAgent).mobile()
     },
 
     headers() {

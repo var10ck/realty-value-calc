@@ -3,6 +3,20 @@ import axios from "axios";
 export default class RequestService {
   static axiosInstance = this.initAxiosInstance();
 
+  static async getAnalyticsForPool(id) {
+    const result = await this.axiosInstance.get(`/realty/analytics/avgPriceOfRealtyByRoomsNumberForPool/${id}`);
+    if (result.data) {
+      return result.data;
+    }
+  }
+
+  static async getAnalyticsCommon() {
+    const result = await this.axiosInstance.get(`/realty/analytics/default`);
+    if (result.data) {
+      return result.data;
+    }
+  }
+
   static async createCorrection(data) {
     const result = await this.axiosInstance.put(`/realty/corrections/numeric`, data);
     if (result.data) {

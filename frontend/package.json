@@ -9,10 +9,13 @@
   },
   "dependencies": {
     "2gis-maps": "^3.7.2",
+    "apexcharts": "^3.36.3",
     "axios": "^1.1.3",
     "core-js": "^3.6.5",
     "lodash": "^4.17.21",
+    "mobile-detect": "^1.4.5",
     "vue": "^2.6.11",
+    "vue-apexcharts": "^1.6.2",
     "vue-router": "^3.2.0",
     "vuetify": "^2.6.0",
     "vuex": "^3.4.0"

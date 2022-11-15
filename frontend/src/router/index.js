@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import AllRealtyObjects from '@/views/AllRealtyObjects.vue'
 import RealtyObject from '@/views/RealtyObject.vue'
 import MapPage from '@/views/MapPage.vue'
+import AnalyticsPage from '@/views/AnalyticsPage.vue'
 import CorrectionsPage from '@/views/CorrectionsPage.vue'
 import Login from '@/components/Login';
 import Registry from '@/components/Registry';
@@ -20,6 +21,11 @@ const routes = [
     path: '/mapPage',
     name: 'MapPage',
     component: MapPage
+  },
+  {
+    path: '/analytics',
+    name: 'AnalyticsPage',
+    component: AnalyticsPage
   },
   {
     path: '/correctionsPage',

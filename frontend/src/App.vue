@@ -19,24 +19,25 @@
           <v-tabs fixed-tabs>
             <v-tab to="/">
               <span class="custon-nav-button">Объекты</span>
-              <v-icon small class="custon-nav-icon mr-2"> mdi-home </v-icon></v-tab
-            >
+              <v-icon small class="custon-nav-icon mr-2"> mdi-home </v-icon>
+            </v-tab>
             <v-tab to="/mapPage">
               <span class="custon-nav-button">Карта</span>
-              <v-icon small class="custon-nav-icon mr-2"> mdi-map </v-icon></v-tab
-            >
+              <v-icon small class="custon-nav-icon mr-2"> mdi-map </v-icon>
+            </v-tab>
             <v-tab to="/correctionsPage">
               <span class="custon-nav-button">Корректировки</span>
-              <v-icon small class="custon-nav-icon mr-2"> mdi-pencil </v-icon></v-tab
-            >
+              <v-icon small class="custon-nav-icon mr-2"> mdi-pencil </v-icon>
+            </v-tab>
+            <v-tab to="/analytics">
+              <span class="custon-nav-button">Аналитика</span>
+              <v-icon small class="custon-nav-icon mr-2"> mdi-poll </v-icon>
+            </v-tab>
           </v-tabs>
           <v-spacer></v-spacer>
           <v-btn class="custon-nav-button" @click="logout" light>Выход</v-btn>
           <v-icon class="custon-nav-icon" @click="logout"> mdi-door </v-icon>
         </v-app-bar>
-        <!-- <v-container>
-            <router-view/>
-          </v-container> -->
       </template>
       <v-snackbar
         top
@@ -174,9 +175,9 @@ html {
   }
 }
 
-@media (max-width: 800px) {
+@media (max-width: 900px) {
   .custom-app-bar {
-    padding: 0 30px;
+    padding: 0 20px;
   }
 }
 
@@ -185,6 +186,15 @@ html {
 }
 
 @media (max-width: 620px) {
+  .v-slide-group__prev {
+      display: none !important;
+  }
+
+  .v-tab {
+    padding: 0px;
+    min-width: 70px;
+  }
+
   .custom-app-bar {
     padding: 0 10px;
   }
