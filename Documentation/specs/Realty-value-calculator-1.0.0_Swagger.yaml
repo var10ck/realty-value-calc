@@ -1,0 +1,1790 @@
+swagger: '2.0'
+info:
+  version: '1.0'
+  title: Realty value calculator
+  description: >-
+    Сервис расчета стоимости объектов недвижимости города Москва.
+
+
+    Данный сервис содержит основную бизнес-логику системы: Импортирование/экспортирование объектов из Excel-файла, добавление и удаление объектов вручную, расчет стоимости объектов.
+  contact: {}
+host: localhost:8080
+basePath: /
+securityDefinitions: {}
+schemes:
+- http
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  /realty/corrections/constant:
+    put:
+      summary: Добавить корректировку Copy
+      tags:
+      - Корректировки по константам
+      operationId: ДобавитькорректировкуCopy
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: userSessionId
+        in: header
+        required: true
+        type: string
+        description: ''
+      - name: Body
+        in: body
+        required: true
+        description: ''
+        schema:
+          $ref: '#/definitions/%D0%94%D0%BE%D0%B1%D0%B0%D0%B2%D0%B8%D1%82%D1%8C%D0%BA%D0%BE%D1%80%D1%80%D0%B5%D0%BA%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%BA%D1%83CopyRequest'
+      responses:
+        '200':
+          description: OK
+          headers:
+            content-length:
+              type: string
+              default: '0'
+    patch:
+      summary: Редактировать корректировку Copy1
+      tags:
+      - Корректировки по константам
+      operationId: РедактироватькорректировкуCopy1
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: userSessionId
+        in: header
+        required: true
+        type: string
+        description: ''
+      - name: Body
+        in: body
+        required: true
+        description: ''
+        schema:
+          $ref: '#/definitions/%D0%A0%D0%B5%D0%B4%D0%B0%D0%BA%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C%D0%BA%D0%BE%D1%80%D1%80%D0%B5%D0%BA%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%BA%D1%83CopyRequest1'
+      responses:
+        '200':
+          description: OK
+          headers:
+            content-length:
+              type: string
+              default: '0'
+    get:
+      summary: Получить список всех корректировок Copy1
+      tags:
+      - Корректировки по константам
+      operationId: ПолучитьсписоквсехкорректировокCopy1
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: userSessionId
+        in: header
+        required: true
+        type: string
+        description: ''
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            default: ''
+            items:
+              $ref: '#/definitions/%D0%9F%D0%BE%D0%BB%D1%83%D1%87%D0%B8%D1%82%D1%8C%D1%81%D0%BF%D0%B8%D1%81%D0%BE%D0%BA%D0%B2%D1%81%D0%B5%D1%85%D0%BA%D0%BE%D1%80%D1%80%D0%B5%D0%BA%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%BE%D0%BACopy'
+          examples:
+            application/json:
+            - id: 2622a81f-b927-4f24-9fa2-8e7a02c93f0a
+              fieldName: condition
+              referenceValue: без отделки
+              analogueValue: муниципальный ремонт
+              correction: 10000
+              correctionType: unit
+              isEnabled: true
+          headers:
+            content-type:
+              type: string
+              default: application/json
+            content-length:
+              type: string
+              default: '230'
+  /realty/corrections/constant/<correctionId>:
+    delete:
+      summary: Удалить корректировку Copy
+      tags:
+      - Корректировки по константам
+      operationId: УдалитькорректировкуCopy
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: userSessionId
+        in: header
+        required: true
+        type: string
+        description: ''
+      responses:
+        '200':
+          description: OK
+          headers:
+            content-length:
+              type: string
+              default: '0'
+  /realty/corrections/numeric:
+    put:
+      summary: Добавить корректировку
+      tags:
+      - Корректировки по числовым полям
+      operationId: Добавитькорректировку
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: userSessionId
+        in: header
+        required: true
+        type: string
+        description: ''
+      - name: Body
+        in: body
+        required: true
+        description: ''
+        schema:
+          $ref: '#/definitions/%D0%94%D0%BE%D0%B1%D0%B0%D0%B2%D0%B8%D1%82%D1%8C%D0%BA%D0%BE%D1%80%D1%80%D0%B5%D0%BA%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%BA%D1%83Request'
+      responses:
+        '200':
+          description: ''
+          headers: {}
+    patch:
+      summary: Редактировать корректировку1
+      tags:
+      - Корректировки по числовым полям
+      operationId: Редактироватькорректировку1
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: userSessionId
+        in: header
+        required: true
+        type: string
+        description: ''
+      - name: Body
+        in: body
+        required: true
+        description: ''
+        schema:
+          $ref: '#/definitions/%D0%A0%D0%B5%D0%B4%D0%B0%D0%BA%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C%D0%BA%D0%BE%D1%80%D1%80%D0%B5%D0%BA%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%BA%D1%83Request1'
+      responses:
+        '200':
+          description: OK
+          headers:
+            content-length:
+              type: string
+              default: '0'
+    get:
+      summary: Получить список всех корректировок1
+      tags:
+      - Корректировки по числовым полям
+      operationId: Получитьсписоквсехкорректировок1
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: userSessionId
+        in: header
+        required: true
+        type: string
+        description: ''
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            default: ''
+            items:
+              $ref: '#/definitions/%D0%9F%D0%BE%D0%BB%D1%83%D1%87%D0%B8%D1%82%D1%8C%D1%81%D0%BF%D0%B8%D1%81%D0%BE%D0%BA%D0%B2%D1%81%D0%B5%D1%85%D0%BA%D0%BE%D1%80%D1%80%D0%B5%D0%BA%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%BE%D0%BA'
+          examples:
+            application/json:
+            - id: 5b26d014-cc14-4e7b-8646-edc041c160fa
+              fieldName: kitchenArea
+              referenceValue: 5-10
+              referenceValueType: 1
+              analogueValue: '30'
+              analogueValueType: 5
+              correction: 22
+              correctionType: percent
+              isEnabled: true
+            - id: 8067aec2-d313-46c4-b929-dee0986963a7
+              fieldName: kitchenArea
+              referenceValue: 5-10
+              referenceValueType: 1
+              analogueValue: '30'
+              analogueValueType: 5
+              correction: 23
+              correctionType: percent
+              isEnabled: true
+            - id: 95785a12-eec3-4e0d-a6a3-98ab52beeb7d
+              fieldName: totalArea
+              referenceValue: '50'
+              referenceValueType: 3
+              analogueValue: '50'
+              analogueValueType: 5
+              correction: 50
+              correctionType: percent
+              isEnabled: true
+            - id: 28be1e59-d9c7-4ab9-99d0-0597ece3cb88
+              fieldName: totalArea
+              referenceValue: '30'
+              referenceValueType: 3
+              analogueValue: '35'
+              analogueValueType: 5
+              correction: 50
+              correctionType: percent
+              isEnabled: true
+            - id: 0c54f694-c4cd-4be4-b416-4119c65b01de
+              fieldName: totalArea
+              referenceValue: 30-50
+              referenceValueType: 1
+              analogueValue: 30-50
+              analogueValueType: 1
+              correction: 50
+              correctionType: percent
+              isEnabled: true
+          headers:
+            content-type:
+              type: string
+              default: application/json
+            content-length:
+              type: string
+              default: '1105'
+  /realty/corrections/numeric/<correctionId>:
+    delete:
+      summary: Удалить корректировку
+      tags:
+      - Корректировки по числовым полям
+      operationId: Удалитькорректировку
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: userSessionId
+        in: header
+        required: true
+        type: string
+        description: ''
+      responses:
+        '200':
+          description: OK
+          headers:
+            content-length:
+              type: string
+              default: '0'
+  /:
+    post:
+      summary: Зарегистрировать пользователя
+      tags:
+      - Авторизация и аутентификация
+      operationId: Зарегистрироватьпользователя
+      deprecated: false
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/register'
+          examples:
+            application/json:
+              id: cf9934f7-9089-4241-9a1d-0984f13bfcf5
+              login: admin
+              passwordHash: $2a$10$OrZGbIj4cZvh1Xz2lFrln.w9OApqHiEPd4Ntue0V7VoGW/c9YUB3O
+              salt: $2a$10$OrZGbIj4cZvh1Xz2lFrln.
+              firstName: Victor
+              lastName: Nguen
+              birthdate: 1999-05-09
+          headers: {}
+    delete:
+      summary: Удалить пользователя1
+      tags:
+      - Авторизация и аутентификация
+      operationId: Удалитьпользователя1
+      deprecated: false
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        default:
+          description: ''
+          headers: {}
+  /auth/user:
+    post:
+      summary: Авторизовать пользователя
+      tags:
+      - Авторизация и аутентификация
+      operationId: Авторизоватьпользователя
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: Body
+        in: body
+        required: true
+        description: ''
+        schema:
+          $ref: '#/definitions/%D0%90%D0%B2%D1%82%D0%BE%D1%80%D0%B8%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D1%8C%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8FRequest2'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Authorizeuser'
+          examples:
+            application/json:
+              sessionId: 05a2bafb-24bb-4f88-94cf-e21c8975bebf
+          headers:
+            content-type:
+              type: string
+              default: application/json
+            content-length:
+              type: string
+              default: '52'
+  /realty/objects/create:
+    post:
+      description: Добавление в систему одного объекта недвижимости
+      summary: Создание объекта недвижимости
+      tags:
+      - CRUD
+      operationId: Созданиеобъектанедвижимости
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: userSessionId
+        in: header
+        required: true
+        type: string
+        description: userSessionId from Cookie
+      - name: Body
+        in: body
+        required: true
+        description: ''
+        schema:
+          $ref: '#/definitions/%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%D0%BE%D0%B1%D1%8A%D0%B5%D0%BA%D1%82%D0%B0%D0%BD%D0%B5%D0%B4%D0%B2%D0%B8%D0%B6%D0%B8%D0%BC%D0%BE%D1%81%D1%82%D0%B8Request3'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%D0%BE%D0%B1%D1%8A%D0%B5%D0%BA%D1%82%D0%B0%D0%BD%D0%B5%D0%B4%D0%B2%D0%B8%D0%B6%D0%B8%D0%BC%D0%BE%D1%81%D1%82%D0%B81'
+          examples:
+            application/json:
+              id: a7f17cd3-7102-449a-8622-d9e8655bfe75
+              location: г. Москва, ул. Ватутина, д. 9
+              roomsNumber: 3
+              segment: Новостройка
+              floorCount: 10
+              wallMaterial: кирпич
+              floorNumber: 4
+              totalArea: 75
+              kitchenArea: 12
+              gotBalcony: true
+              condition: Современная отделка
+              distanceFromMetro: 200
+              createdAt: 2022-11-04T02:39:08.1760348
+              updatedAt: 2022-11-04T02:39:08.1760348
+              poolId: 75ddaa65-542e-448a-b310-08b95d538c5a
+              coordinates:
+                lat: '55.721264'
+                lon: '37.454754'
+          headers:
+            content-type:
+              type: string
+              default: application/json
+            content-length:
+              type: string
+              default: '533'
+  /realty/objects:
+    get:
+      summary: Получить информацию обо всех объектах, добавленных пользователем
+      tags:
+      - CRUD
+      operationId: Получитьинформациюобовсехобъектах,добавленныхпользователем
+      deprecated: false
+      produces:
+      - application/json
+      - text/plain
+      parameters:
+      - name: userSessionId
+        in: header
+        required: true
+        type: string
+        description: userSessionId from Cookie
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            default: ''
+            items:
+              $ref: '#/definitions/%D0%9F%D0%BE%D0%BB%D1%83%D1%87%D0%B8%D1%82%D1%8C%D0%B8%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%86%D0%B8%D1%8E%D0%BE%D0%B1%D0%BE%D0%B2%D1%81%D0%B5%D1%85%D0%BE%D0%B1%D1%8A%D0%B5%D0%BA%D1%82%D0%B0%D1%85%2C%D0%B4%D0%BE%D0%B1%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%BD%D1%8B%D1%85%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D0%B5%D0%BC11'
+          headers:
+            content-type:
+              type: string
+              default: application/json
+            content-length:
+              type: string
+              default: '41518'
+        '401':
+          description: Unauthorized
+          schema:
+            type: string
+            default: ''
+          examples:
+            text/plain: Header userSessionId is not set
+          headers:
+            content-type:
+              type: string
+              default: text/plain
+            content-length:
+              type: string
+              default: '31'
+    patch:
+      description: Единственное обязательное поле - это id, остальные поля должны присутствовать в теле запроса только если их данные обновляются. Данные можно отправить если они не изменились, в таком случае в системе также ничего не изменится.
+      summary: Обновление информации об объекте1
+      tags:
+      - CRUD
+      operationId: Обновлениеинформацииобобъекте1
+      deprecated: false
+      produces:
+      - text/plain
+      parameters:
+      - name: userSessionId
+        in: header
+        required: true
+        type: string
+        description: ''
+      - name: Body
+        in: body
+        required: true
+        description: ''
+        schema:
+          $ref: '#/definitions/%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5%D0%B8%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%86%D0%B8%D0%B8%D0%BE%D0%B1%D0%BE%D0%B1%D1%8A%D0%B5%D0%BA%D1%82%D0%B5Request4'
+      responses:
+        '200':
+          description: OK
+          headers:
+            content-length:
+              type: string
+              default: '0'
+        '400':
+          description: Bad Request
+          schema:
+            type: string
+            default: ''
+          examples:
+            text/plain: User is not author of object
+          headers:
+            content-type:
+              type: string
+              default: text/plain
+            content-length:
+              type: string
+              default: '28'
+        '401':
+          description: Unauthorized
+          schema:
+            type: string
+            default: ''
+          examples:
+            text/plain: Header userSessionId is not set
+          headers:
+            content-type:
+              type: string
+              default: text/plain
+            content-length:
+              type: string
+              default: '31'
+  /realty/objects/4d8ca46f-78b7-4579-8cc2-8a834cb98791:
+    get:
+      description: Получение детальной информации об объекте, включая его координаты
+      summary: Получить информацию об объекте недвижимости1
+      tags:
+      - CRUD
+      operationId: Получитьинформациюобобъектенедвижимости1
+      deprecated: false
+      produces:
+      - application/json
+      - text/plain
+      parameters:
+      - name: userSessionId
+        in: header
+        required: true
+        type: string
+        description: userSessionId from Cookie
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/userSessionIdisset'
+          examples:
+            application/json:
+              id: c256f6e9-dd56-4e7a-9df8-2e4ca9235662
+              location: Москва, Саринский пр-д, 42
+              roomsNumber: 3
+              segment: Новостройка
+              floorCount: 10
+              wallMaterial: кирпич
+              floorNumber: 4
+              totalArea: 75
+              kitchenArea: 12
+              gotBalcony: true
+              condition: Современная отделка
+              distanceFromMetro: 200
+              createdAt: 2022-11-04T02:26:42.778829
+              updatedAt: 2022-11-04T02:26:42.778829
+              poolId: 75ddaa65-542e-448a-b310-08b95d538c5a
+              coordinates:
+                lat: ''
+                lon: ''
+          headers:
+            content-type:
+              type: string
+              default: application/json
+            content-length:
+              type: string
+              default: '510'
+        '401':
+          description: Unauthorized
+          schema:
+            type: string
+            default: ''
+          examples:
+            text/plain: Header userSessionId is not set
+          headers:
+            content-type:
+              type: string
+              default: text/plain
+            content-length:
+              type: string
+              default: '31'
+  /realty/objects/8a7395e0-8bfe-4c9f-b322-cd48d519c21c:
+    delete:
+      summary: Удалить объект недвижимости из системы2
+      tags:
+      - CRUD
+      operationId: Удалитьобъектнедвижимостиизсистемы2
+      deprecated: false
+      produces:
+      - text/plain
+      parameters:
+      - name: userSessionId
+        in: header
+        required: true
+        type: string
+        description: userSessionId from Cookie
+      responses:
+        '200':
+          description: OK
+          headers:
+            content-length:
+              type: string
+              default: '0'
+        '401':
+          description: Unauthorized
+          schema:
+            type: string
+            default: ''
+          examples:
+            text/plain: Header userSessionId is not set
+          headers:
+            content-type:
+              type: string
+              default: text/plain
+            content-length:
+              type: string
+              default: '31'
+  /realty/objects/import:
+    put:
+      description: Импортировать объекты недвижимости из файла
+      summary: Импорт из XLSX-файла
+      tags:
+      - Импорт/экспорт
+      operationId: ИмпортизXLSX-файла
+      deprecated: false
+      produces:
+      - text/plain
+      consumes:
+      - multipart/form-data
+      parameters:
+      - name: userSessionId
+        in: header
+        required: true
+        type: string
+        description: userSessionId from Cookie
+      - name: File
+        in: formData
+        required: true
+        type: file
+        format: file
+        description: ''
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+            default: ''
+          examples:
+            text/plain: '"b3f50452-be30-4294-9543-f9d04128b5f9"'
+          headers:
+            content-type:
+              type: string
+              default: application/json
+            content-length:
+              type: string
+              default: '38'
+  /realty/objects/export:
+    get:
+      summary: Экспорт объектов в xlsx
+      tags:
+      - Импорт/экспорт
+      operationId: Экспортобъектоввxlsx
+      deprecated: false
+      produces:
+      - text/plain
+      parameters:
+      - name: userSessionId
+        in: header
+        required: true
+        type: string
+        description: ''
+      responses:
+        '401':
+          description: Unauthorized
+          schema:
+            type: string
+            default: ''
+          examples:
+            text/plain: Header userSessionId is not set
+          headers:
+            content-type:
+              type: string
+              default: text/plain
+            content-length:
+              type: string
+              default: '31'
+        '200':
+          description: OK
+          schema:
+            type: string
+            default: ''
+          examples:
+            text/plain: binary data here
+          headers:
+            content-disposition:
+              type: string
+              default: attachment
+            content-type:
+              type: string
+              default: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+            transfer-encoding:
+              type: string
+              default: chunked
+  /realty/objects/export/<poolId>:
+    get:
+      summary: Экспорт объектов из конкретного пула в xlsx1
+      tags:
+      - Импорт/экспорт
+      operationId: Экспортобъектовизконкретногопулавxlsx1
+      deprecated: false
+      produces:
+      - text/plain
+      parameters:
+      - name: userSessionId
+        in: header
+        required: true
+        type: string
+        description: ''
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+            default: ''
+          examples:
+            text/plain: "PK\x03\x04\x14\0\b\b\b\0`\x17dU\0\0\0\0\0\0\0\0\0\0\0\0\x13\0\0\0[Content_Types].xml�S�n�0\x10����*6�PU\x15�C\x1F�\x16��\x03\\{�X�%����]\a8�R�\nq�cfgfW�d�q�ZCB\x13|��|�*�*h㻆},^�{Va�^K\e\n\n<4�\a6�N\x16�\bXQ�ǆ�9�\a!P��$�\x10�\x13҆�d�c�D�j);\x10��ѝP�g��E�M'O�ʕ����H7L�h���R���G��^�'�\x03\a{\x13�\b�zސʮ\eB��3\x1C�\v˙��h.�h�W�жF�\x0Ej娄CQՠ똈���}ιL�U:\x12\x14D�\x13����%އ����,�B���[�	��\x1E ;˱�	�{N��~��X�p�\x1CykOL�\x04\x18�kN�V��ܿBZ~����\x7Fq\x18�\x7F�\x0F �a\x19\x1Fr��{O�\x01PK\a\bz��q;\x01\0\0\x1C\x04\0\0PK\x03\x04\x14\0\b\b\b\0`\x17dU\0\0\0\0\0\0\0\0\0\0\0\0\v\0\0\0_rels/.rels���j�0\f�_���8�`�Q��2�m��\x014[ILb��ږ���.[K\n\e�($}�\a�v?�I�Q.���uӂ�h���\ex>=��@\x15��p�H\x06\"�~�}�	�n����*\"\x16\x03�H�׺؁\x02��\x13���8\a�Z�^'�#��7m{��O\x06�3��\x19�G�\x06u�ܓ\x18�'��y|a\x1E�����D�	��\x0El_\x03EYȾ�\0���vql\x1F3�ML�eh\x16���*�\x04��\\3�Y0���oJ׏�\x03	:\x14��^\b�\x1F�}\x02PK\a\b��z��\0\0\0I\x02\0\0PK\x03\x04\x14\0\b\b\b\0`\x17dU\0\0\0\0\0\0\0\0\0\0\0\0\x10\0\0\0docProps/app.xmlM��\n�0\x10D��\x10ro�z\x10�4� �'{�\x0F\b��\x06�MHV�盓z�\x19��T��E�1e\x17�����\x02Ɇ�ѳ����:�No7jH!bb�Y�\a�V���\x04�����T�)$o���0M��9ؗGb�7�\x01pe�\x11�*~�R�>��Y�EB��\x14�\x18nW\x05������\0PK\a\b6n�!�\0\0\0�\0\0\0PK\x03\x04\x14\0\b\b\b\0`\x17dU\0\0\0\0\0\0\0\0\0\0\0\0\x11\0\0\0docProps/core.xmlm��J�0\x10F_�依�E��v\x11eAP\\pE�.$c[l~H�]�޴�\x15Ի$ߙ��7\a=f���`MCXAI�FZ5��!\x0F�m~F�\x10�Qb�\x06\eb,ٴ�t\\Z�;o\x1D�8`Ȓ�\x04.]C�\x18\x1D\a\b�G-B�\b��\x17뵈��;pB��\x0E���\x144F�D\x140\vs�\x1A�Q��to~\\\x04J\x02����\0�`��F�:�;�$+y\b�JM�TL�¥�\x18<���/�烙�.���QͥG\x11QeI��K�|'����~Kڒ�e�XN�}Y�sN�s\r��g�����\"\x15�c��������?5��PK\a\bT\v\x1A�\x04\x01\0\0�\x01\0\0PK\x03\x04\x14\0\b\b\b\0`\x17dU\0\0\0\0\0\0\0\0\0\0\0\0\x14\0\0\0xl/sharedStrings.xml�S�J�@\x10}\x17��%�ڭ\"\"��\x0F�_�\x1FPjl\x03MR����VTD� >IE�g!�V���\x17f��3�z�EB\x02;3�̙3\e�x��ľ�P^\x18\x14��\\�\x12nP\x0Ew��R���6\x17׬�3?g+\x15�r�\f\"\x14�X�\x19x{Mw�+\0�@\x15�j\x14�ץT��T.��\x012�a�/E86*R�\eniGU]7�kr9�_�~�\v,�V�cG\x0E�h�ۺC)��}��LC\x1ASBC[F�-�nZ{e*\x12}2��)\x15��\b�Xw2�;P=!\v�?�\x0F���nL)��sA\x03C\x16gJ{L��-��U��`��)P\x19���t7\x03��>\x05h�\x02^0T�[`I�=[0�\x1C����C}�-f#�Y�q\x0F�\nz4Gv\x0F�I�r\0�	%\x19�=2\\�3|3+՝�\x111�=f�`��lQ��.�ɢuw�zo�2<\x108!5[�\n6��=�\bL.L�nS1\x19�K�y��T6.\n��\x17b��8\x19�\x05t\x0Fi�\x06��m�\x03��\x12��\x19����c�\x12���\x0EPK\a\b\n�\n\x17�\x01\0\0`\x03\0\0PK\x03\x04\x14\0\b\b\b\0`\x17dU\0\0\0\0\0\0\0\0\0\0\0\0\r\0\0\0xl/styles.xml�UM��0\x10�W�\x7F�|�/U�\nX�+��yS�W\a\fXk���l����\"�M��9��x��ޛ�0���\x13\x1C�P���\f/�\x16\x18Q(dɠ������\x16?��ߥ���>5�\x1Ad\x15�3�\x18�~J\x12]4T\x10}'[\n��J*A�ݪ:ѭ���N$x�Z,>&�0�y\nG�\x13F�B\x1E�dx��<�$��\x1A\a O�/�B�-��fi��R!\x06%�h��À\b\x1AX����bޏ\b��\0�\x1C�+�<�@*\a&!K�\x1D}>+F�\x17\r�W!�!l�:�[��\x17mu��ә78\0y�\x12c���ݠ\x18���f\x18$Ĵ��\x06�$���\"�|������˛{�1��uԒ��/-�b�s����9��\x1E\x0FP�rZ\x19+W�n�jd랍4F\n\e���\x12\bw	\x06ŰZ*��l\x1FbÊg�'���`ݮ�e�\x17�В�ӜkaN)p�s���	���E3�S��\x0E^A9\x7Fr�\x1F�i��v��\n���[�.-���!�#\e�`\x136�\x7F�\x16�'��lQW������z=UoF5\"m�{���\e-\x02�U6\x01�xq���ޱ5\b\n\x06�T����L.Į�^��ʁ��K:KxQԌ\n��f\e�_��7PK\a\b\"\x13���\x01\0\0�\x06\0\0PK\x03\x04\x14\0\b\b\b\0`\x17dU\0\0\0\0\0\0\0\0\0\0\0\0\x0F\0\0\0xl/workbook.xml���N�0\f��H�C�;K\n\bA�t\x17��\x13\b\r�n�ٚ���\x06oOک����˟?����\r�H�m�\x1A��\x02Aބ��������=��ˋ�\x14�	� 2�YC��XJɦ'��\n#���Bt�r�;�c$l�'Jn��J�I����P��8B�YC��|8��,�4`�m��#C���%�\x16\x13\x15\x0F�VC�\x03\x13Ⱥ�6�N�\vNQ�I�H[l4���\x7F���2�GG\x1A^	������$\x06\x11K�j���\x06Čmr,f�r-�\x7F�7PK\a\b�F8C�\0\0\0e\x01\0\0PK\x03\x04\x14\0\b\b\b\0`\x17dU\0\0\0\0\0\0\0\0\0\0\0\0\x1A\0\0\0xl/_rels/workbook.xml.rels��Mk�0\f@���}q��\x18�n/c����\0c+qh\"\x19K�迟���@\a;�$��{\x0F��~Γy�\"#���i� \x05�#\r\x0E^�O7�`D=E?1�\x03b�n��8y�?$�YLE�8H���Z		g/\rg����^�\f6�p�\x03�U���r΀%�좃��\x1D��/\x03�\x03I�`|�Rˤ��:f����~\f���mF�\vv����\x1C�:���ׯ�������\x7Fp9HB�Sy\x1DݵK~\x04�\x18����\vPK\a\b�\x03;��\0\0\03\x02\0\0PK\x03\x04\x14\0\b\b\b\0`\x17dU\0\0\0\0\0\0\0\0\0\0\0\0\x18\0\0\0xl/worksheets/sheet1.xml��[o�0\x14��'�?X~_�\x04\x12R\x01U�.k���v}v�\\T��vB\x7F�l�#�\x04yIl�}9�����}+rp\"�g��!Z�\x10�2�QV&>��k������w^M�+O	\x11@\n%�a*Duc\x18\n    \n    <LI���V���Ĕ\x15X�)K\f^1��F*r�2͍Q଄�\x17e\x05)UD�H��;t�\x11x\r�'#5�o\fT�\x03��j�\x18�P.Q��O��P\x109\x17�H�mh��Y�w\x06\"\x12�c.~���dI*�N\x1D�U)�4��'(2�\0\b\n��|�Y$R\x1Fڦ�Ix�\x16\x7F�G}���:�\x1A,��Zw�z��y��,{�v��I�\x18ʞ�6��\x19�������hY��Y�U֮�v�e-H\n        \n        <2�S6�h�\x02o�\x0EtU\x1EQ_\x1FȺn�}���D�%��\x1AA�\x12�h�@sc����h\r��\x04�O��N�W�\x19\x0E\x01o��\x02�3NJ툏:���'���ĽN���g����^'�)�E'6S�A'�S�Q'�)�\x13�)��B�Β��\x02r���\v�YZ_. c^\ry�}�l\x0F��	y�,�J\x0E\x0ET�z�-w���#�T\x10�f�\x1ES�ۇINb�P\x10���6cA��Ue6�B�\x7FPK\a\b\x10=��\x01\0\0v\x06\0\0PK\x01\x02\x14\0\x14\0\b\b\b\0`\x17dUz��q;\x01\0\0\x1C\x04\0\0\x13\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0[Content_Types].xmlPK\x01\x02\x14\0\x14\0\b\b\b\0`\x17dU��z��\0\0\0I\x02\0\0\v\0\0\0\0\0\0\0\0\0\0\0\0\0|\x01\0\0_rels/.relsPK\x01\x02\x14\0\x14\0\b\b\b\0`\x17dU6n�!�\0\0\0�\0\0\0\x10\0\0\0\0\0\0\0\0\0\0\0\0\0�\x02\0\0docProps/app.xmlPK\x01\x02\x14\0\x14\0\b\b\b\0`\x17dUT\v\x1A�\x04\x01\0\0�\x01\0\0\x11\0\0\0\0\0\0\0\0\0\0\0\0\0i\x03\0\0docProps/core.xmlPK\x01\x02\x14\0\x14\0\b\b\b\0`\x17dU\n�\n\x17�\x01\0\0`\x03\0\0\x14\0\0\0\0\0\0\0\0\0\0\0\0\0�\x04\0\0xl/sharedStrings.xmlPK\x01\x02\x14\0\x14\0\b\b\b\0`\x17dU\"\x13���\x01\0\0�\x06\0\0\r\0\0\0\0\0\0\0\0\0\0\0\0\0�\x06\0\0xl/styles.xmlPK\x01\x02\x14\0\x14\0\b\b\b\0`\x17dU�F8C�\0\0\0e\x01\0\0\x0F\0\0\0\0\0\0\0\0\0\0\0\0\0�\b\0\0xl/workbook.xmlPK\x01\x02\x14\0\x14\0\b\b\b\0`\x17dU�\x03;��\0\0\03\x02\0\0\x1A\0\0\0\0\0\0\0\0\0\0\0\0\0�	\0\0xl/_rels/workbook.xml.relsPK\x01\x02\x14\0\x14\0\b\b\b\0`\x17dU\x10=��\x01\0\0v\x06\0\0\x18\0\0\0\0\0\0\0\0\0\0\0\0\0\0\v\0\0xl/worksheets/sheet1.xmlPK\x05\x06\0\0\0\0	\0	\0?\x02\0\07\r\0\0\0\0"
+          headers:
+            content-disposition:
+              type: string
+              default: attachment
+            content-type:
+              type: string
+              default: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+            transfer-encoding:
+              type: string
+              default: chunked
+        '401':
+          description: Unauthorized
+          schema:
+            type: string
+            default: ''
+          examples:
+            text/plain: Header userSessionId is not set
+          headers:
+            content-type:
+              type: string
+              default: text/plain
+            content-length:
+              type: string
+              default: '31'
+  /realty/objects/exportSome:
+    get:
+      summary: Экспорт нескольких объектов в xlsx2
+      tags:
+      - Импорт/экспорт
+      operationId: Экспортнесколькихобъектоввxlsx2
+      deprecated: false
+      produces:
+      - text/plain
+      parameters:
+      - name: userSessionId
+        in: header
+        required: true
+        type: string
+        description: ''
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+            default: ''
+          examples:
+            text/plain: "PK\x03\x04\x14\0\b\b\b\0`\x17dU\0\0\0\0\0\0\0\0\0\0\0\0\x13\0\0\0[Content_Types].xml�S�n�0\x10����*6�PU\x15�C\x1F�\x16��\x03\\{�X�%����]\a8�R�\nq�cfgfW�d�q�ZCB\x13|��|�*�*h㻆},^�{Va�^K\e\n\n<4�\a6�N\x16�\bXQ�ǆ�9�\a!P��$�\x10�\x13҆�d�c�D�j);\x10��ѝP�g��E�M'O�ʕ����H7L�h���R���G��^�'�\x03\a{\x13�\b�zސʮ\eB��3\x1C�\v˙��h.�h�W�жF�\x0Ej娄CQՠ똈���}ιL�U:\x12\x14D�\x13����%އ����,�B���[�	��\x1E ;˱�	�{N��~��X�p�\x1CykOL�\x04\x18�kN�V��ܿBZ~����\x7Fq\x18�\x7F�\x0F �a\x19\x1Fr��{O�\x01PK\a\bz��q;\x01\0\0\x1C\x04\0\0PK\x03\x04\x14\0\b\b\b\0`\x17dU\0\0\0\0\0\0\0\0\0\0\0\0\v\0\0\0_rels/.rels���j�0\f�_���8�`�Q��2�m��\x014[ILb��ږ���.[K\n\e�($}�\a�v?�I�Q.���uӂ�h���\ex>=��@\x15��p�H\x06\"�~�}�	�n����*\"\x16\x03�H�׺؁\x02��\x13���8\a�Z�^'�#��7m{��O\x06�3��\x19�G�\x06u�ܓ\x18�'��y|a\x1E�����D�	��\x0El_\x03EYȾ�\0���vql\x1F3�ML�eh\x16���*�\x04��\\3�Y0���oJ׏�\x03	:\x14��^\b�\x1F�}\x02PK\a\b��z��\0\0\0I\x02\0\0PK\x03\x04\x14\0\b\b\b\0`\x17dU\0\0\0\0\0\0\0\0\0\0\0\0\x10\0\0\0docProps/app.xmlM��\n�0\x10D��\x10ro�z\x10�4� �'{�\x0F\b��\x06�MHV�盓z�\x19��T��E�1e\x17�����\x02Ɇ�ѳ����:�No7jH!bb�Y�\a�V���\x04�����T�)$o���0M��9ؗGb�7�\x01pe�\x11�*~�R�>��Y�EB��\x14�\x18nW\x05������\0PK\a\b6n�!�\0\0\0�\0\0\0PK\x03\x04\x14\0\b\b\b\0`\x17dU\0\0\0\0\0\0\0\0\0\0\0\0\x11\0\0\0docProps/core.xmlm��J�0\x10F_�依�E��v\x11eAP\\pE�.$c[l~H�]�޴�\x15Ի$ߙ��7\a=f���`MCXAI�FZ5��!\x0F�m~F�\x10�Qb�\x06\eb,ٴ�t\\Z�;o\x1D�8`Ȓ�\x04.]C�\x18\x1D\a\b�G-B�\b��\x17뵈��;pB��\x0E���\x144F�D\x140\vs�\x1A�Q��to~\\\x04J\x02����\0�`��F�:�;�$+y\b�JM�TL�¥�\x18<���/�烙�.���QͥG\x11QeI��K�|'����~Kڒ�e�XN�}Y�sN�s\r��g�����\"\x15�c��������?5��PK\a\bT\v\x1A�\x04\x01\0\0�\x01\0\0PK\x03\x04\x14\0\b\b\b\0`\x17dU\0\0\0\0\0\0\0\0\0\0\0\0\x14\0\0\0xl/sharedStrings.xml�S�J�@\x10}\x17��%�ڭ\"\"��\x0F�_�\x1FPjl\x03MR����VTD� >IE�g!�V���\x17f��3�z�EB\x02;3�̙3\e�x��ľ�P^\x18\x14��\\�\x12nP\x0Ew��R���6\x17׬�3?g+\x15�r�\f\"\x14�X�\x19x{Mw�+\0�@\x15�j\x14�ץT��T.��\x012�a�/E86*R�\eniGU]7�kr9�_�~�\v,�V�cG\x0E�h�ۺC)��}��LC\x1ASBC[F�-�nZ{e*\x12}2��)\x15��\b�Xw2�;P=!\v�?�\x0F���nL)��sA\x03C\x16gJ{L��-��U��`��)P\x19���t7\x03��>\x05h�\x02^0T�[`I�=[0�\x1C����C}�-f#�Y�q\x0F�\nz4Gv\x0F�I�r\0�	%\x19�=2\\�3|3+՝�\x111�=f�`��lQ��.�ɢuw�zo�2<\x108!5[�\n6��=�\bL.L�nS1\x19�K�y��T6.\n��\x17b��8\x19�\x05t\x0Fi�\x06��m�\x03��\x12��\x19����c�\x12���\x0EPK\a\b\n�\n\x17�\x01\0\0`\x03\0\0PK\x03\x04\x14\0\b\b\b\0`\x17dU\0\0\0\0\0\0\0\0\0\0\0\0\r\0\0\0xl/styles.xml�UM��0\x10�W�\x7F�|�/U�\nX�+��yS�W\a\fXk���l����\"�M��9��x��ޛ�0���\x13\x1C�P���\f/�\x16\x18Q(dɠ������\x16?��ߥ���>5�\x1Ad\x15�3�\x18�~J\x12]4T\x10}'[\n��J*A�ݪ:ѭ���N$x�Z,>&�0�y\nG�\x13F�B\x1E�dx��<�$��\x1A\a O�/�B�-��fi��R!\x06%�h��À\b\x1AX����bޏ\b��\0�\x1C�+�<�@*\a&!K�\x1D}>+F�\x17\r�W!�!l�:�[��\x17mu��ә78\0y�\x12c���ݠ\x18���f\x18$Ĵ��\x06�$���\"�|������˛{�1��uԒ��/-�b�s����9��\x1E\x0FP�rZ\x19+W�n�jd랍4F\n\e���\x12\bw	\x06ŰZ*��l\x1FbÊg�'���`ݮ�e�\x17�В�ӜkaN)p�s���	���E3�S��\x0E^A9\x7Fr�\x1F�i��v��\n���[�.-���!�#\e�`\x136�\x7F�\x16�'��lQW������z=UoF5\"m�{���\e-\x02�U6\x01�xq���ޱ5\b\n\x06�T����L.Į�^��ʁ��K:KxQԌ\n��f\e�_��7PK\a\b\"\x13���\x01\0\0�\x06\0\0PK\x03\x04\x14\0\b\b\b\0`\x17dU\0\0\0\0\0\0\0\0\0\0\0\0\x0F\0\0\0xl/workbook.xml���N�0\f��H�C�;K\n\bA�t\x17��\x13\b\r�n�ٚ���\x06oOک����˟?����\r�H�m�\x1A��\x02Aބ��������=��ˋ�\x14�	� 2�YC��XJɦ'��\n#���Bt�r�;�c$l�'Jn��J�I����P��8B�YC��|8��,�4`�m��#C���%�\x16\x13\x15\x0F�VC�\x03\x13Ⱥ�6�N�\vNQ�I�H[l4���\x7F���2�GG\x1A^	������$\x06\x11K�j���\x06Čmr,f�r-�\x7F�7PK\a\b�F8C�\0\0\0e\x01\0\0PK\x03\x04\x14\0\b\b\b\0`\x17dU\0\0\0\0\0\0\0\0\0\0\0\0\x1A\0\0\0xl/_rels/workbook.xml.rels��Mk�0\f@���}q��\x18�n/c����\0c+qh\"\x19K�迟���@\a;�$��{\x0F��~Γy�\"#���i� \x05�#\r\x0E^�O7�`D=E?1�\x03b�n��8y�?$�YLE�8H���Z		g/\rg����^�\f6�p�\x03�U���r΀%�좃��\x1D��/\x03�\x03I�`|�Rˤ��:f����~\f���mF�\vv����\x1C�:���ׯ�������\x7Fp9HB�Sy\x1DݵK~\x04�\x18����\vPK\a\b�\x03;��\0\0\03\x02\0\0PK\x03\x04\x14\0\b\b\b\0`\x17dU\0\0\0\0\0\0\0\0\0\0\0\0\x18\0\0\0xl/worksheets/sheet1.xml��[o�0\x14��'�?X~_�\x04\x12R\x01U�.k���v}v�\\T��vB\x7F�l�#�\x04yIl�}9�����}+rp\"�g��!Z�\x10�2�QV&>��k������w^M�+O	\x11@\n%�a*Duc\x18\n    \n    <LI���V���Ĕ\x15X�)K\f^1��F*r�2͍Q଄�\x17e\x05)UD�H��;t�\x11x\r�'#5�o\fT�\x03��j�\x18�P.Q��O��P\x109\x17�H�mh��Y�w\x06\"\x12�c.~���dI*�N\x1D�U)�4��'(2�\0\b\n��|�Y$R\x1Fڦ�Ix�\x16\x7F�G}���:�\x1A,��Zw�z��y��,{�v��I�\x18ʞ�6��\x19�������hY��Y�U֮�v�e-H\n        \n        <2�S6�h�\x02o�\x0EtU\x1EQ_\x1FȺn�}���D�%��\x1AA�\x12�h�@sc����h\r��\x04�O��N�W�\x19\x0E\x01o��\x02�3NJ툏:���'���ĽN���g����^'�)�E'6S�A'�S�Q'�)�\x13�)��B�Β��\x02r���\v�YZ_. c^\ry�}�l\x0F��	y�,�J\x0E\x0ET�z�-w���#�T\x10�f�\x1ES�ۇINb�P\x10���6cA��Ue6�B�\x7FPK\a\b\x10=��\x01\0\0v\x06\0\0PK\x01\x02\x14\0\x14\0\b\b\b\0`\x17dUz��q;\x01\0\0\x1C\x04\0\0\x13\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0[Content_Types].xmlPK\x01\x02\x14\0\x14\0\b\b\b\0`\x17dU��z��\0\0\0I\x02\0\0\v\0\0\0\0\0\0\0\0\0\0\0\0\0|\x01\0\0_rels/.relsPK\x01\x02\x14\0\x14\0\b\b\b\0`\x17dU6n�!�\0\0\0�\0\0\0\x10\0\0\0\0\0\0\0\0\0\0\0\0\0�\x02\0\0docProps/app.xmlPK\x01\x02\x14\0\x14\0\b\b\b\0`\x17dUT\v\x1A�\x04\x01\0\0�\x01\0\0\x11\0\0\0\0\0\0\0\0\0\0\0\0\0i\x03\0\0docProps/core.xmlPK\x01\x02\x14\0\x14\0\b\b\b\0`\x17dU\n�\n\x17�\x01\0\0`\x03\0\0\x14\0\0\0\0\0\0\0\0\0\0\0\0\0�\x04\0\0xl/sharedStrings.xmlPK\x01\x02\x14\0\x14\0\b\b\b\0`\x17dU\"\x13���\x01\0\0�\x06\0\0\r\0\0\0\0\0\0\0\0\0\0\0\0\0�\x06\0\0xl/styles.xmlPK\x01\x02\x14\0\x14\0\b\b\b\0`\x17dU�F8C�\0\0\0e\x01\0\0\x0F\0\0\0\0\0\0\0\0\0\0\0\0\0�\b\0\0xl/workbook.xmlPK\x01\x02\x14\0\x14\0\b\b\b\0`\x17dU�\x03;��\0\0\03\x02\0\0\x1A\0\0\0\0\0\0\0\0\0\0\0\0\0�	\0\0xl/_rels/workbook.xml.relsPK\x01\x02\x14\0\x14\0\b\b\b\0`\x17dU\x10=��\x01\0\0v\x06\0\0\x18\0\0\0\0\0\0\0\0\0\0\0\0\0\0\v\0\0xl/worksheets/sheet1.xmlPK\x05\x06\0\0\0\0	\0	\0?\x02\0\07\r\0\0\0\0"
+          headers:
+            content-disposition:
+              type: string
+              default: attachment
+            content-type:
+              type: string
+              default: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+            transfer-encoding:
+              type: string
+              default: chunked
+        '401':
+          description: Unauthorized
+          schema:
+            type: string
+            default: ''
+          examples:
+            text/plain: Header userSessionId is not set
+          headers:
+            content-type:
+              type: string
+              default: text/plain
+            content-length:
+              type: string
+              default: '31'
+  /realty/objects/calculatePool:
+    post:
+      summary: Запустить расчет стоимости всех объектов в пуле2
+      tags:
+      - Запуск расчета стоимости
+      operationId: Запуститьрасчетстоимостивсехобъектоввпуле2
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: userSessionId
+        in: header
+        required: true
+        type: string
+        description: ''
+      - name: Body
+        in: body
+        required: true
+        description: ''
+        schema:
+          $ref: '#/definitions/%D0%97%D0%B0%D0%BF%D1%83%D1%81%D1%82%D0%B8%D1%82%D1%8C%D1%80%D0%B0%D1%81%D1%87%D0%B5%D1%82%D1%81%D1%82%D0%BE%D0%B8%D0%BC%D0%BE%D1%81%D1%82%D0%B8%D0%B2%D1%81%D0%B5%D1%85%D0%BE%D0%B1%D1%8A%D0%B5%D0%BA%D1%82%D0%BE%D0%B2%D0%B2%D0%BF%D1%83%D0%BB%D0%B5Request5'
+      responses:
+        '200':
+          description: OK
+          headers:
+            content-length:
+              type: string
+              default: '0'
+  /realty/objects/calculateSome:
+    post:
+      summary: Запустить расчет стоимости выбранных объектов3
+      tags:
+      - Запуск расчета стоимости
+      operationId: Запуститьрасчетстоимостивыбранныхобъектов3
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: userSessionId
+        in: header
+        required: true
+        type: string
+        description: ''
+      - name: Body
+        in: body
+        required: true
+        description: ''
+        schema:
+          $ref: '#/definitions/%D0%97%D0%B0%D0%BF%D1%83%D1%81%D1%82%D0%B8%D1%82%D1%8C%D1%80%D0%B0%D1%81%D1%87%D0%B5%D1%82%D1%81%D1%82%D0%BE%D0%B8%D0%BC%D0%BE%D1%81%D1%82%D0%B8%D0%B2%D1%8B%D0%B1%D1%80%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%D0%BE%D0%B1%D1%8A%D0%B5%D0%BA%D1%82%D0%BE%D0%B2Request6'
+      responses:
+        '200':
+          description: ''
+          headers: {}
+  /realty/pool:
+    put:
+      description: >-
+        Можно создать пул вручную, чтобы переназначать объекты в него.
+
+
+        Можно отправить пустой объект в теле запроса, тогда имя пула сгенерируется автоматически. Внимание: отправить нужно именно пустой объект {}, а не пустой body.
+      summary: Создание пула для объектов4
+      tags:
+      - Пулы объектов
+      operationId: Созданиепуладляобъектов4
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: userSessionId
+        in: header
+        required: true
+        type: string
+        description: ''
+      - name: Body
+        in: body
+        required: true
+        description: ''
+        schema:
+          $ref: '#/definitions/%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5%D0%BF%D1%83%D0%BB%D0%B0%D0%B4%D0%BB%D1%8F%D0%BE%D0%B1%D1%8A%D0%B5%D0%BA%D1%82%D0%BE%D0%B2Request7'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Createpoolforobjects'
+          examples:
+            application/json:
+              id: 2f5a0cb0-acd3-43d0-82d6-2f8ff8edfcac
+              name: Новый пул объектов 12345
+              userId: 174fd95f-d7cb-4270-95e2-658beb0c8797
+          headers:
+            content-type:
+              type: string
+              default: application/json
+            content-length:
+              type: string
+              default: '143'
+  /realty/pool/<poolId>:
+    get:
+      summary: Получение информации о пуле по id
+      tags:
+      - Пулы объектов
+      operationId: Получениеинформацииопулепоid
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: userSessionId
+        in: header
+        required: true
+        type: string
+        description: ''
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Getpoolinfo'
+          examples:
+            application/json:
+              id: 75ddaa65-542e-448a-b310-08b95d538c5a
+              name: pool-04-11-2022-01-27-02
+              userId: 174fd95f-d7cb-4270-95e2-658beb0c8797
+          headers:
+            content-type:
+              type: string
+              default: application/json
+            content-length:
+              type: string
+              default: '127'
+  /realty/pools:
+    get:
+      summary: Получение информации обо всех пулах пользователя2
+      tags:
+      - Пулы объектов
+      operationId: Получениеинформацииобовсехпулахпользователя2
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: userSessionId
+        in: header
+        required: true
+        type: string
+        description: ''
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            default: ''
+            items:
+              $ref: '#/definitions/%D0%9F%D0%BE%D0%BB%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D0%B5%D0%B8%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%86%D0%B8%D0%B8%D0%BE%D0%B1%D0%BE%D0%B2%D1%81%D0%B5%D1%85%D0%BF%D1%83%D0%BB%D0%B0%D1%85%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F111'
+          examples:
+            application/json:
+            - id: b3f50452-be30-4294-9543-f9d04128b5f9
+              name: pool-04-11-2022-20-41-05
+            - id: 7d52875e-284f-44bf-bfcf-2f348960cecd
+              name: pool-04-11-2022-21-10-21
+          headers:
+            content-type:
+              type: string
+              default: application/json
+            content-length:
+              type: string
+              default: '161'
+  /realty/analytics/default:
+    get:
+      description: >-
+        | Поле | Описание |
+
+        | --- | --- |
+
+        | countAllRealtyObjects | количество всех загруженных объектов недвижимости |
+
+        | countAllRealtyObjectsOfUser | количество объектов недвижимости, загруженных пользователем |
+
+        | sumAllAreaOfAllObjects | суммарная площадь всех объектов |
+
+        | sumAllAreaOfUsersObjects | суммарная площадь объектов, загруженных пользователем |
+
+        | avgPriceByRoomsNumber | средняя цена квартиры(по всем квартирам в системе) в зависимости от количества комнат |
+      summary: default
+      tags:
+      - Аналитика
+      operationId: default
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: userSessionId
+        in: header
+        required: true
+        type: string
+        description: ''
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/default'
+          examples:
+            application/json:
+              countAllRealtyObjects: 20
+              countAllRealtyObjectsOfUser: 20
+              sumAllAreaOfAllObjects: 1402.8
+              sumAllAreaOfUsersObjects: 1402.8
+              avgPriceByRoomsNumber:
+                '1': 16681095.625
+                '2': 24943582.8333333
+                '3': 30584537.8333333
+          headers:
+            content-type:
+              type: string
+              default: application/json
+            content-length:
+              type: string
+              default: '231'
+  /realty/analytics/avgPriceOfRealtyByRoomsNumberForPool/7d52875e-284f-44bf-bfcf-2f348960cecd:
+    get:
+      summary: Средняя цена квартиры в пуле в зависимости от количетсва комнат3
+      tags:
+      - Аналитика
+      operationId: Средняяценаквартирывпулевзависимостиотколичетсвакомнат3
+      deprecated: false
+      produces:
+      - application/json
+      parameters:
+      - name: userSessionId
+        in: header
+        required: true
+        type: string
+        description: ''
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: number
+            default: ''
+            format: double
+          headers:
+            content-type:
+              type: string
+              default: application/json
+            content-length:
+              type: string
+              default: '79'
+definitions:
+  ДобавитькорректировкуCopyRequest:
+    title: ДобавитькорректировкуCopyRequest
+    example:
+      fieldName: condition
+      referenceValue: без отделки
+      analogueValue: муниципальный ремонт
+      correction: 10000
+      correctionType: unit
+      isEnabled: true
+    type: object
+    properties:
+      fieldName:
+        type: string
+      referenceValue:
+        type: string
+      analogueValue:
+        type: string
+      correction:
+        type: integer
+        format: int32
+      correctionType:
+        type: string
+      isEnabled:
+        type: boolean
+    required:
+    - fieldName
+    - referenceValue
+    - analogueValue
+    - correction
+    - correctionType
+    - isEnabled
+  РедактироватькорректировкуCopyRequest1:
+    title: РедактироватькорректировкуCopyRequest1
+    example:
+      id: 9dac4b4f-e6ee-42ed-a97d-51d61b971e27
+      fieldName: condition
+      referenceValue: без отделки
+      analogueValue: муниципальный ремонт
+      correction: 10000
+      correctionType: unit
+      isEnabled: true
+    type: object
+    properties:
+      id:
+        type: string
+      fieldName:
+        type: string
+      referenceValue:
+        type: string
+      analogueValue:
+        type: string
+      correction:
+        type: integer
+        format: int32
+      correctionType:
+        type: string
+      isEnabled:
+        type: boolean
+    required:
+    - id
+    - fieldName
+    - referenceValue
+    - analogueValue
+    - correction
+    - correctionType
+    - isEnabled
+  ПолучитьсписоквсехкорректировокCopy:
+    title: ПолучитьсписоквсехкорректировокCopy
+    example:
+      id: 2622a81f-b927-4f24-9fa2-8e7a02c93f0a
+      fieldName: condition
+      referenceValue: без отделки
+      analogueValue: муниципальный ремонт
+      correction: 10000
+      correctionType: unit
+      isEnabled: true
+    type: object
+    properties:
+      id:
+        type: string
+      fieldName:
+        type: string
+      referenceValue:
+        type: string
+      analogueValue:
+        type: string
+      correction:
+        type: integer
+        format: int32
+      correctionType:
+        type: string
+      isEnabled:
+        type: boolean
+    required:
+    - id
+    - fieldName
+    - referenceValue
+    - analogueValue
+    - correction
+    - correctionType
+    - isEnabled
+  ДобавитькорректировкуRequest:
+    title: ДобавитькорректировкуRequest
+    example:
+      fieldName: totalArea
+      referenceValue: 30-50
+      referenceValueType: 1
+      analogueValue: 30-50
+      analogueValueType: 1
+      correction: 50
+      correctionType: percent
+      isEnabled: true
+    type: object
+    properties:
+      fieldName:
+        type: string
+      referenceValue:
+        type: string
+      referenceValueType:
+        type: integer
+        format: int32
+      analogueValue:
+        type: string
+      analogueValueType:
+        type: integer
+        format: int32
+      correction:
+        type: integer
+        format: int32
+      correctionType:
+        type: string
+      isEnabled:
+        type: boolean
+    required:
+    - fieldName
+    - referenceValue
+    - referenceValueType
+    - analogueValue
+    - analogueValueType
+    - correction
+    - correctionType
+    - isEnabled
+  РедактироватькорректировкуRequest1:
+    title: РедактироватькорректировкуRequest1
+    example:
+      id: 8067aec2-d313-46c4-b929-dee0986963a7
+      fieldName: kitchenArea
+      referenceValue: 5-10
+      referenceValueType: 1
+      analogueValue: '30'
+      analogueValueType: 5
+      correction: 23
+      correctionType: percent
+      isEnabled: false
+    type: object
+    properties:
+      id:
+        type: string
+      fieldName:
+        type: string
+      referenceValue:
+        type: string
+      referenceValueType:
+        type: integer
+        format: int32
+      analogueValue:
+        type: string
+      analogueValueType:
+        type: integer
+        format: int32
+      correction:
+        type: integer
+        format: int32
+      correctionType:
+        type: string
+      isEnabled:
+        type: boolean
+    required:
+    - id
+    - fieldName
+    - referenceValue
+    - referenceValueType
+    - analogueValue
+    - analogueValueType
+    - correction
+    - correctionType
+    - isEnabled
+  Получитьсписоквсехкорректировок:
+    title: Получитьсписоквсехкорректировок
+    example:
+      id: 5b26d014-cc14-4e7b-8646-edc041c160fa
+      fieldName: kitchenArea
+      referenceValue: 5-10
+      referenceValueType: 1
+      analogueValue: '30'
+      analogueValueType: 5
+      correction: 22
+      correctionType: percent
+      isEnabled: true
+    type: object
+    properties:
+      id:
+        type: string
+      fieldName:
+        type: string
+      referenceValue:
+        type: string
+      referenceValueType:
+        type: integer
+        format: int32
+      analogueValue:
+        type: string
+      analogueValueType:
+        type: integer
+        format: int32
+      correction:
+        type: integer
+        format: int32
+      correctionType:
+        type: string
+      isEnabled:
+        type: boolean
+    required:
+    - id
+    - fieldName
+    - referenceValue
+    - referenceValueType
+    - analogueValue
+    - analogueValueType
+    - correction
+    - correctionType
+    - isEnabled
+  register:
+    title: register
+    example:
+      id: cf9934f7-9089-4241-9a1d-0984f13bfcf5
+      login: admin
+      passwordHash: $2a$10$OrZGbIj4cZvh1Xz2lFrln.w9OApqHiEPd4Ntue0V7VoGW/c9YUB3O
+      salt: $2a$10$OrZGbIj4cZvh1Xz2lFrln.
+      firstName: Victor
+      lastName: Nguen
+      birthdate: 1999-05-09
+    type: object
+    properties:
+      id:
+        type: string
+      login:
+        type: string
+      passwordHash:
+        type: string
+      salt:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      birthdate:
+        type: string
+    required:
+    - id
+    - login
+    - passwordHash
+    - salt
+    - firstName
+    - lastName
+    - birthdate
+  АвторизоватьпользователяRequest2:
+    title: АвторизоватьпользователяRequest2
+    example:
+      login: admin
+      password: admin
+    type: object
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+    required:
+    - login
+    - password
+  Authorizeuser:
+    title: Authorizeuser
+    example:
+      sessionId: 05a2bafb-24bb-4f88-94cf-e21c8975bebf
+    type: object
+    properties:
+      sessionId:
+        type: string
+    required:
+    - sessionId
+  СозданиеобъектанедвижимостиRequest3:
+    title: СозданиеобъектанедвижимостиRequest3
+    example:
+      location: г. Москва, ул. Ватутина, д. 9
+      roomsNumber: 3
+      segment: Новостройка
+      floorCount: 10
+      wallMaterial: кирпич
+      floorNumber: 4
+      totalArea: 75
+      kitchenArea: 12
+      gotBalcony: true
+      condition: Современная отделка
+      distanceFromMetro: 200
+      poolId: 75ddaa65-542e-448a-b310-08b95d538c5a
+    type: object
+    properties:
+      location:
+        type: string
+      roomsNumber:
+        type: integer
+        format: int32
+      segment:
+        type: string
+      floorCount:
+        type: integer
+        format: int32
+      wallMaterial:
+        type: string
+      floorNumber:
+        type: integer
+        format: int32
+      totalArea:
+        type: integer
+        format: int32
+      kitchenArea:
+        type: integer
+        format: int32
+      gotBalcony:
+        type: boolean
+      condition:
+        type: string
+      distanceFromMetro:
+        type: integer
+        format: int32
+      poolId:
+        type: string
+    required:
+    - location
+    - roomsNumber
+    - segment
+    - floorCount
+    - wallMaterial
+    - floorNumber
+    - totalArea
+    - kitchenArea
+    - gotBalcony
+    - condition
+    - distanceFromMetro
+    - poolId
+  Созданиеобъектанедвижимости1:
+    title: Созданиеобъектанедвижимости1
+    example:
+      id: a7f17cd3-7102-449a-8622-d9e8655bfe75
+      location: г. Москва, ул. Ватутина, д. 9
+      roomsNumber: 3
+      segment: Новостройка
+      floorCount: 10
+      wallMaterial: кирпич
+      floorNumber: 4
+      totalArea: 75
+      kitchenArea: 12
+      gotBalcony: true
+      condition: Современная отделка
+      distanceFromMetro: 200
+      createdAt: 2022-11-04T02:39:08.1760348
+      updatedAt: 2022-11-04T02:39:08.1760348
+      poolId: 75ddaa65-542e-448a-b310-08b95d538c5a
+      coordinates:
+        lat: '55.721264'
+        lon: '37.454754'
+    type: object
+    properties:
+      id:
+        type: string
+      location:
+        type: string
+      roomsNumber:
+        type: integer
+        format: int32
+      segment:
+        type: string
+      floorCount:
+        type: integer
+        format: int32
+      wallMaterial:
+        type: string
+      floorNumber:
+        type: integer
+        format: int32
+      totalArea:
+        type: integer
+        format: int32
+      kitchenArea:
+        type: integer
+        format: int32
+      gotBalcony:
+        type: boolean
+      condition:
+        type: string
+      distanceFromMetro:
+        type: integer
+        format: int32
+      createdAt:
+        type: string
+      updatedAt:
+        type: string
+      poolId:
+        type: string
+      coordinates:
+        $ref: '#/definitions/Coordinates'
+    required:
+    - id
+    - location
+    - roomsNumber
+    - segment
+    - floorCount
+    - wallMaterial
+    - floorNumber
+    - totalArea
+    - kitchenArea
+    - gotBalcony
+    - condition
+    - distanceFromMetro
+    - createdAt
+    - updatedAt
+    - poolId
+    - coordinates
+  Coordinates:
+    title: Coordinates
+    example:
+      lat: '55.721264'
+      lon: '37.454754'
+    type: object
+    properties:
+      lat:
+        type: string
+      lon:
+        type: string
+    required:
+    - lat
+    - lon
+  Получитьинформациюобовсехобъектах,добавленныхпользователем11:
+    title: Получитьинформациюобовсехобъектах,добавленныхпользователем11
+    type: object
+    properties:
+      id:
+        type: string
+      location:
+        type: string
+      roomsNumber:
+        type: integer
+        format: int32
+      segment:
+        type: string
+      floorCount:
+        type: integer
+        format: int32
+      wallMaterial:
+        type: string
+      floorNumber:
+        type: integer
+        format: int32
+      totalArea: {}
+      kitchenArea: {}
+      gotBalcony:
+        type: boolean
+      condition:
+        type: string
+      distanceFromMetro:
+        type: integer
+        format: int32
+      calculatedValue:
+        type: integer
+        format: int32
+      createdAt:
+        type: string
+      updatedAt:
+        type: string
+      poolId:
+        type: string
+      coordinates:
+        $ref: '#/definitions/Coordinates'
+      analogs:
+        type: array
+        items:
+          $ref: '#/definitions/Analog'
+    required:
+    - id
+    - location
+    - roomsNumber
+    - segment
+    - floorCount
+    - wallMaterial
+    - floorNumber
+    - totalArea
+    - kitchenArea
+    - gotBalcony
+    - condition
+    - distanceFromMetro
+    - createdAt
+    - updatedAt
+    - poolId
+    - coordinates
+    - analogs
+  Analog:
+    title: Analog
+    type: object
+    properties:
+      url:
+        type: string
+      latitude:
+        type: number
+        format: double
+      longitude:
+        type: number
+        format: double
+      price:
+        type: integer
+        format: int32
+      roomsNumber:
+        type: integer
+        format: int32
+      area: {}
+      kitchenArea: {}
+      distanceToMetroInMinutes:
+        type: integer
+        format: int32
+  userSessionIdisset:
+    title: userSessionIdisset
+    example:
+      id: c256f6e9-dd56-4e7a-9df8-2e4ca9235662
+      location: Москва, Саринский пр-д, 42
+      roomsNumber: 3
+      segment: Новостройка
+      floorCount: 10
+      wallMaterial: кирпич
+      floorNumber: 4
+      totalArea: 75
+      kitchenArea: 12
+      gotBalcony: true
+      condition: Современная отделка
+      distanceFromMetro: 200
+      createdAt: 2022-11-04T02:26:42.778829
+      updatedAt: 2022-11-04T02:26:42.778829
+      poolId: 75ddaa65-542e-448a-b310-08b95d538c5a
+      coordinates:
+        lat: ''
+        lon: ''
+    type: object
+    properties:
+      id:
+        type: string
+      location:
+        type: string
+      roomsNumber:
+        type: integer
+        format: int32
+      segment:
+        type: string
+      floorCount:
+        type: integer
+        format: int32
+      wallMaterial:
+        type: string
+      floorNumber:
+        type: integer
+        format: int32
+      totalArea:
+        type: integer
+        format: int32
+      kitchenArea:
+        type: integer
+        format: int32
+      gotBalcony:
+        type: boolean
+      condition:
+        type: string
+      distanceFromMetro:
+        type: integer
+        format: int32
+      createdAt:
+        type: string
+      updatedAt:
+        type: string
+      poolId:
+        type: string
+      coordinates:
+        $ref: '#/definitions/Coordinates'
+    required:
+    - id
+    - location
+    - roomsNumber
+    - segment
+    - floorCount
+    - wallMaterial
+    - floorNumber
+    - totalArea
+    - kitchenArea
+    - gotBalcony
+    - condition
+    - distanceFromMetro
+    - createdAt
+    - updatedAt
+    - poolId
+    - coordinates
+  ОбновлениеинформацииобобъектеRequest4:
+    title: ОбновлениеинформацииобобъектеRequest4
+    example:
+      id: 4d8ca46f-78b7-4579-8cc2-8a834cb98791
+      poolId: 2c2a54a6-b379-4dd3-9de4-3e00b9345db6
+    type: object
+    properties:
+      id:
+        type: string
+      poolId:
+        type: string
+    required:
+    - id
+    - poolId
+  ЗапуститьрасчетстоимостивсехобъектоввпулеRequest5:
+    title: ЗапуститьрасчетстоимостивсехобъектоввпулеRequest5
+    example:
+      poolId: 7d52875e-284f-44bf-bfcf-2f348960cecd
+      withCorrections: true
+    type: object
+    properties:
+      poolId:
+        type: string
+      withCorrections:
+        type: boolean
+    required:
+    - poolId
+    - withCorrections
+  ЗапуститьрасчетстоимостивыбранныхобъектовRequest6:
+    title: ЗапуститьрасчетстоимостивыбранныхобъектовRequest6
+    example:
+      objectsIds:
+      - 7327b637-e905-4001-804b-49cef06981a3
+      - 1a441588-a72c-4f6e-a950-3ad45f2e98a9
+      withCorrections: false
+    type: object
+    properties:
+      objectsIds:
+        type: array
+        items:
+          type: string
+      withCorrections:
+        type: boolean
+    required:
+    - objectsIds
+    - withCorrections
+  СозданиепуладляобъектовRequest7:
+    title: СозданиепуладляобъектовRequest7
+    example:
+      name: Новый пул объектов 123425
+    type: object
+    properties:
+      name:
+        type: string
+    required:
+    - name
+  Createpoolforobjects:
+    title: Createpoolforobjects
+    example:
+      id: 2f5a0cb0-acd3-43d0-82d6-2f8ff8edfcac
+      name: Новый пул объектов 12345
+      userId: 174fd95f-d7cb-4270-95e2-658beb0c8797
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      userId:
+        type: string
+    required:
+    - id
+    - name
+    - userId
+  Getpoolinfo:
+    title: Getpoolinfo
+    example:
+      id: 75ddaa65-542e-448a-b310-08b95d538c5a
+      name: pool-04-11-2022-01-27-02
+      userId: 174fd95f-d7cb-4270-95e2-658beb0c8797
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      userId:
+        type: string
+    required:
+    - id
+    - name
+    - userId
+  Получениеинформацииобовсехпулахпользователя111:
+    title: Получениеинформацииобовсехпулахпользователя111
+    example:
+      id: b3f50452-be30-4294-9543-f9d04128b5f9
+      name: pool-04-11-2022-20-41-05
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    required:
+    - id
+    - name
+  default:
+    title: default
+    example:
+      countAllRealtyObjects: 20
+      countAllRealtyObjectsOfUser: 20
+      sumAllAreaOfAllObjects: 1402.8
+      sumAllAreaOfUsersObjects: 1402.8
+      avgPriceByRoomsNumber:
+        '1': 16681095.625
+        '2': 24943582.8333333
+        '3': 30584537.8333333
+    type: object
+    properties:
+      countAllRealtyObjects:
+        type: integer
+        format: int32
+      countAllRealtyObjectsOfUser:
+        type: integer
+        format: int32
+      sumAllAreaOfAllObjects:
+        type: number
+        format: double
+      sumAllAreaOfUsersObjects:
+        type: number
+        format: double
+      avgPriceByRoomsNumber:
+        type: object
+        additionalProperties:
+          type: number
+          format: double
+    required:
+    - countAllRealtyObjects
+    - countAllRealtyObjectsOfUser
+    - sumAllAreaOfAllObjects
+    - sumAllAreaOfUsersObjects
+    - avgPriceByRoomsNumber
+tags:
+- name: Корректировки по константам
+- name: Корректировки по числовым полям
+- name: Авторизация и аутентификация
+- name: CRUD
+- name: Импорт/экспорт
+- name: Запуск расчета стоимости
+- name: Пулы объектов
+- name: Аналитика

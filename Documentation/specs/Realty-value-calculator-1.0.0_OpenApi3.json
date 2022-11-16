@@ -1,0 +1,3178 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Realty value calculator",
+    "description": "Сервис расчета стоимости объектов недвижимости города Москва.\n\nДанный сервис содержит основную бизнес-логику системы: Импортирование/экспортирование объектов из Excel-файла, добавление и удаление объектов вручную, расчет стоимости объектов.",
+    "contact": {},
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "variables": {}
+    }
+  ],
+  "paths": {
+    "/realty/corrections/constant": {
+      "put": {
+        "tags": [
+          "Корректировки по константам"
+        ],
+        "summary": "Добавить корректировку",
+        "operationId": "Добавитькорректировку",
+        "parameters": [
+          {
+            "name": "userSessionId",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "7ef82c02-58ce-492c-bbdb-a21db6ab26dc"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Request"
+                  },
+                  {
+                    "example": {
+                      "fieldName": "condition",
+                      "referenceValue": "без отделки",
+                      "analogueValue": "муниципальный ремонт",
+                      "correction": 10000,
+                      "correctionType": "unit",
+                      "isEnabled": true
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "fieldName": "condition",
+                "referenceValue": "без отделки",
+                "analogueValue": "муниципальный ремонт",
+                "correction": 10000,
+                "correctionType": "unit",
+                "isEnabled": true
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "content-length": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "0"
+                  }
+                }
+              }
+            },
+            "content": {}
+          }
+        },
+        "deprecated": false
+      },
+      "patch": {
+        "tags": [
+          "Корректировки по константам"
+        ],
+        "summary": "Редактировать корректировку1",
+        "operationId": "Редактироватькорректировку1",
+        "parameters": [
+          {
+            "name": "userSessionId",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "8596fece-123d-421b-bc1c-0bb3cb162fa0"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Request1"
+                  },
+                  {
+                    "example": {
+                      "id": "9dac4b4f-e6ee-42ed-a97d-51d61b971e27",
+                      "fieldName": "condition",
+                      "referenceValue": "без отделки",
+                      "analogueValue": "муниципальный ремонт",
+                      "correction": 10000,
+                      "correctionType": "unit",
+                      "isEnabled": true
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "id": "9dac4b4f-e6ee-42ed-a97d-51d61b971e27",
+                "fieldName": "condition",
+                "referenceValue": "без отделки",
+                "analogueValue": "муниципальный ремонт",
+                "correction": 10000,
+                "correctionType": "unit",
+                "isEnabled": true
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "content-length": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "0"
+                  }
+                }
+              }
+            },
+            "content": {}
+          }
+        },
+        "deprecated": false
+      },
+      "get": {
+        "tags": [
+          "Корректировки по константам"
+        ],
+        "summary": "Получить список всех корректировок1",
+        "operationId": "Получитьсписоквсехкорректировок1",
+        "parameters": [
+          {
+            "name": "userSessionId",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "7ef82c02-58ce-492c-bbdb-a21db6ab26dc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "content-type": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "application/json"
+                  }
+                }
+              },
+              "content-length": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "230"
+                  }
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Copy"
+                  },
+                  "description": "",
+                  "example": [
+                    {
+                      "id": "2622a81f-b927-4f24-9fa2-8e7a02c93f0a",
+                      "fieldName": "condition",
+                      "referenceValue": "без отделки",
+                      "analogueValue": "муниципальный ремонт",
+                      "correction": 10000,
+                      "correctionType": "unit",
+                      "isEnabled": true
+                    }
+                  ]
+                },
+                "example": [
+                  {
+                    "id": "2622a81f-b927-4f24-9fa2-8e7a02c93f0a",
+                    "fieldName": "condition",
+                    "referenceValue": "без отделки",
+                    "analogueValue": "муниципальный ремонт",
+                    "correction": 10000,
+                    "correctionType": "unit",
+                    "isEnabled": true
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/realty/corrections/constant/<correctionId>": {
+      "delete": {
+        "tags": [
+          "Корректировки по константам"
+        ],
+        "summary": "Удалить корректировку",
+        "operationId": "Удалитькорректировку",
+        "parameters": [
+          {
+            "name": "userSessionId",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "8596fece-123d-421b-bc1c-0bb3cb162fa0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "content-length": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "0"
+                  }
+                }
+              }
+            },
+            "content": {}
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/realty/corrections/numeric": {
+      "put": {
+        "tags": [
+          "Корректировки по числовым полям"
+        ],
+        "summary": "Добавить корректировку2",
+        "operationId": "Добавитькорректировку2",
+        "parameters": [
+          {
+            "name": "userSessionId",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "7ef82c02-58ce-492c-bbdb-a21db6ab26dc"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Request2"
+                  },
+                  {
+                    "example": {
+                      "fieldName": "totalArea",
+                      "referenceValue": "30-50",
+                      "referenceValueType": 1,
+                      "analogueValue": "30-50",
+                      "analogueValueType": 1,
+                      "correction": 50,
+                      "correctionType": "percent",
+                      "isEnabled": true
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "fieldName": "totalArea",
+                "referenceValue": "30-50",
+                "referenceValueType": 1,
+                "analogueValue": "30-50",
+                "analogueValueType": 1,
+                "correction": 50,
+                "correctionType": "percent",
+                "isEnabled": true
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false
+      },
+      "patch": {
+        "tags": [
+          "Корректировки по числовым полям"
+        ],
+        "summary": "Редактировать корректировку3",
+        "operationId": "Редактироватькорректировку3",
+        "parameters": [
+          {
+            "name": "userSessionId",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "8596fece-123d-421b-bc1c-0bb3cb162fa0"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Request3"
+                  },
+                  {
+                    "example": {
+                      "id": "8067aec2-d313-46c4-b929-dee0986963a7",
+                      "fieldName": "kitchenArea",
+                      "referenceValue": "5-10",
+                      "referenceValueType": 1,
+                      "analogueValue": "30",
+                      "analogueValueType": 5,
+                      "correction": 23,
+                      "correctionType": "percent",
+                      "isEnabled": false
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "id": "8067aec2-d313-46c4-b929-dee0986963a7",
+                "fieldName": "kitchenArea",
+                "referenceValue": "5-10",
+                "referenceValueType": 1,
+                "analogueValue": "30",
+                "analogueValueType": 5,
+                "correction": 23,
+                "correctionType": "percent",
+                "isEnabled": false
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "content-length": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "0"
+                  }
+                }
+              }
+            },
+            "content": {}
+          }
+        },
+        "deprecated": false
+      },
+      "get": {
+        "tags": [
+          "Корректировки по числовым полям"
+        ],
+        "summary": "Получить список всех корректировок3",
+        "operationId": "Получитьсписоквсехкорректировок3",
+        "parameters": [
+          {
+            "name": "userSessionId",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "7ef82c02-58ce-492c-bbdb-a21db6ab26dc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "content-type": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "application/json"
+                  }
+                }
+              },
+              "content-length": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "1105"
+                  }
+                }
+              }
+            },
+            "content": {}
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/realty/corrections/numeric/<correctionId>": {
+      "delete": {
+        "tags": [
+          "Корректировки по числовым полям"
+        ],
+        "summary": "Удалить корректировку2",
+        "operationId": "Удалитькорректировку2",
+        "parameters": [
+          {
+            "name": "userSessionId",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "8596fece-123d-421b-bc1c-0bb3cb162fa0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "content-length": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "0"
+                  }
+                }
+              }
+            },
+            "content": {}
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/": {
+      "post": {
+        "tags": [
+          "Авторизация и аутентификация"
+        ],
+        "summary": "Зарегистрировать пользователя",
+        "operationId": "Зарегистрироватьпользователя",
+        "parameters": [],
+        "responses": {
+          "default": {
+            "description": "",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/register"
+                    },
+                    {
+                      "example": {
+                        "id": "cf9934f7-9089-4241-9a1d-0984f13bfcf5",
+                        "login": "admin",
+                        "passwordHash": "$2a$10$OrZGbIj4cZvh1Xz2lFrln.w9OApqHiEPd4Ntue0V7VoGW/c9YUB3O",
+                        "salt": "$2a$10$OrZGbIj4cZvh1Xz2lFrln.",
+                        "firstName": "Victor",
+                        "lastName": "Nguen",
+                        "birthdate": "1999-05-09"
+                      }
+                    }
+                  ]
+                },
+                "example": {
+                  "id": "cf9934f7-9089-4241-9a1d-0984f13bfcf5",
+                  "login": "admin",
+                  "passwordHash": "$2a$10$OrZGbIj4cZvh1Xz2lFrln.w9OApqHiEPd4Ntue0V7VoGW/c9YUB3O",
+                  "salt": "$2a$10$OrZGbIj4cZvh1Xz2lFrln.",
+                  "firstName": "Victor",
+                  "lastName": "Nguen",
+                  "birthdate": "1999-05-09"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "delete": {
+        "tags": [
+          "Авторизация и аутентификация"
+        ],
+        "summary": "Удалить пользователя1",
+        "operationId": "Удалитьпользователя1",
+        "parameters": [],
+        "responses": {
+          "default": {
+            "description": "",
+            "headers": {},
+            "content": {}
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/auth/user": {
+      "post": {
+        "tags": [
+          "Авторизация и аутентификация"
+        ],
+        "summary": "Авторизовать пользователя",
+        "operationId": "Авторизоватьпользователя",
+        "parameters": [],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Request4"
+                  },
+                  {
+                    "example": {
+                      "login": "admin",
+                      "password": "admin"
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "login": "admin",
+                "password": "admin"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "content-type": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "application/json"
+                  }
+                }
+              },
+              "content-length": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "52"
+                  }
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Authorizeuser"
+                    },
+                    {
+                      "example": {
+                        "sessionId": "05a2bafb-24bb-4f88-94cf-e21c8975bebf"
+                      }
+                    }
+                  ]
+                },
+                "example": {
+                  "sessionId": "05a2bafb-24bb-4f88-94cf-e21c8975bebf"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/realty/objects/create": {
+      "post": {
+        "tags": [
+          "CRUD"
+        ],
+        "summary": "Создание объекта недвижимости",
+        "description": "Добавление в систему одного объекта недвижимости",
+        "operationId": "Созданиеобъектанедвижимости",
+        "parameters": [
+          {
+            "name": "userSessionId",
+            "in": "header",
+            "description": "userSessionId from Cookie",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "5daac042-5203-47bc-a2ad-623bfd9ce0c6"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Request5"
+                  },
+                  {
+                    "example": {
+                      "location": "г. Москва, ул. Ватутина, д. 9",
+                      "roomsNumber": 3,
+                      "segment": "Новостройка",
+                      "floorCount": 10,
+                      "wallMaterial": "кирпич",
+                      "floorNumber": 4,
+                      "totalArea": 75,
+                      "kitchenArea": 12,
+                      "gotBalcony": true,
+                      "condition": "Современная отделка",
+                      "distanceFromMetro": 200,
+                      "poolId": "75ddaa65-542e-448a-b310-08b95d538c5a"
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "location": "г. Москва, ул. Ватутина, д. 9",
+                "roomsNumber": 3,
+                "segment": "Новостройка",
+                "floorCount": 10,
+                "wallMaterial": "кирпич",
+                "floorNumber": 4,
+                "totalArea": 75,
+                "kitchenArea": 12,
+                "gotBalcony": true,
+                "condition": "Современная отделка",
+                "distanceFromMetro": 200,
+                "poolId": "75ddaa65-542e-448a-b310-08b95d538c5a"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "content-type": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "application/json"
+                  }
+                }
+              },
+              "content-length": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "533"
+                  }
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/1"
+                    },
+                    {
+                      "example": {
+                        "id": "a7f17cd3-7102-449a-8622-d9e8655bfe75",
+                        "location": "г. Москва, ул. Ватутина, д. 9",
+                        "roomsNumber": 3,
+                        "segment": "Новостройка",
+                        "floorCount": 10,
+                        "wallMaterial": "кирпич",
+                        "floorNumber": 4,
+                        "totalArea": 75,
+                        "kitchenArea": 12,
+                        "gotBalcony": true,
+                        "condition": "Современная отделка",
+                        "distanceFromMetro": 200,
+                        "createdAt": "2022-11-04T02:39:08.1760348",
+                        "updatedAt": "2022-11-04T02:39:08.1760348",
+                        "poolId": "75ddaa65-542e-448a-b310-08b95d538c5a",
+                        "coordinates": {
+                          "lat": "55.721264",
+                          "lon": "37.454754"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "example": {
+                  "id": "a7f17cd3-7102-449a-8622-d9e8655bfe75",
+                  "location": "г. Москва, ул. Ватутина, д. 9",
+                  "roomsNumber": 3,
+                  "segment": "Новостройка",
+                  "floorCount": 10,
+                  "wallMaterial": "кирпич",
+                  "floorNumber": 4,
+                  "totalArea": 75,
+                  "kitchenArea": 12,
+                  "gotBalcony": true,
+                  "condition": "Современная отделка",
+                  "distanceFromMetro": 200,
+                  "createdAt": "2022-11-04T02:39:08.1760348",
+                  "updatedAt": "2022-11-04T02:39:08.1760348",
+                  "poolId": "75ddaa65-542e-448a-b310-08b95d538c5a",
+                  "coordinates": {
+                    "lat": "55.721264",
+                    "lon": "37.454754"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/realty/objects": {
+      "get": {
+        "tags": [
+          "CRUD"
+        ],
+        "summary": "Получить информацию обо всех объектах, добавленных пользователем",
+        "operationId": "Получитьинформациюобовсехобъектах,добавленныхпользователем",
+        "parameters": [
+          {
+            "name": "userSessionId",
+            "in": "header",
+            "description": "userSessionId from Cookie",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "7ef82c02-58ce-492c-bbdb-a21db6ab26dc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "content-type": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "application/json"
+                  }
+                }
+              },
+              "content-length": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "41518"
+                  }
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/11"
+                  },
+                  "description": ""
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+              "content-type": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "text/plain"
+                  }
+                }
+              },
+              "content-length": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "31"
+                  }
+                }
+              }
+            },
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Header userSessionId is not set"
+                },
+                "example": "Header userSessionId is not set"
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "patch": {
+        "tags": [
+          "CRUD"
+        ],
+        "summary": "Обновление информации об объекте1",
+        "description": "Единственное обязательное поле - это id, остальные поля должны присутствовать в теле запроса только если их данные обновляются. Данные можно отправить если они не изменились, в таком случае в системе также ничего не изменится.",
+        "operationId": "Обновлениеинформацииобобъекте1",
+        "parameters": [
+          {
+            "name": "userSessionId",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "8596fece-123d-421b-bc1c-0bb3cb162fa0"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Request6"
+                  },
+                  {
+                    "example": {
+                      "id": "4d8ca46f-78b7-4579-8cc2-8a834cb98791",
+                      "poolId": "2c2a54a6-b379-4dd3-9de4-3e00b9345db6"
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "id": "4d8ca46f-78b7-4579-8cc2-8a834cb98791",
+                "poolId": "2c2a54a6-b379-4dd3-9de4-3e00b9345db6"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "content-length": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "0"
+                  }
+                }
+              }
+            },
+            "content": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "headers": {
+              "content-type": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "text/plain"
+                  }
+                }
+              },
+              "content-length": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "28"
+                  }
+                }
+              }
+            },
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "User is not author of object"
+                },
+                "example": "User is not author of object"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+              "content-type": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "text/plain"
+                  }
+                }
+              },
+              "content-length": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "31"
+                  }
+                }
+              }
+            },
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Header userSessionId is not set"
+                },
+                "example": "Header userSessionId is not set"
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/realty/objects/4d8ca46f-78b7-4579-8cc2-8a834cb98791": {
+      "get": {
+        "tags": [
+          "CRUD"
+        ],
+        "summary": "Получить информацию об объекте недвижимости1",
+        "description": "Получение детальной информации об объекте, включая его координаты",
+        "operationId": "Получитьинформациюобобъектенедвижимости1",
+        "parameters": [
+          {
+            "name": "userSessionId",
+            "in": "header",
+            "description": "userSessionId from Cookie",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "8596fece-123d-421b-bc1c-0bb3cb162fa0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "content-type": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "application/json"
+                  }
+                }
+              },
+              "content-length": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "510"
+                  }
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/userSessionIdisset"
+                    },
+                    {
+                      "example": {
+                        "id": "c256f6e9-dd56-4e7a-9df8-2e4ca9235662",
+                        "location": "Москва, Саринский пр-д, 42",
+                        "roomsNumber": 3,
+                        "segment": "Новостройка",
+                        "floorCount": 10,
+                        "wallMaterial": "кирпич",
+                        "floorNumber": 4,
+                        "totalArea": 75,
+                        "kitchenArea": 12,
+                        "gotBalcony": true,
+                        "condition": "Современная отделка",
+                        "distanceFromMetro": 200,
+                        "createdAt": "2022-11-04T02:26:42.778829",
+                        "updatedAt": "2022-11-04T02:26:42.778829",
+                        "poolId": "75ddaa65-542e-448a-b310-08b95d538c5a",
+                        "coordinates": {
+                          "lat": "",
+                          "lon": ""
+                        }
+                      }
+                    }
+                  ]
+                },
+                "example": {
+                  "id": "c256f6e9-dd56-4e7a-9df8-2e4ca9235662",
+                  "location": "Москва, Саринский пр-д, 42",
+                  "roomsNumber": 3,
+                  "segment": "Новостройка",
+                  "floorCount": 10,
+                  "wallMaterial": "кирпич",
+                  "floorNumber": 4,
+                  "totalArea": 75,
+                  "kitchenArea": 12,
+                  "gotBalcony": true,
+                  "condition": "Современная отделка",
+                  "distanceFromMetro": 200,
+                  "createdAt": "2022-11-04T02:26:42.778829",
+                  "updatedAt": "2022-11-04T02:26:42.778829",
+                  "poolId": "75ddaa65-542e-448a-b310-08b95d538c5a",
+                  "coordinates": {
+                    "lat": "",
+                    "lon": ""
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+              "content-type": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "text/plain"
+                  }
+                }
+              },
+              "content-length": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "31"
+                  }
+                }
+              }
+            },
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Header userSessionId is not set"
+                },
+                "example": "Header userSessionId is not set"
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/realty/objects/8a7395e0-8bfe-4c9f-b322-cd48d519c21c": {
+      "delete": {
+        "tags": [
+          "CRUD"
+        ],
+        "summary": "Удалить объект недвижимости из системы2",
+        "operationId": "Удалитьобъектнедвижимостиизсистемы2",
+        "parameters": [
+          {
+            "name": "userSessionId",
+            "in": "header",
+            "description": "userSessionId from Cookie",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "7d929e60-4e36-4e4a-9733-c4591412fb42"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "content-length": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "0"
+                  }
+                }
+              }
+            },
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+              "content-type": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "text/plain"
+                  }
+                }
+              },
+              "content-length": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "31"
+                  }
+                }
+              }
+            },
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Header userSessionId is not set"
+                },
+                "example": "Header userSessionId is not set"
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/realty/objects/import": {
+      "put": {
+        "tags": [
+          "Импорт/экспорт"
+        ],
+        "summary": "Импорт из XLSX-файла",
+        "description": "Импортировать объекты недвижимости из файла",
+        "operationId": "ИмпортизXLSX-файла",
+        "parameters": [
+          {
+            "name": "userSessionId",
+            "in": "header",
+            "description": "userSessionId from Cookie",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "05a2bafb-24bb-4f88-94cf-e21c8975bebf"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "encoding": {},
+              "schema": {
+                "required": [
+                  "File"
+                ],
+                "type": "object",
+                "properties": {
+                  "File": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "content-type": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "application/json"
+                  }
+                }
+              },
+              "content-length": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "38"
+                  }
+                }
+              }
+            },
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "\"b3f50452-be30-4294-9543-f9d04128b5f9\""
+                },
+                "example": "\"b3f50452-be30-4294-9543-f9d04128b5f9\""
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/realty/objects/export": {
+      "get": {
+        "tags": [
+          "Импорт/экспорт"
+        ],
+        "summary": "Экспорт объектов в xlsx",
+        "operationId": "Экспортобъектоввxlsx",
+        "parameters": [
+          {
+            "name": "userSessionId",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "b01a2e5c-f642-419f-88ec-97cfe3a77860"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+              "content-type": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "text/plain"
+                  }
+                }
+              },
+              "content-length": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "31"
+                  }
+                }
+              }
+            },
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Header userSessionId is not set"
+                },
+                "example": "Header userSessionId is not set"
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "headers": {
+              "content-disposition": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "attachment"
+                  }
+                }
+              },
+              "content-type": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                  }
+                }
+              },
+              "transfer-encoding": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "chunked"
+                  }
+                }
+              }
+            },
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "binary data here"
+                },
+                "example": "binary data here"
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/realty/objects/export/<poolId>": {
+      "get": {
+        "tags": [
+          "Импорт/экспорт"
+        ],
+        "summary": "Экспорт объектов из конкретного пула в xlsx1",
+        "operationId": "Экспортобъектовизконкретногопулавxlsx1",
+        "parameters": [
+          {
+            "name": "userSessionId",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "5daac042-5203-47bc-a2ad-623bfd9ce0c6"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "content-disposition": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "attachment"
+                  }
+                }
+              },
+              "content-type": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                  }
+                }
+              },
+              "transfer-encoding": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "chunked"
+                  }
+                }
+              }
+            },
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0013\u0000\u0000\u0000[Content_Types].xml�S�n�0\u0010����*6�PU\u0015�C\u001f�\u0016��\u0003\\{�X�%����]\u00078�R�\nq�cfgfW�d�q�ZCB\u0013|��|�*�*h㻆},^�{Va�^K\u001b\n\n<4�\u00076�N\u0016�\bXQ�ǆ�9�\u0007!P��$�\u0010�\u0013҆�d�c�D�j);\u0010��ѝP�g��E�M'O�ʕ����H7L�h���R���G��^�'�\u0003\u0007{\u0013�\b�zސʮ\u001bB��3\u001c�\u000b˙��h.�h�W�жF�\u000ej娄CQՠ똈���}ιL�U:\u0012\u0014D�\u0013����%އ����,�B���[�\t��\u001e ;˱�\t�{N��~��X�p�\u001cykOL�\u0004\u0018�kN�V��ܿBZ~����q\u0018��\u000f �a\u0019\u001fr��{O�\u0001PK\u0007\bz��q;\u0001\u0000\u0000\u001c\u0004\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u000b\u0000\u0000\u0000_rels/.rels���j�0\f�_���8�`�Q��2�m��\u00014[ILb��ږ���.[K\n\u001b�($}�\u0007�v?�I�Q.���uӂ�h���\u001bx>=��@\u0015��p�H\u0006\"�~�}�\t�n����*\"\u0016\u0003�H�׺؁\u0002��\u0013���8\u0007�Z�^'�#��7m{��O\u0006�3��\u0019�G�\u0006u�ܓ\u0018�'��y|a\u001e�����D�\t��\u000el_\u0003EYȾ�\u0000���vql\u001f3�ML�eh\u0016���*�\u0004��\\3�Y0���oJ׏�\u0003\t:\u0014��^\b�\u001f�}\u0002PK\u0007\b��z��\u0000\u0000\u0000I\u0002\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0010\u0000\u0000\u0000docProps/app.xmlM��\n�0\u0010D��\u0010ro�z\u0010�4� �'{�\u000f\b��\u0006�MHV�盓z�\u0019��T��E�1e\u0017�����\u0002Ɇ�ѳ����:�No7jH!bb�Y�\u0007�V���\u0004�����T�)$o���0M��9ؗGb�7�\u0001pe�\u0011�*~�R�>��Y�EB��\u0014�\u0018nW\u0005������\u0000PK\u0007\b6n�!�\u0000\u0000\u0000�\u0000\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0011\u0000\u0000\u0000docProps/core.xmlm��J�0\u0010F_�依�E��v\u0011eAP\\pE�.$c[l~H�]�޴�\u0015Ի$ߙ��7\u0007=f���`MCXAI�FZ5��!\u000f�m~F�\u0010�Qb�\u0006\u001bb,ٴ�t\\Z�;o\u001d�8`Ȓ�\u0004.]C�\u0018\u001d\u0007\b�G-B�\b��\u0017뵈��;pB��\u000e���\u00144F�D\u00140\u000bs�\u001a�Q��to~\\\u0004J\u0002����\u0000�`��F�:�;�$+y\b�JM�TL�¥�\u0018<���/�烙�.���QͥG\u0011QeI��K�|'����~Kڒ�e�XN�}Y�sN�s\r��g�����\"\u0015�c��������?5��PK\u0007\bT\u000b\u001a�\u0004\u0001\u0000\u0000�\u0001\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0014\u0000\u0000\u0000xl/sharedStrings.xml�S�J�@\u0010}\u0017��%�ڭ\"\"��\u000f�_�\u001fPjl\u0003MR����VTD� >IE�g!�V���\u0017f��3�z�EB\u0002;3�̙3\u001b�x��ľ�P^\u0018\u0014��\\�\u0012nP\u000ew��R���6\u0017׬�3?g+\u0015�r�\f\"\u0014�X�\u0019x{Mw�+\u0000�@\u0015�j\u0014�ץT��T.��\u00012�a�/E86*R�\u001bniGU]7�kr9�_�~�\u000b,�V�cG\u000e�h�ۺC)��}��LC\u001aSBC[F�-�nZ{e*\u0012}2��)\u0015��\b�Xw2�;P=!\u000b�?�\u000f���nL)��sA\u0003C\u0016gJ{L��-��U��`��)P\u0019���t7\u0003��>\u0005h�\u0002^0T�[`I�=[0�\u001c����C}�-f#�Y�q\u000f�\nz4Gv\u000f�I�r\u0000�\t%\u0019�=2\\�3|3+՝�\u00111�=f�`��lQ��.�ɢuw�zo�2<\u00108!5[�\n6��=�\bL.L�nS1\u0019�K�y��T6.\n��\u0017b��8\u0019�\u0005t\u000fi�\u0006��m�\u0003��\u0012��\u0019����c�\u0012���\u000ePK\u0007\b\n�\n\u0017�\u0001\u0000\u0000`\u0003\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\r\u0000\u0000\u0000xl/styles.xml�UM��0\u0010�W��|�/U�\nX�+��yS�W\u0007\fXk���l����\"�M��9��x��ޛ�0���\u0013\u001c�P���\f/�\u0016\u0018Q(dɠ������\u0016?��ߥ���>5�\u001ad\u0015�3�\u0018�~J\u0012]4T\u0010}'[\n��J*A�ݪ:ѭ���N$x�Z,>&�0�y\nG�\u0013F�B\u001e�dx��<�$��\u001a\u0007 O�/�B�-��fi��R!\u0006%�h��À\b\u001aX����bޏ\b��\u0000�\u001c�+�<�@*\u0007&!K�\u001d}>+F�\u0017\r�W!�!l�:�[��\u0017mu��ә78\u0000y�\u0012c���ݠ\u0018���f\u0018$Ĵ��\u0006�$���\"�|������˛{�1��uԒ��/-�b�s����9��\u001e\u000fP�rZ\u0019+W�n�jd랍4F\n\u001b���\u0012\bw\t\u0006ŰZ*��l\u001fbÊg�'���`ݮ�e�\u0017�В�ӜkaN)p�s���\t���E3�S��\u000e^A9r�\u001f�i��v��\n���[�.-���!�#\u001b�`\u00136��\u0016�'��lQW������z=UoF5\"m�{���\u001b-\u0002�U6\u0001�xq���ޱ5\b\n\u0006�T����L.Į�^��ʁ��K:KxQԌ\n��f\u001b�_��7PK\u0007\b\"\u0013���\u0001\u0000\u0000�\u0006\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u000f\u0000\u0000\u0000xl/workbook.xml���N�0\f��H�C�;K\n\bA�t\u0017��\u0013\b\r�n�ٚ���\u0006oOک����˟?����\r�H�m�\u001a��\u0002Aބ��������=��ˋ�\u0014�\t� 2�YC��XJɦ'��\n#���Bt�r�;�c$l�'Jn��J�I����P��8B�YC��|8��,�4`�m��#C���%�\u0016\u0013\u0015\u000f�VC�\u0003\u0013Ⱥ�6�N�\u000bNQ�I�H[l4������2�GG\u001a^\t������$\u0006\u0011K�j���\u0006Čmr,f�r-��7PK\u0007\b�F8C�\u0000\u0000\u0000e\u0001\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u001a\u0000\u0000\u0000xl/_rels/workbook.xml.rels��Mk�0\f@���}q��\u0018�n/c����\u0000c+qh\"\u0019K�迟���@\u0007;�$��{\u000f��~Γy�\"#���i� \u0005�#\r\u000e^�O7�`D=E?1�\u0003b�n��8y�?$�YLE�8H���Z\t\tg/\rg����^�\f6�p�\u0003�U���r΀%�좃��\u001d��/\u0003�\u0003I�`|�Rˤ��:f����~\f���mF�\u000bv����\u001c�:���ׯ�������p9HB�Sy\u001dݵK~\u0004�\u0018����\u000bPK\u0007\b�\u0003;��\u0000\u0000\u00003\u0002\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0018\u0000\u0000\u0000xl/worksheets/sheet1.xml��[o�0\u0014��'�?X~_�\u0004\u0012R\u0001U�.k���v}v�\\T��vB�l�#�\u0004yIl�}9�����}+rp\"�g��!Z�\u0010�2�QV&>��k������w^M�+O\t\u0011@\n%�a*Duc\u0018\n    \n    <LI���V���Ĕ\u0015X�)K\f^1��F*r�2͍Q଄�\u0017e\u0005)UD�H��;t�\u0011x\r�'#5�o\fT�\u0003��j�\u0018�P.Q��O��P\u00109\u0017�H�mh��Y�w\u0006\"\u0012�c.~���dI*�N\u001d�U)�4��'(2�\u0000\b\n��|�Y$R\u001fڦ�Ix�\u0016�G}���:�\u001a,��Zw�z��y��,{�v��I�\u0018ʞ�6��\u0019�������hY��Y�U֮�v�e-H\n        \n        <2�S6�h�\u0002o�\u000etU\u001eQ_\u001fȺn�}���D�%��\u001aA�\u0012�h�@sc����h\r��\u0004�O��N�W�\u0019\u000e\u0001o��\u0002�3NJ툏:���'���ĽN���g����^'�)�E'6S�A'�S�Q'�)�\u0013�)��B�Β��\u0002r���\u000b�YZ_. c^\ry�}�l\u000f��\ty�,�J\u000e\u000eT�z�-w���#�T\u0010�f�\u001eS�ۇINb�P\u0010���6cA��Ue6�B�PK\u0007\b\u0010=��\u0001\u0000\u0000v\u0006\u0000\u0000PK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dUz��q;\u0001\u0000\u0000\u001c\u0004\u0000\u0000\u0013\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000[Content_Types].xmlPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dU��z��\u0000\u0000\u0000I\u0002\u0000\u0000\u000b\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000|\u0001\u0000\u0000_rels/.relsPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dU6n�!�\u0000\u0000\u0000�\u0000\u0000\u0000\u0010\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000�\u0002\u0000\u0000docProps/app.xmlPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dUT\u000b\u001a�\u0004\u0001\u0000\u0000�\u0001\u0000\u0000\u0011\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000i\u0003\u0000\u0000docProps/core.xmlPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dU\n�\n\u0017�\u0001\u0000\u0000`\u0003\u0000\u0000\u0014\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000�\u0004\u0000\u0000xl/sharedStrings.xmlPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dU\"\u0013���\u0001\u0000\u0000�\u0006\u0000\u0000\r\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000�\u0006\u0000\u0000xl/styles.xmlPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dU�F8C�\u0000\u0000\u0000e\u0001\u0000\u0000\u000f\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000�\b\u0000\u0000xl/workbook.xmlPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dU�\u0003;��\u0000\u0000\u00003\u0002\u0000\u0000\u001a\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000�\t\u0000\u0000xl/_rels/workbook.xml.relsPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dU\u0010=��\u0001\u0000\u0000v\u0006\u0000\u0000\u0018\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u000b\u0000\u0000xl/worksheets/sheet1.xmlPK\u0005\u0006\u0000\u0000\u0000\u0000\t\u0000\t\u0000?\u0002\u0000\u00007\r\u0000\u0000\u0000\u0000"
+                },
+                "example": "PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0013\u0000\u0000\u0000[Content_Types].xml�S�n�0\u0010����*6�PU\u0015�C\u001f�\u0016��\u0003\\{�X�%����]\u00078�R�\nq�cfgfW�d�q�ZCB\u0013|��|�*�*h㻆},^�{Va�^K\u001b\n\n<4�\u00076�N\u0016�\bXQ�ǆ�9�\u0007!P��$�\u0010�\u0013҆�d�c�D�j);\u0010��ѝP�g��E�M'O�ʕ����H7L�h���R���G��^�'�\u0003\u0007{\u0013�\b�zސʮ\u001bB��3\u001c�\u000b˙��h.�h�W�жF�\u000ej娄CQՠ똈���}ιL�U:\u0012\u0014D�\u0013����%އ����,�B���[�\t��\u001e ;˱�\t�{N��~��X�p�\u001cykOL�\u0004\u0018�kN�V��ܿBZ~����q\u0018��\u000f �a\u0019\u001fr��{O�\u0001PK\u0007\bz��q;\u0001\u0000\u0000\u001c\u0004\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u000b\u0000\u0000\u0000_rels/.rels���j�0\f�_���8�`�Q��2�m��\u00014[ILb��ږ���.[K\n\u001b�($}�\u0007�v?�I�Q.���uӂ�h���\u001bx>=��@\u0015��p�H\u0006\"�~�}�\t�n����*\"\u0016\u0003�H�׺؁\u0002��\u0013���8\u0007�Z�^'�#��7m{��O\u0006�3��\u0019�G�\u0006u�ܓ\u0018�'��y|a\u001e�����D�\t��\u000el_\u0003EYȾ�\u0000���vql\u001f3�ML�eh\u0016���*�\u0004��\\3�Y0���oJ׏�\u0003\t:\u0014��^\b�\u001f�}\u0002PK\u0007\b��z��\u0000\u0000\u0000I\u0002\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0010\u0000\u0000\u0000docProps/app.xmlM��\n�0\u0010D��\u0010ro�z\u0010�4� �'{�\u000f\b��\u0006�MHV�盓z�\u0019��T��E�1e\u0017�����\u0002Ɇ�ѳ����:�No7jH!bb�Y�\u0007�V���\u0004�����T�)$o���0M��9ؗGb�7�\u0001pe�\u0011�*~�R�>��Y�EB��\u0014�\u0018nW\u0005������\u0000PK\u0007\b6n�!�\u0000\u0000\u0000�\u0000\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0011\u0000\u0000\u0000docProps/core.xmlm��J�0\u0010F_�依�E��v\u0011eAP\\pE�.$c[l~H�]�޴�\u0015Ի$ߙ��7\u0007=f���`MCXAI�FZ5��!\u000f�m~F�\u0010�Qb�\u0006\u001bb,ٴ�t\\Z�;o\u001d�8`Ȓ�\u0004.]C�\u0018\u001d\u0007\b�G-B�\b��\u0017뵈��;pB��\u000e���\u00144F�D\u00140\u000bs�\u001a�Q��to~\\\u0004J\u0002����\u0000�`��F�:�;�$+y\b�JM�TL�¥�\u0018<���/�烙�.���QͥG\u0011QeI��K�|'����~Kڒ�e�XN�}Y�sN�s\r��g�����\"\u0015�c��������?5��PK\u0007\bT\u000b\u001a�\u0004\u0001\u0000\u0000�\u0001\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0014\u0000\u0000\u0000xl/sharedStrings.xml�S�J�@\u0010}\u0017��%�ڭ\"\"��\u000f�_�\u001fPjl\u0003MR����VTD� >IE�g!�V���\u0017f��3�z�EB\u0002;3�̙3\u001b�x��ľ�P^\u0018\u0014��\\�\u0012nP\u000ew��R���6\u0017׬�3?g+\u0015�r�\f\"\u0014�X�\u0019x{Mw�+\u0000�@\u0015�j\u0014�ץT��T.��\u00012�a�/E86*R�\u001bniGU]7�kr9�_�~�\u000b,�V�cG\u000e�h�ۺC)��}��LC\u001aSBC[F�-�nZ{e*\u0012}2��)\u0015��\b�Xw2�;P=!\u000b�?�\u000f���nL)��sA\u0003C\u0016gJ{L��-��U��`��)P\u0019���t7\u0003��>\u0005h�\u0002^0T�[`I�=[0�\u001c����C}�-f#�Y�q\u000f�\nz4Gv\u000f�I�r\u0000�\t%\u0019�=2\\�3|3+՝�\u00111�=f�`��lQ��.�ɢuw�zo�2<\u00108!5[�\n6��=�\bL.L�nS1\u0019�K�y��T6.\n��\u0017b��8\u0019�\u0005t\u000fi�\u0006��m�\u0003��\u0012��\u0019����c�\u0012���\u000ePK\u0007\b\n�\n\u0017�\u0001\u0000\u0000`\u0003\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\r\u0000\u0000\u0000xl/styles.xml�UM��0\u0010�W��|�/U�\nX�+��yS�W\u0007\fXk���l����\"�M��9��x��ޛ�0���\u0013\u001c�P���\f/�\u0016\u0018Q(dɠ������\u0016?��ߥ���>5�\u001ad\u0015�3�\u0018�~J\u0012]4T\u0010}'[\n��J*A�ݪ:ѭ���N$x�Z,>&�0�y\nG�\u0013F�B\u001e�dx��<�$��\u001a\u0007 O�/�B�-��fi��R!\u0006%�h��À\b\u001aX����bޏ\b��\u0000�\u001c�+�<�@*\u0007&!K�\u001d}>+F�\u0017\r�W!�!l�:�[��\u0017mu��ә78\u0000y�\u0012c���ݠ\u0018���f\u0018$Ĵ��\u0006�$���\"�|������˛{�1��uԒ��/-�b�s����9��\u001e\u000fP�rZ\u0019+W�n�jd랍4F\n\u001b���\u0012\bw\t\u0006ŰZ*��l\u001fbÊg�'���`ݮ�e�\u0017�В�ӜkaN)p�s���\t���E3�S��\u000e^A9r�\u001f�i��v��\n���[�.-���!�#\u001b�`\u00136��\u0016�'��lQW������z=UoF5\"m�{���\u001b-\u0002�U6\u0001�xq���ޱ5\b\n\u0006�T����L.Į�^��ʁ��K:KxQԌ\n��f\u001b�_��7PK\u0007\b\"\u0013���\u0001\u0000\u0000�\u0006\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u000f\u0000\u0000\u0000xl/workbook.xml���N�0\f��H�C�;K\n\bA�t\u0017��\u0013\b\r�n�ٚ���\u0006oOک����˟?����\r�H�m�\u001a��\u0002Aބ��������=��ˋ�\u0014�\t� 2�YC��XJɦ'��\n#���Bt�r�;�c$l�'Jn��J�I����P��8B�YC��|8��,�4`�m��#C���%�\u0016\u0013\u0015\u000f�VC�\u0003\u0013Ⱥ�6�N�\u000bNQ�I�H[l4������2�GG\u001a^\t������$\u0006\u0011K�j���\u0006Čmr,f�r-��7PK\u0007\b�F8C�\u0000\u0000\u0000e\u0001\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u001a\u0000\u0000\u0000xl/_rels/workbook.xml.rels��Mk�0\f@���}q��\u0018�n/c����\u0000c+qh\"\u0019K�迟���@\u0007;�$��{\u000f��~Γy�\"#���i� \u0005�#\r\u000e^�O7�`D=E?1�\u0003b�n��8y�?$�YLE�8H���Z\t\tg/\rg����^�\f6�p�\u0003�U���r΀%�좃��\u001d��/\u0003�\u0003I�`|�Rˤ��:f����~\f���mF�\u000bv����\u001c�:���ׯ�������p9HB�Sy\u001dݵK~\u0004�\u0018����\u000bPK\u0007\b�\u0003;��\u0000\u0000\u00003\u0002\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0018\u0000\u0000\u0000xl/worksheets/sheet1.xml��[o�0\u0014��'�?X~_�\u0004\u0012R\u0001U�.k���v}v�\\T��vB�l�#�\u0004yIl�}9�����}+rp\"�g��!Z�\u0010�2�QV&>��k������w^M�+O\t\u0011@\n%�a*Duc\u0018\n    \n    <LI���V���Ĕ\u0015X�)K\f^1��F*r�2͍Q଄�\u0017e\u0005)UD�H��;t�\u0011x\r�'#5�o\fT�\u0003��j�\u0018�P.Q��O��P\u00109\u0017�H�mh��Y�w\u0006\"\u0012�c.~���dI*�N\u001d�U)�4��'(2�\u0000\b\n��|�Y$R\u001fڦ�Ix�\u0016�G}���:�\u001a,��Zw�z��y��,{�v��I�\u0018ʞ�6��\u0019�������hY��Y�U֮�v�e-H\n        \n        <2�S6�h�\u0002o�\u000etU\u001eQ_\u001fȺn�}���D�%��\u001aA�\u0012�h�@sc����h\r��\u0004�O��N�W�\u0019\u000e\u0001o��\u0002�3NJ툏:���'���ĽN���g����^'�)�E'6S�A'�S�Q'�)�\u0013�)��B�Β��\u0002r���\u000b�YZ_. c^\ry�}�l\u000f��\ty�,�J\u000e\u000eT�z�-w���#�T\u0010�f�\u001eS�ۇINb�P\u0010���6cA��Ue6�B�PK\u0007\b\u0010=��\u0001\u0000\u0000v\u0006\u0000\u0000PK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dUz��q;\u0001\u0000\u0000\u001c\u0004\u0000\u0000\u0013\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000[Content_Types].xmlPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dU��z��\u0000\u0000\u0000I\u0002\u0000\u0000\u000b\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000|\u0001\u0000\u0000_rels/.relsPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dU6n�!�\u0000\u0000\u0000�\u0000\u0000\u0000\u0010\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000�\u0002\u0000\u0000docProps/app.xmlPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dUT\u000b\u001a�\u0004\u0001\u0000\u0000�\u0001\u0000\u0000\u0011\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000i\u0003\u0000\u0000docProps/core.xmlPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dU\n�\n\u0017�\u0001\u0000\u0000`\u0003\u0000\u0000\u0014\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000�\u0004\u0000\u0000xl/sharedStrings.xmlPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dU\"\u0013���\u0001\u0000\u0000�\u0006\u0000\u0000\r\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000�\u0006\u0000\u0000xl/styles.xmlPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dU�F8C�\u0000\u0000\u0000e\u0001\u0000\u0000\u000f\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000�\b\u0000\u0000xl/workbook.xmlPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dU�\u0003;��\u0000\u0000\u00003\u0002\u0000\u0000\u001a\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000�\t\u0000\u0000xl/_rels/workbook.xml.relsPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dU\u0010=��\u0001\u0000\u0000v\u0006\u0000\u0000\u0018\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u000b\u0000\u0000xl/worksheets/sheet1.xmlPK\u0005\u0006\u0000\u0000\u0000\u0000\t\u0000\t\u0000?\u0002\u0000\u00007\r\u0000\u0000\u0000\u0000"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+              "content-type": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "text/plain"
+                  }
+                }
+              },
+              "content-length": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "31"
+                  }
+                }
+              }
+            },
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Header userSessionId is not set"
+                },
+                "example": "Header userSessionId is not set"
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/realty/objects/exportSome": {
+      "get": {
+        "tags": [
+          "Импорт/экспорт"
+        ],
+        "summary": "Экспорт нескольких объектов в xlsx2",
+        "operationId": "Экспортнесколькихобъектоввxlsx2",
+        "parameters": [
+          {
+            "name": "userSessionId",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "5daac042-5203-47bc-a2ad-623bfd9ce0c6"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "content-disposition": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "attachment"
+                  }
+                }
+              },
+              "content-type": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                  }
+                }
+              },
+              "transfer-encoding": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "chunked"
+                  }
+                }
+              }
+            },
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0013\u0000\u0000\u0000[Content_Types].xml�S�n�0\u0010����*6�PU\u0015�C\u001f�\u0016��\u0003\\{�X�%����]\u00078�R�\nq�cfgfW�d�q�ZCB\u0013|��|�*�*h㻆},^�{Va�^K\u001b\n\n<4�\u00076�N\u0016�\bXQ�ǆ�9�\u0007!P��$�\u0010�\u0013҆�d�c�D�j);\u0010��ѝP�g��E�M'O�ʕ����H7L�h���R���G��^�'�\u0003\u0007{\u0013�\b�zސʮ\u001bB��3\u001c�\u000b˙��h.�h�W�жF�\u000ej娄CQՠ똈���}ιL�U:\u0012\u0014D�\u0013����%އ����,�B���[�\t��\u001e ;˱�\t�{N��~��X�p�\u001cykOL�\u0004\u0018�kN�V��ܿBZ~����q\u0018��\u000f �a\u0019\u001fr��{O�\u0001PK\u0007\bz��q;\u0001\u0000\u0000\u001c\u0004\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u000b\u0000\u0000\u0000_rels/.rels���j�0\f�_���8�`�Q��2�m��\u00014[ILb��ږ���.[K\n\u001b�($}�\u0007�v?�I�Q.���uӂ�h���\u001bx>=��@\u0015��p�H\u0006\"�~�}�\t�n����*\"\u0016\u0003�H�׺؁\u0002��\u0013���8\u0007�Z�^'�#��7m{��O\u0006�3��\u0019�G�\u0006u�ܓ\u0018�'��y|a\u001e�����D�\t��\u000el_\u0003EYȾ�\u0000���vql\u001f3�ML�eh\u0016���*�\u0004��\\3�Y0���oJ׏�\u0003\t:\u0014��^\b�\u001f�}\u0002PK\u0007\b��z��\u0000\u0000\u0000I\u0002\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0010\u0000\u0000\u0000docProps/app.xmlM��\n�0\u0010D��\u0010ro�z\u0010�4� �'{�\u000f\b��\u0006�MHV�盓z�\u0019��T��E�1e\u0017�����\u0002Ɇ�ѳ����:�No7jH!bb�Y�\u0007�V���\u0004�����T�)$o���0M��9ؗGb�7�\u0001pe�\u0011�*~�R�>��Y�EB��\u0014�\u0018nW\u0005������\u0000PK\u0007\b6n�!�\u0000\u0000\u0000�\u0000\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0011\u0000\u0000\u0000docProps/core.xmlm��J�0\u0010F_�依�E��v\u0011eAP\\pE�.$c[l~H�]�޴�\u0015Ի$ߙ��7\u0007=f���`MCXAI�FZ5��!\u000f�m~F�\u0010�Qb�\u0006\u001bb,ٴ�t\\Z�;o\u001d�8`Ȓ�\u0004.]C�\u0018\u001d\u0007\b�G-B�\b��\u0017뵈��;pB��\u000e���\u00144F�D\u00140\u000bs�\u001a�Q��to~\\\u0004J\u0002����\u0000�`��F�:�;�$+y\b�JM�TL�¥�\u0018<���/�烙�.���QͥG\u0011QeI��K�|'����~Kڒ�e�XN�}Y�sN�s\r��g�����\"\u0015�c��������?5��PK\u0007\bT\u000b\u001a�\u0004\u0001\u0000\u0000�\u0001\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0014\u0000\u0000\u0000xl/sharedStrings.xml�S�J�@\u0010}\u0017��%�ڭ\"\"��\u000f�_�\u001fPjl\u0003MR����VTD� >IE�g!�V���\u0017f��3�z�EB\u0002;3�̙3\u001b�x��ľ�P^\u0018\u0014��\\�\u0012nP\u000ew��R���6\u0017׬�3?g+\u0015�r�\f\"\u0014�X�\u0019x{Mw�+\u0000�@\u0015�j\u0014�ץT��T.��\u00012�a�/E86*R�\u001bniGU]7�kr9�_�~�\u000b,�V�cG\u000e�h�ۺC)��}��LC\u001aSBC[F�-�nZ{e*\u0012}2��)\u0015��\b�Xw2�;P=!\u000b�?�\u000f���nL)��sA\u0003C\u0016gJ{L��-��U��`��)P\u0019���t7\u0003��>\u0005h�\u0002^0T�[`I�=[0�\u001c����C}�-f#�Y�q\u000f�\nz4Gv\u000f�I�r\u0000�\t%\u0019�=2\\�3|3+՝�\u00111�=f�`��lQ��.�ɢuw�zo�2<\u00108!5[�\n6��=�\bL.L�nS1\u0019�K�y��T6.\n��\u0017b��8\u0019�\u0005t\u000fi�\u0006��m�\u0003��\u0012��\u0019����c�\u0012���\u000ePK\u0007\b\n�\n\u0017�\u0001\u0000\u0000`\u0003\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\r\u0000\u0000\u0000xl/styles.xml�UM��0\u0010�W��|�/U�\nX�+��yS�W\u0007\fXk���l����\"�M��9��x��ޛ�0���\u0013\u001c�P���\f/�\u0016\u0018Q(dɠ������\u0016?��ߥ���>5�\u001ad\u0015�3�\u0018�~J\u0012]4T\u0010}'[\n��J*A�ݪ:ѭ���N$x�Z,>&�0�y\nG�\u0013F�B\u001e�dx��<�$��\u001a\u0007 O�/�B�-��fi��R!\u0006%�h��À\b\u001aX����bޏ\b��\u0000�\u001c�+�<�@*\u0007&!K�\u001d}>+F�\u0017\r�W!�!l�:�[��\u0017mu��ә78\u0000y�\u0012c���ݠ\u0018���f\u0018$Ĵ��\u0006�$���\"�|������˛{�1��uԒ��/-�b�s����9��\u001e\u000fP�rZ\u0019+W�n�jd랍4F\n\u001b���\u0012\bw\t\u0006ŰZ*��l\u001fbÊg�'���`ݮ�e�\u0017�В�ӜkaN)p�s���\t���E3�S��\u000e^A9r�\u001f�i��v��\n���[�.-���!�#\u001b�`\u00136��\u0016�'��lQW������z=UoF5\"m�{���\u001b-\u0002�U6\u0001�xq���ޱ5\b\n\u0006�T����L.Į�^��ʁ��K:KxQԌ\n��f\u001b�_��7PK\u0007\b\"\u0013���\u0001\u0000\u0000�\u0006\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u000f\u0000\u0000\u0000xl/workbook.xml���N�0\f��H�C�;K\n\bA�t\u0017��\u0013\b\r�n�ٚ���\u0006oOک����˟?����\r�H�m�\u001a��\u0002Aބ��������=��ˋ�\u0014�\t� 2�YC��XJɦ'��\n#���Bt�r�;�c$l�'Jn��J�I����P��8B�YC��|8��,�4`�m��#C���%�\u0016\u0013\u0015\u000f�VC�\u0003\u0013Ⱥ�6�N�\u000bNQ�I�H[l4������2�GG\u001a^\t������$\u0006\u0011K�j���\u0006Čmr,f�r-��7PK\u0007\b�F8C�\u0000\u0000\u0000e\u0001\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u001a\u0000\u0000\u0000xl/_rels/workbook.xml.rels��Mk�0\f@���}q��\u0018�n/c����\u0000c+qh\"\u0019K�迟���@\u0007;�$��{\u000f��~Γy�\"#���i� \u0005�#\r\u000e^�O7�`D=E?1�\u0003b�n��8y�?$�YLE�8H���Z\t\tg/\rg����^�\f6�p�\u0003�U���r΀%�좃��\u001d��/\u0003�\u0003I�`|�Rˤ��:f����~\f���mF�\u000bv����\u001c�:���ׯ�������p9HB�Sy\u001dݵK~\u0004�\u0018����\u000bPK\u0007\b�\u0003;��\u0000\u0000\u00003\u0002\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0018\u0000\u0000\u0000xl/worksheets/sheet1.xml��[o�0\u0014��'�?X~_�\u0004\u0012R\u0001U�.k���v}v�\\T��vB�l�#�\u0004yIl�}9�����}+rp\"�g��!Z�\u0010�2�QV&>��k������w^M�+O\t\u0011@\n%�a*Duc\u0018\n    \n    <LI���V���Ĕ\u0015X�)K\f^1��F*r�2͍Q଄�\u0017e\u0005)UD�H��;t�\u0011x\r�'#5�o\fT�\u0003��j�\u0018�P.Q��O��P\u00109\u0017�H�mh��Y�w\u0006\"\u0012�c.~���dI*�N\u001d�U)�4��'(2�\u0000\b\n��|�Y$R\u001fڦ�Ix�\u0016�G}���:�\u001a,��Zw�z��y��,{�v��I�\u0018ʞ�6��\u0019�������hY��Y�U֮�v�e-H\n        \n        <2�S6�h�\u0002o�\u000etU\u001eQ_\u001fȺn�}���D�%��\u001aA�\u0012�h�@sc����h\r��\u0004�O��N�W�\u0019\u000e\u0001o��\u0002�3NJ툏:���'���ĽN���g����^'�)�E'6S�A'�S�Q'�)�\u0013�)��B�Β��\u0002r���\u000b�YZ_. c^\ry�}�l\u000f��\ty�,�J\u000e\u000eT�z�-w���#�T\u0010�f�\u001eS�ۇINb�P\u0010���6cA��Ue6�B�PK\u0007\b\u0010=��\u0001\u0000\u0000v\u0006\u0000\u0000PK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dUz��q;\u0001\u0000\u0000\u001c\u0004\u0000\u0000\u0013\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000[Content_Types].xmlPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dU��z��\u0000\u0000\u0000I\u0002\u0000\u0000\u000b\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000|\u0001\u0000\u0000_rels/.relsPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dU6n�!�\u0000\u0000\u0000�\u0000\u0000\u0000\u0010\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000�\u0002\u0000\u0000docProps/app.xmlPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dUT\u000b\u001a�\u0004\u0001\u0000\u0000�\u0001\u0000\u0000\u0011\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000i\u0003\u0000\u0000docProps/core.xmlPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dU\n�\n\u0017�\u0001\u0000\u0000`\u0003\u0000\u0000\u0014\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000�\u0004\u0000\u0000xl/sharedStrings.xmlPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dU\"\u0013���\u0001\u0000\u0000�\u0006\u0000\u0000\r\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000�\u0006\u0000\u0000xl/styles.xmlPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dU�F8C�\u0000\u0000\u0000e\u0001\u0000\u0000\u000f\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000�\b\u0000\u0000xl/workbook.xmlPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dU�\u0003;��\u0000\u0000\u00003\u0002\u0000\u0000\u001a\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000�\t\u0000\u0000xl/_rels/workbook.xml.relsPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dU\u0010=��\u0001\u0000\u0000v\u0006\u0000\u0000\u0018\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u000b\u0000\u0000xl/worksheets/sheet1.xmlPK\u0005\u0006\u0000\u0000\u0000\u0000\t\u0000\t\u0000?\u0002\u0000\u00007\r\u0000\u0000\u0000\u0000"
+                },
+                "example": "PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0013\u0000\u0000\u0000[Content_Types].xml�S�n�0\u0010����*6�PU\u0015�C\u001f�\u0016��\u0003\\{�X�%����]\u00078�R�\nq�cfgfW�d�q�ZCB\u0013|��|�*�*h㻆},^�{Va�^K\u001b\n\n<4�\u00076�N\u0016�\bXQ�ǆ�9�\u0007!P��$�\u0010�\u0013҆�d�c�D�j);\u0010��ѝP�g��E�M'O�ʕ����H7L�h���R���G��^�'�\u0003\u0007{\u0013�\b�zސʮ\u001bB��3\u001c�\u000b˙��h.�h�W�жF�\u000ej娄CQՠ똈���}ιL�U:\u0012\u0014D�\u0013����%އ����,�B���[�\t��\u001e ;˱�\t�{N��~��X�p�\u001cykOL�\u0004\u0018�kN�V��ܿBZ~����q\u0018��\u000f �a\u0019\u001fr��{O�\u0001PK\u0007\bz��q;\u0001\u0000\u0000\u001c\u0004\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u000b\u0000\u0000\u0000_rels/.rels���j�0\f�_���8�`�Q��2�m��\u00014[ILb��ږ���.[K\n\u001b�($}�\u0007�v?�I�Q.���uӂ�h���\u001bx>=��@\u0015��p�H\u0006\"�~�}�\t�n����*\"\u0016\u0003�H�׺؁\u0002��\u0013���8\u0007�Z�^'�#��7m{��O\u0006�3��\u0019�G�\u0006u�ܓ\u0018�'��y|a\u001e�����D�\t��\u000el_\u0003EYȾ�\u0000���vql\u001f3�ML�eh\u0016���*�\u0004��\\3�Y0���oJ׏�\u0003\t:\u0014��^\b�\u001f�}\u0002PK\u0007\b��z��\u0000\u0000\u0000I\u0002\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0010\u0000\u0000\u0000docProps/app.xmlM��\n�0\u0010D��\u0010ro�z\u0010�4� �'{�\u000f\b��\u0006�MHV�盓z�\u0019��T��E�1e\u0017�����\u0002Ɇ�ѳ����:�No7jH!bb�Y�\u0007�V���\u0004�����T�)$o���0M��9ؗGb�7�\u0001pe�\u0011�*~�R�>��Y�EB��\u0014�\u0018nW\u0005������\u0000PK\u0007\b6n�!�\u0000\u0000\u0000�\u0000\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0011\u0000\u0000\u0000docProps/core.xmlm��J�0\u0010F_�依�E��v\u0011eAP\\pE�.$c[l~H�]�޴�\u0015Ի$ߙ��7\u0007=f���`MCXAI�FZ5��!\u000f�m~F�\u0010�Qb�\u0006\u001bb,ٴ�t\\Z�;o\u001d�8`Ȓ�\u0004.]C�\u0018\u001d\u0007\b�G-B�\b��\u0017뵈��;pB��\u000e���\u00144F�D\u00140\u000bs�\u001a�Q��to~\\\u0004J\u0002����\u0000�`��F�:�;�$+y\b�JM�TL�¥�\u0018<���/�烙�.���QͥG\u0011QeI��K�|'����~Kڒ�e�XN�}Y�sN�s\r��g�����\"\u0015�c��������?5��PK\u0007\bT\u000b\u001a�\u0004\u0001\u0000\u0000�\u0001\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0014\u0000\u0000\u0000xl/sharedStrings.xml�S�J�@\u0010}\u0017��%�ڭ\"\"��\u000f�_�\u001fPjl\u0003MR����VTD� >IE�g!�V���\u0017f��3�z�EB\u0002;3�̙3\u001b�x��ľ�P^\u0018\u0014��\\�\u0012nP\u000ew��R���6\u0017׬�3?g+\u0015�r�\f\"\u0014�X�\u0019x{Mw�+\u0000�@\u0015�j\u0014�ץT��T.��\u00012�a�/E86*R�\u001bniGU]7�kr9�_�~�\u000b,�V�cG\u000e�h�ۺC)��}��LC\u001aSBC[F�-�nZ{e*\u0012}2��)\u0015��\b�Xw2�;P=!\u000b�?�\u000f���nL)��sA\u0003C\u0016gJ{L��-��U��`��)P\u0019���t7\u0003��>\u0005h�\u0002^0T�[`I�=[0�\u001c����C}�-f#�Y�q\u000f�\nz4Gv\u000f�I�r\u0000�\t%\u0019�=2\\�3|3+՝�\u00111�=f�`��lQ��.�ɢuw�zo�2<\u00108!5[�\n6��=�\bL.L�nS1\u0019�K�y��T6.\n��\u0017b��8\u0019�\u0005t\u000fi�\u0006��m�\u0003��\u0012��\u0019����c�\u0012���\u000ePK\u0007\b\n�\n\u0017�\u0001\u0000\u0000`\u0003\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\r\u0000\u0000\u0000xl/styles.xml�UM��0\u0010�W��|�/U�\nX�+��yS�W\u0007\fXk���l����\"�M��9��x��ޛ�0���\u0013\u001c�P���\f/�\u0016\u0018Q(dɠ������\u0016?��ߥ���>5�\u001ad\u0015�3�\u0018�~J\u0012]4T\u0010}'[\n��J*A�ݪ:ѭ���N$x�Z,>&�0�y\nG�\u0013F�B\u001e�dx��<�$��\u001a\u0007 O�/�B�-��fi��R!\u0006%�h��À\b\u001aX����bޏ\b��\u0000�\u001c�+�<�@*\u0007&!K�\u001d}>+F�\u0017\r�W!�!l�:�[��\u0017mu��ә78\u0000y�\u0012c���ݠ\u0018���f\u0018$Ĵ��\u0006�$���\"�|������˛{�1��uԒ��/-�b�s����9��\u001e\u000fP�rZ\u0019+W�n�jd랍4F\n\u001b���\u0012\bw\t\u0006ŰZ*��l\u001fbÊg�'���`ݮ�e�\u0017�В�ӜkaN)p�s���\t���E3�S��\u000e^A9r�\u001f�i��v��\n���[�.-���!�#\u001b�`\u00136��\u0016�'��lQW������z=UoF5\"m�{���\u001b-\u0002�U6\u0001�xq���ޱ5\b\n\u0006�T����L.Į�^��ʁ��K:KxQԌ\n��f\u001b�_��7PK\u0007\b\"\u0013���\u0001\u0000\u0000�\u0006\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u000f\u0000\u0000\u0000xl/workbook.xml���N�0\f��H�C�;K\n\bA�t\u0017��\u0013\b\r�n�ٚ���\u0006oOک����˟?����\r�H�m�\u001a��\u0002Aބ��������=��ˋ�\u0014�\t� 2�YC��XJɦ'��\n#���Bt�r�;�c$l�'Jn��J�I����P��8B�YC��|8��,�4`�m��#C���%�\u0016\u0013\u0015\u000f�VC�\u0003\u0013Ⱥ�6�N�\u000bNQ�I�H[l4������2�GG\u001a^\t������$\u0006\u0011K�j���\u0006Čmr,f�r-��7PK\u0007\b�F8C�\u0000\u0000\u0000e\u0001\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u001a\u0000\u0000\u0000xl/_rels/workbook.xml.rels��Mk�0\f@���}q��\u0018�n/c����\u0000c+qh\"\u0019K�迟���@\u0007;�$��{\u000f��~Γy�\"#���i� \u0005�#\r\u000e^�O7�`D=E?1�\u0003b�n��8y�?$�YLE�8H���Z\t\tg/\rg����^�\f6�p�\u0003�U���r΀%�좃��\u001d��/\u0003�\u0003I�`|�Rˤ��:f����~\f���mF�\u000bv����\u001c�:���ׯ�������p9HB�Sy\u001dݵK~\u0004�\u0018����\u000bPK\u0007\b�\u0003;��\u0000\u0000\u00003\u0002\u0000\u0000PK\u0003\u0004\u0014\u0000\b\b\b\u0000`\u0017dU\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0018\u0000\u0000\u0000xl/worksheets/sheet1.xml��[o�0\u0014��'�?X~_�\u0004\u0012R\u0001U�.k���v}v�\\T��vB�l�#�\u0004yIl�}9�����}+rp\"�g��!Z�\u0010�2�QV&>��k������w^M�+O\t\u0011@\n%�a*Duc\u0018\n    \n    <LI���V���Ĕ\u0015X�)K\f^1��F*r�2͍Q଄�\u0017e\u0005)UD�H��;t�\u0011x\r�'#5�o\fT�\u0003��j�\u0018�P.Q��O��P\u00109\u0017�H�mh��Y�w\u0006\"\u0012�c.~���dI*�N\u001d�U)�4��'(2�\u0000\b\n��|�Y$R\u001fڦ�Ix�\u0016�G}���:�\u001a,��Zw�z��y��,{�v��I�\u0018ʞ�6��\u0019�������hY��Y�U֮�v�e-H\n        \n        <2�S6�h�\u0002o�\u000etU\u001eQ_\u001fȺn�}���D�%��\u001aA�\u0012�h�@sc����h\r��\u0004�O��N�W�\u0019\u000e\u0001o��\u0002�3NJ툏:���'���ĽN���g����^'�)�E'6S�A'�S�Q'�)�\u0013�)��B�Β��\u0002r���\u000b�YZ_. c^\ry�}�l\u000f��\ty�,�J\u000e\u000eT�z�-w���#�T\u0010�f�\u001eS�ۇINb�P\u0010���6cA��Ue6�B�PK\u0007\b\u0010=��\u0001\u0000\u0000v\u0006\u0000\u0000PK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dUz��q;\u0001\u0000\u0000\u001c\u0004\u0000\u0000\u0013\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000[Content_Types].xmlPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dU��z��\u0000\u0000\u0000I\u0002\u0000\u0000\u000b\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000|\u0001\u0000\u0000_rels/.relsPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dU6n�!�\u0000\u0000\u0000�\u0000\u0000\u0000\u0010\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000�\u0002\u0000\u0000docProps/app.xmlPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dUT\u000b\u001a�\u0004\u0001\u0000\u0000�\u0001\u0000\u0000\u0011\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000i\u0003\u0000\u0000docProps/core.xmlPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dU\n�\n\u0017�\u0001\u0000\u0000`\u0003\u0000\u0000\u0014\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000�\u0004\u0000\u0000xl/sharedStrings.xmlPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dU\"\u0013���\u0001\u0000\u0000�\u0006\u0000\u0000\r\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000�\u0006\u0000\u0000xl/styles.xmlPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dU�F8C�\u0000\u0000\u0000e\u0001\u0000\u0000\u000f\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000�\b\u0000\u0000xl/workbook.xmlPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dU�\u0003;��\u0000\u0000\u00003\u0002\u0000\u0000\u001a\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000�\t\u0000\u0000xl/_rels/workbook.xml.relsPK\u0001\u0002\u0014\u0000\u0014\u0000\b\b\b\u0000`\u0017dU\u0010=��\u0001\u0000\u0000v\u0006\u0000\u0000\u0018\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u000b\u0000\u0000xl/worksheets/sheet1.xmlPK\u0005\u0006\u0000\u0000\u0000\u0000\t\u0000\t\u0000?\u0002\u0000\u00007\r\u0000\u0000\u0000\u0000"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+              "content-type": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "text/plain"
+                  }
+                }
+              },
+              "content-length": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "31"
+                  }
+                }
+              }
+            },
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Header userSessionId is not set"
+                },
+                "example": "Header userSessionId is not set"
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/realty/objects/calculatePool": {
+      "post": {
+        "tags": [
+          "Запуск расчета стоимости"
+        ],
+        "summary": "Запустить расчет стоимости всех объектов в пуле4",
+        "operationId": "Запуститьрасчетстоимостивсехобъектоввпуле4",
+        "parameters": [
+          {
+            "name": "userSessionId",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "8596fece-123d-421b-bc1c-0bb3cb162fa0"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Request7"
+                  },
+                  {
+                    "example": {
+                      "poolId": "7d52875e-284f-44bf-bfcf-2f348960cecd",
+                      "withCorrections": true
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "poolId": "7d52875e-284f-44bf-bfcf-2f348960cecd",
+                "withCorrections": true
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "content-length": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "0"
+                  }
+                }
+              }
+            },
+            "content": {}
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/realty/objects/calculateSome": {
+      "post": {
+        "tags": [
+          "Запуск расчета стоимости"
+        ],
+        "summary": "Запустить расчет стоимости выбранных объектов5",
+        "operationId": "Запуститьрасчетстоимостивыбранныхобъектов5",
+        "parameters": [
+          {
+            "name": "userSessionId",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "8596fece-123d-421b-bc1c-0bb3cb162fa0"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Request8"
+                  },
+                  {
+                    "example": {
+                      "objectsIds": [
+                        "7327b637-e905-4001-804b-49cef06981a3",
+                        "1a441588-a72c-4f6e-a950-3ad45f2e98a9"
+                      ],
+                      "withCorrections": false
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "objectsIds": [
+                  "7327b637-e905-4001-804b-49cef06981a3",
+                  "1a441588-a72c-4f6e-a950-3ad45f2e98a9"
+                ],
+                "withCorrections": false
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/realty/pool": {
+      "put": {
+        "tags": [
+          "Пулы объектов"
+        ],
+        "summary": "Создание пула для объектов6",
+        "description": "Можно создать пул вручную, чтобы переназначать объекты в него.\n\nМожно отправить пустой объект в теле запроса, тогда имя пула сгенерируется автоматически. Внимание: отправить нужно именно пустой объект {}, а не пустой body.",
+        "operationId": "Созданиепуладляобъектов6",
+        "parameters": [
+          {
+            "name": "userSessionId",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "8596fece-123d-421b-bc1c-0bb3cb162fa0"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Request9"
+                  },
+                  {
+                    "example": {
+                      "name": "Новый пул объектов 123425"
+                    }
+                  }
+                ]
+              },
+              "example": {
+                "name": "Новый пул объектов 123425"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "content-type": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "application/json"
+                  }
+                }
+              },
+              "content-length": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "143"
+                  }
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Createpoolforobjects"
+                    },
+                    {
+                      "example": {
+                        "id": "2f5a0cb0-acd3-43d0-82d6-2f8ff8edfcac",
+                        "name": "Новый пул объектов 12345",
+                        "userId": "174fd95f-d7cb-4270-95e2-658beb0c8797"
+                      }
+                    }
+                  ]
+                },
+                "example": {
+                  "id": "2f5a0cb0-acd3-43d0-82d6-2f8ff8edfcac",
+                  "name": "Новый пул объектов 12345",
+                  "userId": "174fd95f-d7cb-4270-95e2-658beb0c8797"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/realty/pool/<poolId>": {
+      "get": {
+        "tags": [
+          "Пулы объектов"
+        ],
+        "summary": "Получение информации о пуле по id",
+        "operationId": "Получениеинформацииопулепоid",
+        "parameters": [
+          {
+            "name": "userSessionId",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "5daac042-5203-47bc-a2ad-623bfd9ce0c6"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "content-type": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "application/json"
+                  }
+                }
+              },
+              "content-length": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "127"
+                  }
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Getpoolinfo"
+                    },
+                    {
+                      "example": {
+                        "id": "75ddaa65-542e-448a-b310-08b95d538c5a",
+                        "name": "pool-04-11-2022-01-27-02",
+                        "userId": "174fd95f-d7cb-4270-95e2-658beb0c8797"
+                      }
+                    }
+                  ]
+                },
+                "example": {
+                  "id": "75ddaa65-542e-448a-b310-08b95d538c5a",
+                  "name": "pool-04-11-2022-01-27-02",
+                  "userId": "174fd95f-d7cb-4270-95e2-658beb0c8797"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/realty/pools": {
+      "get": {
+        "tags": [
+          "Пулы объектов"
+        ],
+        "summary": "Получение информации обо всех пулах пользователя4",
+        "operationId": "Получениеинформацииобовсехпулахпользователя4",
+        "parameters": [
+          {
+            "name": "userSessionId",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "8596fece-123d-421b-bc1c-0bb3cb162fa0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "content-type": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "application/json"
+                  }
+                }
+              },
+              "content-length": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "161"
+                  }
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/111"
+                  },
+                  "description": "",
+                  "example": [
+                    {
+                      "id": "b3f50452-be30-4294-9543-f9d04128b5f9",
+                      "name": "pool-04-11-2022-20-41-05"
+                    },
+                    {
+                      "id": "7d52875e-284f-44bf-bfcf-2f348960cecd",
+                      "name": "pool-04-11-2022-21-10-21"
+                    }
+                  ]
+                },
+                "example": [
+                  {
+                    "id": "b3f50452-be30-4294-9543-f9d04128b5f9",
+                    "name": "pool-04-11-2022-20-41-05"
+                  },
+                  {
+                    "id": "7d52875e-284f-44bf-bfcf-2f348960cecd",
+                    "name": "pool-04-11-2022-21-10-21"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/realty/analytics/default": {
+      "get": {
+        "tags": [
+          "Аналитика"
+        ],
+        "summary": "default",
+        "description": "| Поле | Описание |\n| --- | --- |\n| countAllRealtyObjects | количество всех загруженных объектов недвижимости |\n| countAllRealtyObjectsOfUser | количество объектов недвижимости, загруженных пользователем |\n| sumAllAreaOfAllObjects | суммарная площадь всех объектов |\n| sumAllAreaOfUsersObjects | суммарная площадь объектов, загруженных пользователем |\n| avgPriceByRoomsNumber | средняя цена квартиры(по всем квартирам в системе) в зависимости от количества комнат |",
+        "operationId": "default",
+        "parameters": [
+          {
+            "name": "userSessionId",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "7ef82c02-58ce-492c-bbdb-a21db6ab26dc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "content-type": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "application/json"
+                  }
+                }
+              },
+              "content-length": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "231"
+                  }
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/default"
+                    },
+                    {
+                      "example": {
+                        "countAllRealtyObjects": 20,
+                        "countAllRealtyObjectsOfUser": 20,
+                        "sumAllAreaOfAllObjects": 1402.8,
+                        "sumAllAreaOfUsersObjects": 1402.8,
+                        "avgPriceByRoomsNumber": {
+                          "1": 16681095.625,
+                          "2": 24943582.833333332,
+                          "3": 30584537.833333332
+                        }
+                      }
+                    }
+                  ]
+                },
+                "example": {
+                  "countAllRealtyObjects": 20,
+                  "countAllRealtyObjectsOfUser": 20,
+                  "sumAllAreaOfAllObjects": 1402.8,
+                  "sumAllAreaOfUsersObjects": 1402.8,
+                  "avgPriceByRoomsNumber": {
+                    "1": 16681095.625,
+                    "2": 24943582.833333332,
+                    "3": 30584537.833333332
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/realty/analytics/avgPriceOfRealtyByRoomsNumberForPool/7d52875e-284f-44bf-bfcf-2f348960cecd": {
+      "get": {
+        "tags": [
+          "Аналитика"
+        ],
+        "summary": "Средняя цена квартиры в пуле в зависимости от количетсва комнат5",
+        "operationId": "Средняяценаквартирывпулевзависимостиотколичетсвакомнат5",
+        "parameters": [
+          {
+            "name": "userSessionId",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "7ef82c02-58ce-492c-bbdb-a21db6ab26dc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "content-type": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "application/json"
+                  }
+                }
+              },
+              "content-length": {
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string"
+                    },
+                    "example": "79"
+                  }
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "number",
+                  "format": "double"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Request": {
+        "title": "Request",
+        "required": [
+          "fieldName",
+          "referenceValue",
+          "analogueValue",
+          "correction",
+          "correctionType",
+          "isEnabled"
+        ],
+        "type": "object",
+        "properties": {
+          "fieldName": {
+            "type": "string"
+          },
+          "referenceValue": {
+            "type": "string"
+          },
+          "analogueValue": {
+            "type": "string"
+          },
+          "correction": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "correctionType": {
+            "type": "string"
+          },
+          "isEnabled": {
+            "type": "boolean"
+          }
+        },
+        "example": {
+          "fieldName": "condition",
+          "referenceValue": "без отделки",
+          "analogueValue": "муниципальный ремонт",
+          "correction": 10000,
+          "correctionType": "unit",
+          "isEnabled": true
+        }
+      },
+      "Request1": {
+        "title": "Request1",
+        "required": [
+          "id",
+          "fieldName",
+          "referenceValue",
+          "analogueValue",
+          "correction",
+          "correctionType",
+          "isEnabled"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "fieldName": {
+            "type": "string"
+          },
+          "referenceValue": {
+            "type": "string"
+          },
+          "analogueValue": {
+            "type": "string"
+          },
+          "correction": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "correctionType": {
+            "type": "string"
+          },
+          "isEnabled": {
+            "type": "boolean"
+          }
+        },
+        "example": {
+          "id": "9dac4b4f-e6ee-42ed-a97d-51d61b971e27",
+          "fieldName": "condition",
+          "referenceValue": "без отделки",
+          "analogueValue": "муниципальный ремонт",
+          "correction": 10000,
+          "correctionType": "unit",
+          "isEnabled": true
+        }
+      },
+      "Copy": {
+        "title": "Copy",
+        "required": [
+          "id",
+          "fieldName",
+          "referenceValue",
+          "analogueValue",
+          "correction",
+          "correctionType",
+          "isEnabled"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "fieldName": {
+            "type": "string"
+          },
+          "referenceValue": {
+            "type": "string"
+          },
+          "analogueValue": {
+            "type": "string"
+          },
+          "correction": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "correctionType": {
+            "type": "string"
+          },
+          "isEnabled": {
+            "type": "boolean"
+          }
+        },
+        "example": {
+          "id": "2622a81f-b927-4f24-9fa2-8e7a02c93f0a",
+          "fieldName": "condition",
+          "referenceValue": "без отделки",
+          "analogueValue": "муниципальный ремонт",
+          "correction": 10000,
+          "correctionType": "unit",
+          "isEnabled": true
+        }
+      },
+      "Request2": {
+        "title": "Request2",
+        "required": [
+          "fieldName",
+          "referenceValue",
+          "referenceValueType",
+          "analogueValue",
+          "analogueValueType",
+          "correction",
+          "correctionType",
+          "isEnabled"
+        ],
+        "type": "object",
+        "properties": {
+          "fieldName": {
+            "type": "string"
+          },
+          "referenceValue": {
+            "type": "string"
+          },
+          "referenceValueType": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "analogueValue": {
+            "type": "string"
+          },
+          "analogueValueType": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "correction": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "correctionType": {
+            "type": "string"
+          },
+          "isEnabled": {
+            "type": "boolean"
+          }
+        },
+        "example": {
+          "fieldName": "totalArea",
+          "referenceValue": "30-50",
+          "referenceValueType": 1,
+          "analogueValue": "30-50",
+          "analogueValueType": 1,
+          "correction": 50,
+          "correctionType": "percent",
+          "isEnabled": true
+        }
+      },
+      "Request3": {
+        "title": "Request3",
+        "required": [
+          "id",
+          "fieldName",
+          "referenceValue",
+          "referenceValueType",
+          "analogueValue",
+          "analogueValueType",
+          "correction",
+          "correctionType",
+          "isEnabled"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "fieldName": {
+            "type": "string"
+          },
+          "referenceValue": {
+            "type": "string"
+          },
+          "referenceValueType": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "analogueValue": {
+            "type": "string"
+          },
+          "analogueValueType": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "correction": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "correctionType": {
+            "type": "string"
+          },
+          "isEnabled": {
+            "type": "boolean"
+          }
+        },
+        "example": {
+          "id": "8067aec2-d313-46c4-b929-dee0986963a7",
+          "fieldName": "kitchenArea",
+          "referenceValue": "5-10",
+          "referenceValueType": 1,
+          "analogueValue": "30",
+          "analogueValueType": 5,
+          "correction": 23,
+          "correctionType": "percent",
+          "isEnabled": false
+        }
+      },
+      "register": {
+        "title": "register",
+        "required": [
+          "id",
+          "login",
+          "passwordHash",
+          "salt",
+          "firstName",
+          "lastName",
+          "birthdate"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "login": {
+            "type": "string"
+          },
+          "passwordHash": {
+            "type": "string"
+          },
+          "salt": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "birthdate": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "id": "cf9934f7-9089-4241-9a1d-0984f13bfcf5",
+          "login": "admin",
+          "passwordHash": "$2a$10$OrZGbIj4cZvh1Xz2lFrln.w9OApqHiEPd4Ntue0V7VoGW/c9YUB3O",
+          "salt": "$2a$10$OrZGbIj4cZvh1Xz2lFrln.",
+          "firstName": "Victor",
+          "lastName": "Nguen",
+          "birthdate": "1999-05-09"
+        }
+      },
+      "Request4": {
+        "title": "Request4",
+        "required": [
+          "login",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "login": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "login": "admin",
+          "password": "admin"
+        }
+      },
+      "Authorizeuser": {
+        "title": "Authorizeuser",
+        "required": [
+          "sessionId"
+        ],
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "sessionId": "05a2bafb-24bb-4f88-94cf-e21c8975bebf"
+        }
+      },
+      "Request5": {
+        "title": "Request5",
+        "required": [
+          "location",
+          "roomsNumber",
+          "segment",
+          "floorCount",
+          "wallMaterial",
+          "floorNumber",
+          "totalArea",
+          "kitchenArea",
+          "gotBalcony",
+          "condition",
+          "distanceFromMetro",
+          "poolId"
+        ],
+        "type": "object",
+        "properties": {
+          "location": {
+            "type": "string"
+          },
+          "roomsNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "segment": {
+            "type": "string"
+          },
+          "floorCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "wallMaterial": {
+            "type": "string"
+          },
+          "floorNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalArea": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "kitchenArea": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "gotBalcony": {
+            "type": "boolean"
+          },
+          "condition": {
+            "type": "string"
+          },
+          "distanceFromMetro": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "poolId": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "location": "г. Москва, ул. Ватутина, д. 9",
+          "roomsNumber": 3,
+          "segment": "Новостройка",
+          "floorCount": 10,
+          "wallMaterial": "кирпич",
+          "floorNumber": 4,
+          "totalArea": 75,
+          "kitchenArea": 12,
+          "gotBalcony": true,
+          "condition": "Современная отделка",
+          "distanceFromMetro": 200,
+          "poolId": "75ddaa65-542e-448a-b310-08b95d538c5a"
+        }
+      },
+      "1": {
+        "title": "1",
+        "required": [
+          "id",
+          "location",
+          "roomsNumber",
+          "segment",
+          "floorCount",
+          "wallMaterial",
+          "floorNumber",
+          "totalArea",
+          "kitchenArea",
+          "gotBalcony",
+          "condition",
+          "distanceFromMetro",
+          "createdAt",
+          "updatedAt",
+          "poolId",
+          "coordinates"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "roomsNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "segment": {
+            "type": "string"
+          },
+          "floorCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "wallMaterial": {
+            "type": "string"
+          },
+          "floorNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalArea": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "kitchenArea": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "gotBalcony": {
+            "type": "boolean"
+          },
+          "condition": {
+            "type": "string"
+          },
+          "distanceFromMetro": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "poolId": {
+            "type": "string"
+          },
+          "coordinates": {
+            "$ref": "#/components/schemas/Coordinates"
+          }
+        },
+        "example": {
+          "id": "a7f17cd3-7102-449a-8622-d9e8655bfe75",
+          "location": "г. Москва, ул. Ватутина, д. 9",
+          "roomsNumber": 3,
+          "segment": "Новостройка",
+          "floorCount": 10,
+          "wallMaterial": "кирпич",
+          "floorNumber": 4,
+          "totalArea": 75,
+          "kitchenArea": 12,
+          "gotBalcony": true,
+          "condition": "Современная отделка",
+          "distanceFromMetro": 200,
+          "createdAt": "2022-11-04T02:39:08.1760348",
+          "updatedAt": "2022-11-04T02:39:08.1760348",
+          "poolId": "75ddaa65-542e-448a-b310-08b95d538c5a",
+          "coordinates": {
+            "lat": "55.721264",
+            "lon": "37.454754"
+          }
+        }
+      },
+      "Coordinates": {
+        "title": "Coordinates",
+        "required": [
+          "lat",
+          "lon"
+        ],
+        "type": "object",
+        "properties": {
+          "lat": {
+            "type": "string"
+          },
+          "lon": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "lat": "55.721264",
+          "lon": "37.454754"
+        }
+      },
+      "11": {
+        "title": "11",
+        "required": [
+          "id",
+          "location",
+          "roomsNumber",
+          "segment",
+          "floorCount",
+          "wallMaterial",
+          "floorNumber",
+          "totalArea",
+          "kitchenArea",
+          "gotBalcony",
+          "condition",
+          "distanceFromMetro",
+          "createdAt",
+          "updatedAt",
+          "poolId",
+          "coordinates",
+          "analogs"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "roomsNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "segment": {
+            "type": "string"
+          },
+          "floorCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "wallMaterial": {
+            "type": "string"
+          },
+          "floorNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalArea": {
+            "oneOf": [
+              {
+                "type": "integer",
+                "format": "int32"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          "kitchenArea": {
+            "oneOf": [
+              {
+                "type": "integer",
+                "format": "int32"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          "gotBalcony": {
+            "type": "boolean"
+          },
+          "condition": {
+            "type": "string"
+          },
+          "distanceFromMetro": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "calculatedValue": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "poolId": {
+            "type": "string"
+          },
+          "coordinates": {
+            "$ref": "#/components/schemas/Coordinates"
+          },
+          "analogs": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/Analog"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "description": ""
+          }
+        }
+      },
+      "Analog": {
+        "title": "Analog",
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "latitude": {
+            "type": "number"
+          },
+          "longitude": {
+            "type": "number"
+          },
+          "price": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "roomsNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "area": {
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "integer",
+                "format": "int32"
+              }
+            ]
+          },
+          "kitchenArea": {
+            "oneOf": [
+              {
+                "type": "integer",
+                "format": "int32"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "distanceToMetroInMinutes": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "userSessionIdisset": {
+        "title": "userSessionIdisset",
+        "required": [
+          "id",
+          "location",
+          "roomsNumber",
+          "segment",
+          "floorCount",
+          "wallMaterial",
+          "floorNumber",
+          "totalArea",
+          "kitchenArea",
+          "gotBalcony",
+          "condition",
+          "distanceFromMetro",
+          "createdAt",
+          "updatedAt",
+          "poolId",
+          "coordinates"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "roomsNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "segment": {
+            "type": "string"
+          },
+          "floorCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "wallMaterial": {
+            "type": "string"
+          },
+          "floorNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalArea": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "kitchenArea": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "gotBalcony": {
+            "type": "boolean"
+          },
+          "condition": {
+            "type": "string"
+          },
+          "distanceFromMetro": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "poolId": {
+            "type": "string"
+          },
+          "coordinates": {
+            "$ref": "#/components/schemas/Coordinates"
+          }
+        },
+        "example": {
+          "id": "c256f6e9-dd56-4e7a-9df8-2e4ca9235662",
+          "location": "Москва, Саринский пр-д, 42",
+          "roomsNumber": 3,
+          "segment": "Новостройка",
+          "floorCount": 10,
+          "wallMaterial": "кирпич",
+          "floorNumber": 4,
+          "totalArea": 75,
+          "kitchenArea": 12,
+          "gotBalcony": true,
+          "condition": "Современная отделка",
+          "distanceFromMetro": 200,
+          "createdAt": "2022-11-04T02:26:42.778829",
+          "updatedAt": "2022-11-04T02:26:42.778829",
+          "poolId": "75ddaa65-542e-448a-b310-08b95d538c5a",
+          "coordinates": {
+            "lat": "",
+            "lon": ""
+          }
+        }
+      },
+      "Request6": {
+        "title": "Request6",
+        "required": [
+          "id",
+          "poolId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "poolId": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "id": "4d8ca46f-78b7-4579-8cc2-8a834cb98791",
+          "poolId": "2c2a54a6-b379-4dd3-9de4-3e00b9345db6"
+        }
+      },
+      "Request7": {
+        "title": "Request7",
+        "required": [
+          "poolId",
+          "withCorrections"
+        ],
+        "type": "object",
+        "properties": {
+          "poolId": {
+            "type": "string"
+          },
+          "withCorrections": {
+            "type": "boolean"
+          }
+        },
+        "example": {
+          "poolId": "7d52875e-284f-44bf-bfcf-2f348960cecd",
+          "withCorrections": true
+        }
+      },
+      "Request8": {
+        "title": "Request8",
+        "required": [
+          "objectsIds",
+          "withCorrections"
+        ],
+        "type": "object",
+        "properties": {
+          "objectsIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": ""
+          },
+          "withCorrections": {
+            "type": "boolean"
+          }
+        },
+        "example": {
+          "objectsIds": [
+            "7327b637-e905-4001-804b-49cef06981a3",
+            "1a441588-a72c-4f6e-a950-3ad45f2e98a9"
+          ],
+          "withCorrections": false
+        }
+      },
+      "Request9": {
+        "title": "Request9",
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "name": "Новый пул объектов 123425"
+        }
+      },
+      "Createpoolforobjects": {
+        "title": "Createpoolforobjects",
+        "required": [
+          "id",
+          "name",
+          "userId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "id": "2f5a0cb0-acd3-43d0-82d6-2f8ff8edfcac",
+          "name": "Новый пул объектов 12345",
+          "userId": "174fd95f-d7cb-4270-95e2-658beb0c8797"
+        }
+      },
+      "Getpoolinfo": {
+        "title": "Getpoolinfo",
+        "required": [
+          "id",
+          "name",
+          "userId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "id": "75ddaa65-542e-448a-b310-08b95d538c5a",
+          "name": "pool-04-11-2022-01-27-02",
+          "userId": "174fd95f-d7cb-4270-95e2-658beb0c8797"
+        }
+      },
+      "111": {
+        "title": "111",
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "id": "b3f50452-be30-4294-9543-f9d04128b5f9",
+          "name": "pool-04-11-2022-20-41-05"
+        }
+      },
+      "default": {
+        "title": "default",
+        "required": [
+          "countAllRealtyObjects",
+          "countAllRealtyObjectsOfUser",
+          "sumAllAreaOfAllObjects",
+          "sumAllAreaOfUsersObjects",
+          "avgPriceByRoomsNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "countAllRealtyObjects": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "countAllRealtyObjectsOfUser": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sumAllAreaOfAllObjects": {
+            "type": "number"
+          },
+          "sumAllAreaOfUsersObjects": {
+            "type": "number"
+          },
+          "avgPriceByRoomsNumber": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number"
+            }
+          }
+        },
+        "example": {
+          "countAllRealtyObjects": 20,
+          "countAllRealtyObjectsOfUser": 20,
+          "sumAllAreaOfAllObjects": 1402.8,
+          "sumAllAreaOfUsersObjects": 1402.8,
+          "avgPriceByRoomsNumber": {
+            "1": 16681095.625,
+            "2": 24943582.833333332,
+            "3": 30584537.833333332
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Корректировки по константам"
+    },
+    {
+      "name": "Корректировки по числовым полям"
+    },
+    {
+      "name": "Авторизация и аутентификация"
+    },
+    {
+      "name": "CRUD"
+    },
+    {
+      "name": "Импорт/экспорт"
+    },
+    {
+      "name": "Запуск расчета стоимости"
+    },
+    {
+      "name": "Пулы объектов"
+    },
+    {
+      "name": "Аналитика"
+    }
+  ]
+}

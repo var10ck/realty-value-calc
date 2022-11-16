@@ -1,0 +1,527 @@
+_type: export
+__export_format: 4
+__export_source: apimatic.transformer
+resources:
+- name: Realty value calculator
+  _type: workspace
+  _id: wrk_7c72526c3fe5495ea6c4fc88c5779ddf
+  description: >-
+    Сервис расчета стоимости объектов недвижимости города Москва.
+
+
+    Данный сервис содержит основную бизнес-логику системы: Импортирование/экспортирование объектов из Excel-файла, добавление и удаление объектов вручную, расчет стоимости объектов.
+- name: Корректировки по константам
+  _type: request_group
+  _id: fld_c22b27a259b5413ba7c114eac483edb3
+  parentId: wrk_7c72526c3fe5495ea6c4fc88c5779ddf
+- name: Корректировки по числовым полям
+  _type: request_group
+  _id: fld_70499e4a6fb3432199c2bb5b1115e089
+  parentId: wrk_7c72526c3fe5495ea6c4fc88c5779ddf
+- name: Авторизация и аутентификация
+  _type: request_group
+  _id: fld_b0cab61bc9a04716b8431f2e6e4fc6a4
+  parentId: wrk_7c72526c3fe5495ea6c4fc88c5779ddf
+- name: CRUD
+  _type: request_group
+  _id: fld_59fe214dafa948718213dbe1ab6929e7
+  parentId: wrk_7c72526c3fe5495ea6c4fc88c5779ddf
+- name: Импорт/экспорт
+  _type: request_group
+  _id: fld_4a5e66ad607f49beb0dbe2a9c963267b
+  parentId: wrk_7c72526c3fe5495ea6c4fc88c5779ddf
+- name: Запуск расчета стоимости
+  _type: request_group
+  _id: fld_ee348f63753741bea2f77cb0be295e26
+  parentId: wrk_7c72526c3fe5495ea6c4fc88c5779ddf
+- name: Пулы объектов
+  _type: request_group
+  _id: fld_7aacacda771140aa8e57cc345e8d34df
+  parentId: wrk_7c72526c3fe5495ea6c4fc88c5779ddf
+- name: Аналитика
+  _type: request_group
+  _id: fld_d1c2a74a041e4e8b86d675b7cfa5ed37
+  parentId: wrk_7c72526c3fe5495ea6c4fc88c5779ddf
+- name: Добавить корректировку
+  method: PUT
+  url: http://localhost:8080/realty/corrections/constant
+  body:
+    mimeType: application/json
+    text: >-
+      {
+
+        "fieldName": "condition",
+
+        "referenceValue": "без отделки",
+
+        "analogueValue": "муниципальный ремонт",
+
+        "correction": 10000,
+
+        "correctionType": "unit",
+
+        "isEnabled": true
+
+      }
+  headers:
+  - name: userSessionId
+    value: 7ef82c02-58ce-492c-bbdb-a21db6ab26dc
+    disabled: false
+  authentication: {}
+  _type: request
+  _id: req_2f37871dc09648098c4d7d1a85c51ee3
+  parentId: fld_c22b27a259b5413ba7c114eac483edb3
+- name: Редактировать корректировку1
+  method: PATCH
+  url: http://localhost:8080/realty/corrections/constant
+  body:
+    mimeType: application/json
+    text: >-
+      {
+
+        "id": "9dac4b4f-e6ee-42ed-a97d-51d61b971e27",
+
+        "fieldName": "condition",
+
+        "referenceValue": "без отделки",
+
+        "analogueValue": "муниципальный ремонт",
+
+        "correction": 10000,
+
+        "correctionType": "unit",
+
+        "isEnabled": true
+
+      }
+  headers:
+  - name: userSessionId
+    value: 8596fece-123d-421b-bc1c-0bb3cb162fa0
+    disabled: false
+  authentication: {}
+  _type: request
+  _id: req_923553bc3b08403ebb34e3c6f1045344
+  parentId: fld_c22b27a259b5413ba7c114eac483edb3
+- name: Удалить корректировку
+  method: DELETE
+  url: http://localhost:8080/realty/corrections/constant/<correctionId>
+  headers:
+  - name: userSessionId
+    value: 8596fece-123d-421b-bc1c-0bb3cb162fa0
+    disabled: false
+  authentication: {}
+  _type: request
+  _id: req_66d1a15f97c649d3a0085ac090d8498f
+  parentId: fld_c22b27a259b5413ba7c114eac483edb3
+- name: Получить список всех корректировок1
+  method: GET
+  url: http://localhost:8080/realty/corrections/constant
+  headers:
+  - name: userSessionId
+    value: 7ef82c02-58ce-492c-bbdb-a21db6ab26dc
+    disabled: false
+  authentication: {}
+  _type: request
+  _id: req_54645910642041babb7bf903258a5e86
+  parentId: fld_c22b27a259b5413ba7c114eac483edb3
+- name: Добавить корректировку2
+  method: PUT
+  url: http://localhost:8080/realty/corrections/numeric
+  body:
+    mimeType: application/json
+    text: >-
+      {
+
+        "fieldName": "totalArea",
+
+        "referenceValue": "30-50",
+
+        "referenceValueType": 1,
+
+        "analogueValue": "30-50",
+
+        "analogueValueType": 1,
+
+        "correction": 50,
+
+        "correctionType": "percent",
+
+        "isEnabled": true
+
+      }
+  headers:
+  - name: userSessionId
+    value: 7ef82c02-58ce-492c-bbdb-a21db6ab26dc
+    disabled: false
+  authentication: {}
+  _type: request
+  _id: req_a69020cf750c43079c282fc40a709b78
+  parentId: fld_70499e4a6fb3432199c2bb5b1115e089
+- name: Редактировать корректировку3
+  method: PATCH
+  url: http://localhost:8080/realty/corrections/numeric
+  body:
+    mimeType: application/json
+    text: >-
+      {
+
+        "id": "8067aec2-d313-46c4-b929-dee0986963a7",
+
+        "fieldName": "kitchenArea",
+
+        "referenceValue": "5-10",
+
+        "referenceValueType": 1,
+
+        "analogueValue": "30",
+
+        "analogueValueType": 5,
+
+        "correction": 23,
+
+        "correctionType": "percent",
+
+        "isEnabled": false
+
+      }
+  headers:
+  - name: userSessionId
+    value: 8596fece-123d-421b-bc1c-0bb3cb162fa0
+    disabled: false
+  authentication: {}
+  _type: request
+  _id: req_fa446824bce343be978e5c4b1781a9ec
+  parentId: fld_70499e4a6fb3432199c2bb5b1115e089
+- name: Удалить корректировку2
+  method: DELETE
+  url: http://localhost:8080/realty/corrections/numeric/<correctionId>
+  headers:
+  - name: userSessionId
+    value: 8596fece-123d-421b-bc1c-0bb3cb162fa0
+    disabled: false
+  authentication: {}
+  _type: request
+  _id: req_a08d9de03fdf48349ec099e85c6d6b56
+  parentId: fld_70499e4a6fb3432199c2bb5b1115e089
+- name: Получить список всех корректировок3
+  method: GET
+  url: http://localhost:8080/realty/corrections/numeric
+  headers:
+  - name: userSessionId
+    value: 7ef82c02-58ce-492c-bbdb-a21db6ab26dc
+    disabled: false
+  authentication: {}
+  _type: request
+  _id: req_38218cfd541c436f80f525bcaa2ff34e
+  parentId: fld_70499e4a6fb3432199c2bb5b1115e089
+- name: Зарегистрировать пользователя
+  method: POST
+  url: http://localhost:8080/
+  authentication: {}
+  _type: request
+  _id: req_72ea8feb8c914cda894c676425b844ca
+  parentId: fld_b0cab61bc9a04716b8431f2e6e4fc6a4
+- name: Авторизовать пользователя
+  method: POST
+  url: http://localhost:8080/auth/user
+  body:
+    mimeType: application/json
+    text: >-
+      {
+
+        "login": "admin",
+
+        "password": "admin"
+
+      }
+  authentication: {}
+  _type: request
+  _id: req_51ac130a37a5490b9a48abc5b0634948
+  parentId: fld_b0cab61bc9a04716b8431f2e6e4fc6a4
+- name: Удалить пользователя1
+  method: DELETE
+  url: http://localhost:8080/
+  authentication: {}
+  _type: request
+  _id: req_e5bd25888ff348a398b14f8ed23793c7
+  parentId: fld_b0cab61bc9a04716b8431f2e6e4fc6a4
+- name: Создание объекта недвижимости
+  method: POST
+  url: http://localhost:8080/realty/objects/create
+  body:
+    mimeType: application/json
+    text: >-
+      {
+
+        "location": "г. Москва, ул. Ватутина, д. 9",
+
+        "roomsNumber": 3,
+
+        "segment": "Новостройка",
+
+        "floorCount": 10,
+
+        "wallMaterial": "кирпич",
+
+        "floorNumber": 4,
+
+        "totalArea": 75,
+
+        "kitchenArea": 12,
+
+        "gotBalcony": true,
+
+        "condition": "Современная отделка",
+
+        "distanceFromMetro": 200,
+
+        "poolId": "75ddaa65-542e-448a-b310-08b95d538c5a"
+
+      }
+  headers:
+  - name: userSessionId
+    value: 5daac042-5203-47bc-a2ad-623bfd9ce0c6
+    disabled: false
+  authentication: {}
+  _type: request
+  _id: req_d799d64f59404efe955419ac26b62254
+  parentId: fld_59fe214dafa948718213dbe1ab6929e7
+  description: Добавление в систему одного объекта недвижимости
+- name: Получить информацию обо всех объектах, добавленных пользователем
+  method: GET
+  url: http://localhost:8080/realty/objects
+  headers:
+  - name: userSessionId
+    value: 7ef82c02-58ce-492c-bbdb-a21db6ab26dc
+    disabled: false
+  authentication: {}
+  _type: request
+  _id: req_7e3c3ae776484545b58dd9cdac3d790e
+  parentId: fld_59fe214dafa948718213dbe1ab6929e7
+- name: Получить информацию об объекте недвижимости1
+  method: GET
+  url: http://localhost:8080/realty/objects/4d8ca46f-78b7-4579-8cc2-8a834cb98791
+  headers:
+  - name: userSessionId
+    value: 8596fece-123d-421b-bc1c-0bb3cb162fa0
+    disabled: false
+  authentication: {}
+  _type: request
+  _id: req_ee9263160c5545b1bc68f5f8f1c0a096
+  parentId: fld_59fe214dafa948718213dbe1ab6929e7
+  description: Получение детальной информации об объекте, включая его координаты
+- name: Обновление информации об объекте1
+  method: PATCH
+  url: http://localhost:8080/realty/objects
+  body:
+    mimeType: application/json
+    text: >-
+      {
+
+        "id": "4d8ca46f-78b7-4579-8cc2-8a834cb98791",
+
+        "poolId": "2c2a54a6-b379-4dd3-9de4-3e00b9345db6"
+
+      }
+  headers:
+  - name: userSessionId
+    value: 8596fece-123d-421b-bc1c-0bb3cb162fa0
+    disabled: false
+  authentication: {}
+  _type: request
+  _id: req_52450bb4024144f985c37109a29f1d40
+  parentId: fld_59fe214dafa948718213dbe1ab6929e7
+  description: Единственное обязательное поле - это id, остальные поля должны присутствовать в теле запроса только если их данные обновляются. Данные можно отправить если они не изменились, в таком случае в системе также ничего не изменится.
+- name: Удалить объект недвижимости из системы2
+  method: DELETE
+  url: http://localhost:8080/realty/objects/8a7395e0-8bfe-4c9f-b322-cd48d519c21c
+  headers:
+  - name: userSessionId
+    value: 7d929e60-4e36-4e4a-9733-c4591412fb42
+    disabled: false
+  authentication: {}
+  _type: request
+  _id: req_0c9eeae4814f4888b45ae534309ffdbc
+  parentId: fld_59fe214dafa948718213dbe1ab6929e7
+- name: Импорт из XLSX-файла
+  method: PUT
+  url: http://localhost:8080/realty/objects/import
+  body:
+    mimeType: multipart/form-data
+    params:
+    - type: file
+      name: File
+      value: path/to/file21
+      disabled: false
+  headers:
+  - name: userSessionId
+    value: 05a2bafb-24bb-4f88-94cf-e21c8975bebf
+    disabled: false
+  authentication: {}
+  _type: request
+  _id: req_17fcbe89774c44c38d86778cb0fd09f1
+  parentId: fld_4a5e66ad607f49beb0dbe2a9c963267b
+  description: Импортировать объекты недвижимости из файла
+- name: Экспорт объектов в xlsx
+  method: GET
+  url: http://localhost:8080/realty/objects/export
+  headers:
+  - name: userSessionId
+    value: b01a2e5c-f642-419f-88ec-97cfe3a77860
+    disabled: false
+  authentication: {}
+  _type: request
+  _id: req_87fd2e39c753446b8074eea9ed2c16de
+  parentId: fld_4a5e66ad607f49beb0dbe2a9c963267b
+- name: Экспорт объектов из конкретного пула в xlsx1
+  method: GET
+  url: http://localhost:8080/realty/objects/export/<poolId>
+  headers:
+  - name: userSessionId
+    value: 5daac042-5203-47bc-a2ad-623bfd9ce0c6
+    disabled: false
+  authentication: {}
+  _type: request
+  _id: req_da9f0455edcb4342b3a1ff527ce0e4af
+  parentId: fld_4a5e66ad607f49beb0dbe2a9c963267b
+- name: Экспорт нескольких объектов в xlsx2
+  method: GET
+  url: http://localhost:8080/realty/objects/exportSome
+  headers:
+  - name: userSessionId
+    value: 5daac042-5203-47bc-a2ad-623bfd9ce0c6
+    disabled: false
+  authentication: {}
+  _type: request
+  _id: req_e1c5f863345448109e75682c50b89565
+  parentId: fld_4a5e66ad607f49beb0dbe2a9c963267b
+- name: Запустить расчет стоимости всех объектов в пуле4
+  method: POST
+  url: http://localhost:8080/realty/objects/calculatePool
+  body:
+    mimeType: application/json
+    text: >-
+      {
+
+        "poolId": "7d52875e-284f-44bf-bfcf-2f348960cecd",
+
+        "withCorrections": true
+
+      }
+  headers:
+  - name: userSessionId
+    value: 8596fece-123d-421b-bc1c-0bb3cb162fa0
+    disabled: false
+  authentication: {}
+  _type: request
+  _id: req_44614d2e89a74744987a427941c5405c
+  parentId: fld_ee348f63753741bea2f77cb0be295e26
+- name: Запустить расчет стоимости выбранных объектов5
+  method: POST
+  url: http://localhost:8080/realty/objects/calculateSome
+  body:
+    mimeType: application/json
+    text: >-
+      {
+
+        "objectsIds": [
+
+          "7327b637-e905-4001-804b-49cef06981a3",
+
+          "1a441588-a72c-4f6e-a950-3ad45f2e98a9"
+
+        ],
+
+        "withCorrections": false
+
+      }
+  headers:
+  - name: userSessionId
+    value: 8596fece-123d-421b-bc1c-0bb3cb162fa0
+    disabled: false
+  authentication: {}
+  _type: request
+  _id: req_70bb2153eaa042839ac206fb10320950
+  parentId: fld_ee348f63753741bea2f77cb0be295e26
+- name: Создание пула для объектов6
+  method: PUT
+  url: http://localhost:8080/realty/pool
+  body:
+    mimeType: application/json
+    text: >-
+      {
+
+        "name": "Новый пул объектов 123425"
+
+      }
+  headers:
+  - name: userSessionId
+    value: 8596fece-123d-421b-bc1c-0bb3cb162fa0
+    disabled: false
+  authentication: {}
+  _type: request
+  _id: req_38adbf7e0d7f42f49661e623ced084f1
+  parentId: fld_7aacacda771140aa8e57cc345e8d34df
+  description: >-
+    Можно создать пул вручную, чтобы переназначать объекты в него.
+
+
+    Можно отправить пустой объект в теле запроса, тогда имя пула сгенерируется автоматически. Внимание: отправить нужно именно пустой объект {}, а не пустой body.
+- name: Получение информации о пуле по id
+  method: GET
+  url: http://localhost:8080/realty/pool/<poolId>
+  headers:
+  - name: userSessionId
+    value: 5daac042-5203-47bc-a2ad-623bfd9ce0c6
+    disabled: false
+  authentication: {}
+  _type: request
+  _id: req_0ae2e2c0217141db998832f7aa1adc01
+  parentId: fld_7aacacda771140aa8e57cc345e8d34df
+- name: Получение информации обо всех пулах пользователя4
+  method: GET
+  url: http://localhost:8080/realty/pools
+  headers:
+  - name: userSessionId
+    value: 8596fece-123d-421b-bc1c-0bb3cb162fa0
+    disabled: false
+  authentication: {}
+  _type: request
+  _id: req_58be2927679f48c3b496203e3ead7714
+  parentId: fld_7aacacda771140aa8e57cc345e8d34df
+- name: default
+  method: GET
+  url: http://localhost:8080/realty/analytics/default
+  headers:
+  - name: userSessionId
+    value: 7ef82c02-58ce-492c-bbdb-a21db6ab26dc
+    disabled: false
+  authentication: {}
+  _type: request
+  _id: req_d3e9c79f2ec947fbbf1eb4fbc0e3ee49
+  parentId: fld_d1c2a74a041e4e8b86d675b7cfa5ed37
+  description: >-
+    | Поле | Описание |
+
+    | --- | --- |
+
+    | countAllRealtyObjects | количество всех загруженных объектов недвижимости |
+
+    | countAllRealtyObjectsOfUser | количество объектов недвижимости, загруженных пользователем |
+
+    | sumAllAreaOfAllObjects | суммарная площадь всех объектов |
+
+    | sumAllAreaOfUsersObjects | суммарная площадь объектов, загруженных пользователем |
+
+    | avgPriceByRoomsNumber | средняя цена квартиры(по всем квартирам в системе) в зависимости от количества комнат |
+- name: Средняя цена квартиры в пуле в зависимости от количетсва комнат5
+  method: GET
+  url: http://localhost:8080/realty/analytics/avgPriceOfRealtyByRoomsNumberForPool/7d52875e-284f-44bf-bfcf-2f348960cecd
+  headers:
+  - name: userSessionId
+    value: 7ef82c02-58ce-492c-bbdb-a21db6ab26dc
+    disabled: false
+  authentication: {}
+  _type: request
+  _id: req_82000830fadf49df9589454d23a10b22
+  parentId: fld_d1c2a74a041e4e8b86d675b7cfa5ed37
