@@ -1,6 +1,5 @@
 package helpers
 import dao.entities.corrections.CorrectionNumeric
-import dao.entities.integration.AnalogueObject
 import dao.entities.realty.RealtyObject
 import dto.integration.cian.Apartment
 
@@ -17,10 +16,12 @@ object CorrectionHelper {
                 val (objectField: Double, analogueField: Option[Double]) = correction.fieldName.toLowerCase match {
                     case "kitchenarea" => (realtyObject.kitchenArea, analogueObject.kitchenArea)
                     case "totalarea" => (realtyObject.totalArea, analogueObject.area)
-                    case "floornumber" => (realtyObject.floorNumber.toDouble, analogueObject.coordinates.floors.map(_.toDouble))
+                    case "floornumber" =>
+                        (realtyObject.floorNumber.toDouble, analogueObject.coordinates.floors.map(_.toDouble))
                     case "distancefrommetro" =>
-                        (realtyObject.distanceFromMetro.toDouble,
-                        analogueObject.distanceToMetro.headOption.flatMap(_.minutes).map(_.toDouble))
+                        (
+                          realtyObject.distanceFromMetro.toDouble,
+                          analogueObject.distanceToMetro.headOption.flatMap(_.minutes).map(_.toDouble))
                 }
 
                 val referenceValueFunc: Double => Boolean =
@@ -62,5 +63,35 @@ object CorrectionHelper {
     def greaterThenOrEqualStr(compareWith: String): Double => Boolean = (value: Double) => value >= compareWith.toDouble
 
     def equal(compareWith: String): Double => Boolean = (value: Double) => value == compareWith.toDouble
+
+    def conditionFinishingCorrection(realtyObject: RealtyObject, analogueObject: Apartment): Option[Double] = {
+        val partialAppliedCorrection = correctMeterPrice(analogueObject) _
+        realtyObject.condition match {
+            case "fine" =>
+                analogueObject.condition match {
+                    case Some("fine") => analogueObject.price.map(_.toDouble)
+                    case Some("rough") => partialAppliedCorrection(-6700)
+                    case None || Some("without") => partialAppliedCorrection(-20100)
+                }
+            case "rough" =>
+                analogueObject.condition match {
+                    case Some("fine") => partialAppliedCorrection(6700)
+                    case Some("rough") => analogueObject.price.map(_.toDouble)
+                    case None || Some("without") => partialAppliedCorrection(-13400)
+                }
+            case "without" =>
+                analogueObject.condition match {
+                    case Some("fine") => partialAppliedCorrection(20100)
+                    case Some("rough") => partialAppliedCorrection(13400)
+                    case None || Some("without") => analogueObject.price.map(_.toDouble)
+                }
+        }
+    }
+
+    private def correctMeterPrice(analogueObject: Apartment)(correction: Double) =
+        for {
+            price <- analogueObject.price
+            area <- analogueObject.area
+        } yield (price / area + correction) * area
 
 }
