@@ -1,5 +1,5 @@
 package api
-import dto.corrections.{CreateNumericCorrectionDTO, UpdateNumericCorrectionDTO}
+import dto.corrections.{CreateConstantCorrectionDTO, CreateNumericCorrectionDTO, UpdateConstantCorrectionDTO, UpdateNumericCorrectionDTO}
 import helpers.AuthHelper.{withUserContextAndDtoZIO, withUserContextZIO}
 import helpers.HttpExceptionHandlers._
 import services.CorrectionService
@@ -44,6 +44,37 @@ object CorrectionApi {
             }.fold(
               correctionExceptionsHandler,
               corrections => Response.json(corrections.toJson)
+            )
+
+        case req @ Method.PUT -> !! / "realty" / "corrections" / "constant" =>
+            withUserContextAndDtoZIO(req) { (_, dto: CreateConstantCorrectionDTO) =>
+               CorrectionService.createConstant(dto)
+            }.fold(
+                correctionExceptionsHandler,
+                _ => Response.ok
+            )
+
+        case req @ Method.PATCH -> !! / "realty" / "corrections" / "constant" =>
+            withUserContextAndDtoZIO(req) { (_, dto: UpdateConstantCorrectionDTO) =>
+                CorrectionService.updateConstant(dto)
+            }.fold(
+                correctionExceptionsHandler,
+                _ => Response.ok
+            )
+
+        case req @ Method.DELETE -> !! / "realty" / "corrections" / "constant" / correctionId =>
+            withUserContextZIO(req) { _ => CorrectionService.deleteConstant(correctionId) }
+                .fold(
+                    correctionExceptionsHandler,
+                    _ => Response.ok
+                )
+
+        case req @ Method.GET -> !! / "realty" / "corrections" / "constant" =>
+            withUserContextZIO(req) { _ =>
+                CorrectionService.getAllConstant
+            }.fold(
+                correctionExceptionsHandler,
+                corrections => Response.json(corrections.toJson)
             )
     }
 

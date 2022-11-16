@@ -113,4 +113,35 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="create CorrectionConstant table" author="Victor Nguen">
+        <createTable tableName="CorrectionConstant">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="fieldName" type="varchar(40)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="referenceValue" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="analogueValue" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="correction" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="correctionType" type="varchar(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="isEnabled" type="boolean" defaultValueBoolean="true">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addUniqueConstraint
+                tableName="CorrectionConstant"
+                constraintName="unique_CorrectionConstant_allValueFields"
+                columnNames="fieldName, referenceValue, analogueValue, correction, correctionType"
+        />
+    </changeSet>
+
 </databaseChangeLog>

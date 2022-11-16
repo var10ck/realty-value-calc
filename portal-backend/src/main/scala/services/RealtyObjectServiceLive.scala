@@ -2,15 +2,22 @@ package services
 import dao.entities.auth.{User, UserId}
 import dao.entities.integration.AnalogueObject
 import dao.entities.realty.{RealtyObject, RealtyObjectId, RealtyObjectPoolId}
-import dao.repositories.corrections.CorrectionNumericRepository
+import dao.repositories.corrections.{CorrectionConstantRepository, CorrectionNumericRepository}
 import dao.repositories.integration.AnalogueObjectRepository
 import dao.repositories.realty.{RealtyObjectPoolRepository, RealtyObjectRepository}
-import dto.realty.{AnalogueObjectInfoDTO, CalculateValueOfSomeObjectsDTO, CreateRealtyObjectDTO, ExportSomeObjectsDTO, RealtyObjectInfoDTO, UpdateRealtyObjectDTO}
+import dto.realty.{
+    AnalogueObjectInfoDTO,
+    CalculateValueOfSomeObjectsDTO,
+    CreateRealtyObjectDTO,
+    ExportSomeObjectsDTO,
+    RealtyObjectInfoDTO,
+    UpdateRealtyObjectDTO
+}
 import helpers.aggregatorParser.CianValuesTranslator.{segmentTranslate, wallMaterialTranslate}
 import helpers.{CorrectionHelper, ExcelHelper, FileHelper, GeoHelper}
 import zhttp.service.{ChannelFactory, EventLoopGroup}
 import zio.stream.{ZSink, ZStream}
-import zio.{Console, Scope, ULayer, ZIO, ZLayer, durationInt}
+import zio.{durationInt, Console, Scope, ULayer, ZIO, ZLayer}
 
 import java.io.File
 import java.sql.SQLException
@@ -98,18 +105,23 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
         } yield tempFile
 
     private def writeObjectsInXlsxFile(objects: List[RealtyObject]): ZIO[Any with Scope, Throwable, File] =
-        for{
+        for {
             tempFile <- FileHelper.makeTempFileZIO("upload", ".xlsx")
             _ <- ZIO.debug(s"Created temporary file \"${tempFile.getAbsolutePath}\"")
             inputStream <- FileHelper.makeFileOutputStream(tempFile)
-            _ <- ExcelHelper.transformObjectsToXlsx(inputStream, objects) <* ZIO.from(tempFile.delete()).delay(15.minutes).forkDaemon
+            _ <- ExcelHelper.transformObjectsToXlsx(inputStream, objects) <* ZIO
+                .from(tempFile.delete())
+                .delay(15.minutes)
+                .forkDaemon
             _ <- ZIO.debug(s"Wrote ${objects.length} objects $objects to file ${tempFile.getAbsolutePath}")
         } yield tempFile
 
-    override def exportSelectedObjectsToXlsx(dto: ExportSomeObjectsDTO, userId: UserId)
-    : ZIO[Any with Scope with DataSource with RealtyObjectRepository, Throwable, File] =
+    override def exportSelectedObjectsToXlsx(
+        dto: ExportSomeObjectsDTO,
+        userId: UserId): ZIO[Any with Scope with DataSource with RealtyObjectRepository, Throwable, File] =
         for {
-            objects <- ZIO.foreach(dto.objectIds){objectId => RealtyObjectRepository.get(objectId)}
+            objects <- ZIO
+                .foreach(dto.objectIds) { objectId => RealtyObjectRepository.get(objectId) }
                 .map(_.flatten.filter(_.addedByUserId == userId))
             tempFile <- writeObjectsInXlsxFile(objects)
         } yield tempFile
@@ -243,7 +255,8 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
         limitOfAnalogs: Int = 20): ZIO[
       DataSource
           with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory
-          with configuration.ApplicationConfig with SearchRealtyService with CorrectionNumericRepository,
+          with configuration.ApplicationConfig with SearchRealtyService with CorrectionNumericRepository
+          with CorrectionConstantRepository,
       Throwable,
       Unit] =
         for {
@@ -263,7 +276,8 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
         limitOfAnalogs: Int = 20): ZIO[
       DataSource
           with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory
-          with configuration.ApplicationConfig with SearchRealtyService with CorrectionNumericRepository,
+          with configuration.ApplicationConfig with SearchRealtyService with CorrectionNumericRepository
+          with CorrectionConstantRepository,
       Throwable,
       Unit] =
         for {
@@ -294,7 +308,8 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
         limitOfAnalogs: Int): ZIO[
       DataSource
           with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory
-          with configuration.ApplicationConfig with SearchRealtyService with CorrectionNumericRepository,
+          with configuration.ApplicationConfig with SearchRealtyService with CorrectionNumericRepository
+          with CorrectionConstantRepository,
       Throwable,
       Unit] =
         ZIO.foreach(realtyObjects)(calculateValueOfSingleObject(_, withCorrections, numPages, limitOfAnalogs)).unit
@@ -307,7 +322,8 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
         limitOfAnalogs: Int): ZIO[
       DataSource
           with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory
-          with configuration.ApplicationConfig with SearchRealtyService with CorrectionNumericRepository,
+          with configuration.ApplicationConfig with SearchRealtyService with CorrectionNumericRepository
+          with CorrectionConstantRepository,
       Throwable,
       Unit] =
         for {
@@ -319,8 +335,11 @@ final case class RealtyObjectServiceLive() extends RealtyObjectService {
                 if (objToCalculate.roomsNumber >= 4)
                     List(objToCalculate.roomsNumber - 1, objToCalculate.roomsNumber, objToCalculate.roomsNumber + 1)
                 else List(objToCalculate.roomsNumber)
-            allCorrections <- CorrectionNumericRepository.getAllEnabled
-            correctionFunctions <- ZIO.attempt(allCorrections.map(CorrectionHelper.correctionNumericToFunction))
+            allCorrectionsNumeric <- CorrectionNumericRepository.getAllEnabled
+            allCorrectionsConstant <- CorrectionConstantRepository.getAllEnabled
+            correctionFunctions <- ZIO.attempt(
+              allCorrectionsNumeric.map(CorrectionHelper.correctionNumericToFunction) ++ allCorrectionsConstant.map(
+                CorrectionHelper.correctionConstantToFunction))
             analoguesOfObject <- SearchRealtyService.searchRealtyInSquare(
               polygon,
               rooms = rooms,

@@ -1,7 +1,7 @@
 package services
 import dao.entities.auth.{User, UserId}
 import dao.entities.realty.{RealtyObject, RealtyObjectId, RealtyObjectPoolId}
-import dao.repositories.corrections.CorrectionNumericRepository
+import dao.repositories.corrections.{CorrectionConstantRepository, CorrectionNumericRepository}
 import dao.repositories.integration.AnalogueObjectRepository
 import dao.repositories.realty.{RealtyObjectPoolRepository, RealtyObjectRepository}
 import dto.realty.{CalculateValueOfSomeObjectsDTO, CreateRealtyObjectDTO, DeleteRealtyObjectDTO, ExportSomeObjectsDTO, RealtyObjectInfoDTO, UpdateRealtyObjectDTO}
@@ -85,7 +85,7 @@ trait RealtyObjectService {
     def calculateAllInPool(poolId: String, userId: UserId, withCorrections: Boolean, numPages: Int, limitOfAnalogs: Int): ZIO[
       DataSource
           with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
-          with SearchRealtyService with CorrectionNumericRepository,
+          with SearchRealtyService with CorrectionNumericRepository with CorrectionConstantRepository,
       Throwable,
       Unit]
 
@@ -97,7 +97,7 @@ trait RealtyObjectService {
         limitOfAnalogs: Int): ZIO[
       DataSource
           with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
-          with SearchRealtyService with CorrectionNumericRepository,
+          with SearchRealtyService with CorrectionNumericRepository with CorrectionConstantRepository,
       Throwable,
       Unit]
 }
@@ -184,7 +184,7 @@ object RealtyObjectService {
                            limitOfAnalogs: Int = 20): ZIO[
       DataSource
           with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
-          with SearchRealtyService with RealtyObjectService with CorrectionNumericRepository,
+          with SearchRealtyService with RealtyObjectService with CorrectionNumericRepository with CorrectionConstantRepository,
       Throwable,
       Unit] =
         ZIO.serviceWithZIO[RealtyObjectService](_.calculateAllInPool(poolId, userId, withCorrections, numPages, limitOfAnalogs))
@@ -197,7 +197,7 @@ object RealtyObjectService {
         limitOfAnalogs: Int = 20): ZIO[
       DataSource
           with RealtyObjectRepository with AnalogueObjectRepository with EventLoopGroup with ChannelFactory with configuration.ApplicationConfig
-          with SearchRealtyService with RealtyObjectService with CorrectionNumericRepository,
+          with SearchRealtyService with RealtyObjectService with CorrectionNumericRepository with CorrectionConstantRepository,
       Throwable,
       Unit] =
         ZIO.serviceWithZIO[RealtyObjectService](_.calculateForSome(dto, userId, numPages, limitOfAnalogs))

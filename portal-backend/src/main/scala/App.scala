@@ -2,7 +2,7 @@ import api.{AnalyticsApi, AuthApi, CorrectionApi, RealtyObjectApi, RealtyObjectP
 import configuration.ApplicationConfig
 import dao.repositories.analytics.AnalyticsRepository
 import dao.repositories.auth.{UserRepository, UserSessionRepository}
-import dao.repositories.corrections.CorrectionNumericRepository
+import dao.repositories.corrections.{CorrectionConstantRepository, CorrectionNumericRepository}
 import dao.repositories.integration.AnalogueObjectRepository
 import dao.repositories.realty.{RealtyObjectPoolRepository, RealtyObjectPoolRepositoryLive, RealtyObjectRepository}
 import db.{DataSource, LiquibaseService, LiquibaseServiceLive, zioLiveDS}
@@ -18,7 +18,7 @@ object App {
         with Liquibase with RealtyObjectRepository with RealtyObjectService with Scope with GeoSuggestionService
         with EventLoopGroup with ChannelFactory with RealtyObjectPoolRepository with RealtyObjectPoolService
         with SearchRealtyService with AnalogueObjectRepository with CorrectionService with CorrectionNumericRepository
-        with AnalyticsRepository with AnalyticsService
+        with AnalyticsRepository with AnalyticsService with CorrectionConstantRepository
 
     val appEnv: ZLayer[Any with Scope, Throwable, AppEnvironment] =
         ApplicationConfig.live >+> zioLiveDS >+> LiquibaseService.live >+> UserRepository.live >+>
@@ -27,7 +27,7 @@ object App {
             RealtyObjectPoolRepository.live >+> EventLoopGroup.auto() >+> ChannelFactory.auto >+> Scope.default >+>
             RealtyObjectPoolRepository.live >+> RealtyObjectPoolService.live >+> SearchRealtyService.cian >+>
             AnalogueObjectRepository.live >+> CorrectionService.live >+> CorrectionNumericRepository.live >+>
-            AnalyticsRepository.live >+> AnalyticsService.live
+            AnalyticsRepository.live >+> AnalyticsService.live >+> CorrectionConstantRepository.live
 
 
     val httpApp = AuthApi.api ++ RealtyObjectApi.api ++ RealtyObjectPoolApi.api ++ CorrectionApi.api ++ AnalyticsApi.api

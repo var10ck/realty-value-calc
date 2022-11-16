@@ -1,5 +1,5 @@
 package helpers
-import dao.entities.corrections.CorrectionNumeric
+import dao.entities.corrections.{CorrectionConstant, CorrectionNumeric}
 import dao.entities.integration.AnalogueObject
 import dao.entities.realty.RealtyObject
 import dto.integration.cian.Apartment
@@ -63,4 +63,25 @@ object CorrectionHelper {
 
     def equal(compareWith: String): Double => Boolean = (value: Double) => value == compareWith.toDouble
 
+    def correctionConstantToFunction(correction: CorrectionConstant): (RealtyObject, Apartment) => Double => Double =
+        (realtyObject: RealtyObject, analogueObject: Apartment) =>
+            (price: Double) => {
+                val (objectField: String, analogueField: String) = correction.fieldName.toLowerCase match {
+                    case "condition" => (realtyObject.condition, transformAnalogueCondition(analogueObject.condition))
+                    case "gotBalcony" => (transformGotBalconyField(realtyObject.gotBalcony), transformGotBalconyField(analogueObject.balcony))
+                }
+
+                if (objectField == correction.referenceValue && analogueField == correction.analogueValue)
+                    correctionTypeToFunc(correction.correctionType)(correction.correction.toDouble)(price)
+                else price
+            }
+
+    def transformGotBalconyField(v: Boolean): String = if (v) "yes" else "no"
+
+    def transformAnalogueCondition(s: Option[String]): String = s match {
+            case Some("fine") => "современная отделка"
+            case Some("rough") => "муниципальный ремонт"
+            case Some("without") => "без отделки"
+            case None => "без отделки"
+    }
 }
