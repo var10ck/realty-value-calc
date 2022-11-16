@@ -80,5 +80,13 @@ export const correctionsFields = [
     value: 'distanceFromMetro',
     label: 'Удаленность от станции метро, мин. пешком',
   },
+  {
+    value: 'gotBalcony',
+    label: 'Наличие балкона/лоджии',
+  },
+  {
+    value: 'condition',
+    label: 'Состояние',
+  },
 ]
 

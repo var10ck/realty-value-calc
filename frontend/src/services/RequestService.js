@@ -18,21 +18,24 @@ export default class RequestService {
   }
 
   static async createCorrection(data) {
-    const result = await this.axiosInstance.put(`/realty/corrections/numeric`, data);
+    const path = ["gotBalcony", "condition"].includes(data.fieldName) ? 'constant' : 'numeric'
+    const result = await this.axiosInstance.put(`/realty/corrections/${path}`, data);
     if (result.data) {
       return result.data;
     }
   }
 
   static async editCorrection(data) {
-    const result = await this.axiosInstance.patch(`/realty/corrections/numeric`, data);
+    const path = ["gotBalcony", "condition"].includes(data.fieldName) ? 'constant' : 'numeric'
+    const result = await this.axiosInstance.patch(`/realty/corrections/${path}`, data);
     if (result.data) {
       return result.data;
     }
   }
 
-  static async removeCorrection(id) {
-    const result = await this.axiosInstance.delete(`/realty/corrections/numeric/${id}`, 
+  static async removeCorrection(data) {
+    const path = ["gotBalcony", "condition"].includes(data.fieldName) ? 'constant' : 'numeric'
+    const result = await this.axiosInstance.delete(`/realty/corrections/${path}/${data.id}`, 
     );
     if (result.status === 200) {
       return true;
@@ -41,9 +44,12 @@ export default class RequestService {
   }
 
   static async getAllCorrections() {
-    const result = await this.axiosInstance.get(`/realty/corrections/numeric`);
-    if (result.data) {
-      return result.data;
+    const [result1, result2] = await Promise.all([
+      this.axiosInstance.get(`/realty/corrections/constant`),
+      this.axiosInstance.get(`/realty/corrections/numeric`)
+    ])
+    if (result1.data && result2.data) {
+      return [...result1.data, ...result2.data];
     }
   }
 
