@@ -122,6 +122,7 @@ export default {
   async created() {
     if (this.mode === 'create' || this.mode === 'edit' ) {
       this.editedCorrection = Object.assign({}, this.correction)
+      this.editedCorrection.isEnabled =  !!this.editedCorrection.isEnabled;
     }
   },
 

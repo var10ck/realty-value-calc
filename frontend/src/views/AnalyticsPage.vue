@@ -201,7 +201,7 @@ export default {
         },
       },
       title: {
-        text: "Средняя площадь",
+        text: "Суммарная площадь",
         floating: true,
         offsetY: 330,
         align: "center",
@@ -302,7 +302,7 @@ export default {
     commonAreasValues() {
       return [
         {
-          name: "Средняя площадь",
+          name: "Суммарная площадь",
           data: Object.values(
             Object.fromEntries(
               Object.entries(this.common).filter(([key]) =>

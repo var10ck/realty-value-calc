@@ -121,7 +121,7 @@ export default {
             if (el) {
               console.log(el)
               el.addEventListener("click", () =>
-                that.$router.push(`/realtyObject/${x?.id}`)
+                that.$router.push(`/objectInfo/${x?.id}`)
               );
             }
           })

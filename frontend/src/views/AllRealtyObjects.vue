@@ -26,8 +26,8 @@
         'page-text': '',
         'show-current-page': true,
       }"
-      @dblclick:row="(e, options) => $router.push(`/realtyObject/${options.item.id}`)"
-      @click:row="(e, options) => isMobile ? $router.push(`/realtyObject/${options.item.id}`) : null"
+      @dblclick:row="(e, options) => $router.push(`/objectInfo/${options.item.id}`)"
+      @click:row="(e, options) => isMobile ? $router.push(`/objectInfo/${options.item.id}`) : null"
     >
     <template v-slot:top>
       <v-toolbar
@@ -119,7 +119,7 @@
               </v-btn>
               <v-checkbox
                 v-model="useCorrections"
-                v-show="selectedPool.id"
+                v-show="selectedPool.id || selectedObjects.length"
                 class="mr-3 mt-3"
                 label="Использовать корректировки при расчете"
               ></v-checkbox>
@@ -344,22 +344,23 @@
     </template>
     <template v-slot:item.actions="{ item }">
       <v-icon
-        small
-        class="mr-2"
-        @click="editItem(item)"
+       isMobile
+        v-bind="isMobile ? 'large' : 'small'"
+        :class="isMobile ? 'mr-5' : 'mr-2'"
+        @click="editItem($event, item)"
       >
         mdi-pencil
       </v-icon>
       <v-icon
-        small
-        class="mr-2"
-        @click="copyItem(item)"
+        v-bind="isMobile ? 'large' : 'small'"
+        :class="isMobile ? 'mr-5' : 'mr-2'"
+        @click="copyItem($event, item)"
       >
         mdi-content-copy
       </v-icon>
       <v-icon
-        small
-        @click="deleteItem(item)"
+        v-bind="isMobile ? 'large' : 'small'"
+        @click="deleteItem($event, item)"
       >
         mdi-delete
       </v-icon>
@@ -546,15 +547,22 @@ export default {
       this.poolName = '';
     },
 
-    editItem (item) {
+    editItem (e, item) {
+      if (this.isMobile) {
+        e.stopPropagation()
+      }
+      
         console.log('here')
         this.editedIndex = this.realtyObjects.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
 
-    copyItem (item) {
-        console.log('here')
+    copyItem (e, item) {
+        if (this.isMobile) {
+          e.stopPropagation()
+        }
+
         this.editedItem = Object.assign({}, item)
         // удаляем служебную информацию
         delete this.editedItem.analogs;
@@ -565,7 +573,11 @@ export default {
         this.dialog = true
       },
 
-      deleteItem (item) {
+      deleteItem (e, item) {
+        if (this.isMobile) {
+          e.stopPropagation()
+        }
+
         this.editedIndex = this.realtyObjects.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialogDelete = true
@@ -645,6 +657,16 @@ export default {
      }
     .custom-filter-items {
       display: block;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .v-data-table-header-mobile__wrapper {
+      flex-direction: row-reverse;
+
+      .v-input--selection-controls__input {
+        margin-right: -15px;
+      }
     }
   }
 

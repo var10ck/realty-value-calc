@@ -43,7 +43,7 @@ const routes = [
     component: Registry,
   },
   {
-    path: '/realtyObject/:id',
+    path: '/objectInfo/:id',
     name: 'RealtyObject',
     component: RealtyObject,
   },
